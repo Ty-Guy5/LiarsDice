@@ -1,4 +1,4 @@
 
-public class Bid {
+public class Bid implements Decision {
 
 }

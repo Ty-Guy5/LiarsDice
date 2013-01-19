@@ -1,4 +1,4 @@
 
-public class TestBot1 {
+public class TestBot1 extends Bot {
 
 }

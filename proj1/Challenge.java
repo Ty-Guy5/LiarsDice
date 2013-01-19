@@ -1,4 +1,4 @@
 
-public class Challenge {
+public class Challenge implements Decision {
 
 }

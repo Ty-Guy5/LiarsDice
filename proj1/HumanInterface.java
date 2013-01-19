@@ -1,4 +1,4 @@
 
-public class HumanInterface {
+public class HumanInterface extends Bot {
 
 }
