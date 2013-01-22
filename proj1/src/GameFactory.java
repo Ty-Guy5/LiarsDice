@@ -1,6 +1,6 @@
 
-public class GameFactory {
-	public getGameInstance(){
-		return new LiarsDiceGame();
-	}
+public interface GameFactory {
+	
+	public Game getGameInstance();
+	
 }

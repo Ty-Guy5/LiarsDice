@@ -1,4 +1,4 @@
-
+//done
 public class Bid implements Decision {
 	private int dieNumber, frequency;
 	
@@ -10,5 +10,8 @@ public class Bid implements Decision {
 	public int getDieNumber(){
 		return dieNumber;
 	}
-	
+
+	public int getFrequency() {
+		return frequency;
+	}
 }
