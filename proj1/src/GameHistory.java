@@ -25,4 +25,16 @@ public class GameHistory {
 	public List<Round> getRounds() {
 		return rounds;
 	}
+
+	public void addRound(Round round){
+		rounds.add(round);
+	}
+	
+	public void addTurn(Turn turn){
+		rounds.get(rounds.size() - 1).addTurn(turn);
+	}
+	
+	public void endRound(Result result){
+		rounds.get(rounds.size() - 1).end(result);
+	}
 }

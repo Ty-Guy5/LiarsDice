@@ -7,6 +7,8 @@ public class LiarsDiceGame implements Game {
 	}
 	
 	public Bot runGame(List<Bot> botsPlaying) {
+		//TODO this is stubbed out for now
+		return botsPlaying.get(0);
 		/*
 		Game/Liars Dice (# of bots)
 			create # Players
