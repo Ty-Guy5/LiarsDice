@@ -1,14 +1,13 @@
 
-public class HumanInterface extends Bot {
+public class HumanController extends LiarsDiceBot {
 
-	@Override
 	public String getName() {
 		return "HumanPlayer";
 	}
 
-	@Override
 	public Decision getDecision(GameInfo currentGameInfo) {
 		//TODO stubbed out
+		//will need to talk up at the View level to get the human input
 		return new Challenge();
 	}
 

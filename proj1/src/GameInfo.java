@@ -1,13 +1,13 @@
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
-
+//done
 
 public class GameInfo {
 	private Bid currentBid;
 	private GameHistory gameHistory;
 	private List<Die> myDice;
-	private List<PlayerInfo> players;
+	private List<PlayerInfo> playersInfo;
 	
 	public GameInfo(){
 		init(null, new GameHistory(), new ArrayList<Die>(), new ArrayList<PlayerInfo>());
@@ -18,15 +18,15 @@ public class GameInfo {
 	}
 	
 	public GameInfo(GameInfo gi){
-		init(gi.getBid(), gi.getGameHistory(), gi.getMyDice(), gi.getPlayers());
+		init(gi.getBid(), gi.getGameHistory(), gi.getMyDice(), gi.getPlayersInfo());
 	}
 
 	//copies deeply
-	public void init(Bid currentBid, GameHistory gameHistory, List<Die> myDice, List<PlayerInfo> players) {
+	public void init(Bid currentBid, GameHistory gameHistory, List<Die> myDice, List<PlayerInfo> playersInfo) {
 		this.currentBid = currentBid;
 		this.gameHistory = new GameHistory(gameHistory);
 		this.myDice = Collections.unmodifiableList(myDice);
-		this.players = Collections.unmodifiableList(players);
+		this.playersInfo = Collections.unmodifiableList(playersInfo);
 	}
 
 	public Bid getBid(){
@@ -45,7 +45,7 @@ public class GameInfo {
 		return myDice;
 	}
 	
-	public List<PlayerInfo> getPlayers() {
-		return players;
+	public List<PlayerInfo> getPlayersInfo() {
+		return playersInfo;
 	}
 }

@@ -18,6 +18,7 @@ public class Round {
 	
 	public Round(Round r){
 		//copies each turn in the other round into a new turns array
+		//don't need deep copy because turns are not modifiable
 		turns = new ArrayList<Turn>(r.getTurns());
 		result = r.result;
 	}

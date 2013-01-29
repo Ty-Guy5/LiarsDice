@@ -17,7 +17,7 @@ public class LiarsDiceGame implements Game {
 			initialize dice, etc.
 			while(>1 bot has dice){ -- (rounds)
 				while(no challenges){ -- (turns)
-					initialize GameInfo & PlayerInfo
+					initialize GameInfo & PlayerInfo - both deep copies, don't include anything original!
 					ask next Player to take a turn – get Decision
 					if invalid bid{
 						1. choose a valid bid for them (or challenge) (not good option)
