@@ -1,19 +1,28 @@
+import java.util.ArrayList;
 import java.util.List;
 
 public class LiarsDiceGame implements Game {
+	GameHistory history;
+	List<Player> players;
+	
 	
 	public LiarsDiceGame(){
-		
+		players = new ArrayList<Player>();
 	}
 	
 	public Bot runGame(List<Bot> botsPlaying) {
-		//TODO this is stubbed out for now
+		//wrap each bot in a Player object
+		for (Bot bot : botsPlaying)
+		{
+			players.add(new Player((LiarsDiceBot) bot));
+		}
+		//TODO make sure that tournament decides play order before passing the list here
+		
+		//TODO finish this stub
 		return botsPlaying.get(0);
+		
 		/*
 		Game/Liars Dice (# of bots)
-			create # Players
-			assign bot to each Player
-			decide turn order
 			initialize dice, etc.
 			while(>1 bot has dice){ -- (rounds)
 				while(no challenges){ -- (turns)

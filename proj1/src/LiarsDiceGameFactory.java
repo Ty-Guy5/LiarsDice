@@ -1,3 +1,4 @@
+import java.util.ArrayList;
 import java.util.List;
 
 
@@ -13,7 +14,10 @@ public class LiarsDiceGameFactory implements GameFactory {
 
 	public List<Bot> getBots() {
 		// TODO Reflection goes here - for now can hardcode here
-		return null;
+		ArrayList<Bot> bots = new ArrayList<Bot>();
+		bots.add(new TestBot1());
+		
+		return bots;
 	}
 
 	public String getGameName() {
