@@ -1,3 +1,9 @@
+package programmerTournamentModel;
+import liarsDiceModel.Challenge;
+import liarsDiceModel.Decision;
+import liarsDiceModel.GameInfo;
+import liarsDiceModel.LiarsDiceBot;
+
 
 public class HumanController extends LiarsDiceBot {
 

@@ -1,6 +1,11 @@
+package programmerTournamentModel;
 import java.util.ArrayList;
 import java.util.List;
 //done
+
+import liarsDiceModel.Result;
+import liarsDiceModel.Round;
+import liarsDiceModel.Turn;
 
 public class GameHistory {
 	private List<Round> rounds;

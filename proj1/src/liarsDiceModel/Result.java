@@ -1,3 +1,4 @@
+package liarsDiceModel;
 
 public enum Result {
 	EXCEPTION,

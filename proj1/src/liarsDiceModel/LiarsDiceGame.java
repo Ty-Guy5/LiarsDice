@@ -1,5 +1,11 @@
+package liarsDiceModel;
+
 import java.util.ArrayList;
 import java.util.List;
+
+import programmerTournamentModel.Bot;
+import programmerTournamentModel.Game;
+import programmerTournamentModel.GameHistory;
 
 public class LiarsDiceGame implements Game {
 	GameHistory history;
@@ -12,9 +18,11 @@ public class LiarsDiceGame implements Game {
 	
 	public Bot runGame(List<Bot> botsPlaying) {
 		//wrap each bot in a Player object
+		int playerNumber = 1;
 		for (Bot bot : botsPlaying)
 		{
-			players.add(new Player((LiarsDiceBot) bot));
+			//TODO check this for correctness
+			players.add(new Player((LiarsDiceBot) bot, "" + playerNumber++));
 		}
 		//TODO make sure that tournament decides play order before passing the list here
 		

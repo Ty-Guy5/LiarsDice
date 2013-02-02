@@ -1,3 +1,4 @@
+package liarsDiceModel;
 
 public class PlayerInfo {
 	private int numDice;

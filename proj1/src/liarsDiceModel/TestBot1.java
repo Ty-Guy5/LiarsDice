@@ -1,3 +1,5 @@
+package liarsDiceModel;
+
 
 public class TestBot1 extends LiarsDiceBot {
 

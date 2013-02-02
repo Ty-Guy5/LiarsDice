@@ -1,3 +1,5 @@
+package liarsDiceModel;
+
 
 public class Turn {
 	private String playerName;

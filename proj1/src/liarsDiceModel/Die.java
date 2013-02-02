@@ -1,3 +1,4 @@
+package liarsDiceModel;
 import java.util.Random;
 //done
 public class Die {

@@ -1,3 +1,4 @@
+package liarsDiceModel;
 //done
 public class Bid implements Decision {
 	private int dieNumber, frequency;

@@ -1,3 +1,7 @@
+import gui.GUI;
+import programmerTournamentModel.GameHistory;
+
+
 
 public class Main {
 
@@ -5,7 +9,9 @@ public class Main {
 	 * @param args
 	 */
 	public static void main(String[] args) {
-		// TODO Auto-generated method stub
+		
+		GUI mainGUI = new GUI();
+
 		GameHistory gh = new GameHistory();
 		GameHistory gh2 = new GameHistory(gh);
 	}

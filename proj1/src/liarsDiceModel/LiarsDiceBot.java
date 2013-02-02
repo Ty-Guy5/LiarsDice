@@ -1,3 +1,6 @@
+package liarsDiceModel;
+import programmerTournamentModel.Bot;
+
 //done
 public abstract class LiarsDiceBot implements Bot {
 	
