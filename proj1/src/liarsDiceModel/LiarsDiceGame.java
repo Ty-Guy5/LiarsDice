@@ -21,7 +21,6 @@ public class LiarsDiceGame implements Game {
 		int playerNumber = 1;
 		for (Bot bot : botsPlaying)
 		{
-			//TODO check this for correctness
 			players.add(new Player((LiarsDiceBot) bot, "" + playerNumber++));
 		}
 		//TODO make sure that tournament decides play order before passing the list here
