@@ -1,18 +1,18 @@
 package liarsDiceModel;
-
+//done
 
 public class Turn {
-	private String playerName;
+	private int playerID;
 	private Decision decision;
 	
-	public Turn(String playerName, Decision decision)
+	public Turn(int playerID, Decision decision)
 	{
-		this.playerName = playerName;
+		this.playerID = playerID;
 		this.decision = decision;
 	}
 
-	public String getPlayerName() {
-		return playerName;
+	public int getPlayerID() {
+		return playerID;
 	}
 
 	public Decision getDecision() {

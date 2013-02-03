@@ -9,24 +9,70 @@ import programmerTournamentModel.GameHistory;
 
 public class LiarsDiceGame implements Game {
 	GameHistory history;
-	List<Player> players;
+	int numPlayers;
+	List<LiarsDicePlayer> players;
 	
-	
-	public LiarsDiceGame(){
-		players = new ArrayList<Player>();
+	public LiarsDiceGame(List<LiarsDicePlayer> players){
+		numPlayers = players.size();
+		this.players = players;
 	}
 	
-	public Bot runGame(List<Bot> botsPlaying) {
-		//wrap each bot in a Player object
-		int playerNumber = 1;
-		for (Bot bot : botsPlaying)
-		{
-			players.add(new Player((LiarsDiceBot) bot, "" + playerNumber++));
-		}
-		//TODO make sure that tournament decides play order before passing the list here
+	public Player runGame() {
 		
-		//TODO finish this stub
-		return botsPlaying.get(0);
+		//TODO make sure that tournament decides play order before passing the list here (pass in bots in play order)
+		int turnIndex = 0;
+		while(numPlayers > 1){
+			boolean noChallenges = true;
+			Bid currentBid = null;
+			while(noChallenges){
+				ArrayList<PlayerInfo> allPlayersInfo = new ArrayList<PlayerInfo>();
+				for(Player p : players){
+					allPlayersInfo.add(new PlayerInfo((LiarsDicePlayer)p));
+				}
+				GameInfo gi = new GameInfo(currentBid, new GameHistory(history), players.get(turnIndex).getDice(), allPlayersInfo);
+				Decision decision = null;
+				try{
+					decision = players.get(turnIndex).getDecision(gi);
+				}catch(Exception e){ //checking against exceptions thrown by bot
+					e.printStackTrace();
+					history.endRound(Result.EXCEPTION);
+					//maybe log later
+					loseDie(turnIndex);
+					break;
+				}
+				if(!isValidDecision(decision, currentBid)){
+					history.endRound(Result.INVALIDDECISION);
+					loseDie(turnIndex);
+					break;
+				}
+				if(decision instanceof Challenge){
+					history.endRound(Result.CHALLENGE);
+					/*
+					determine who loses a die
+						if(current bid == valid)
+							challenger loses a die
+							if(0 dice left)
+								somehow remove from turn order
+						else
+							challenged loses a die
+							if(0 dice left)index
+								somehow remove from turn order
+					 */
+					if(numberOfDiceWithValue(currentBid.getDieNumber()) >= currentBid.getFrequency()){
+						loseDie(turnIndex);
+					}
+					else{
+						loseDie(previousTurnIndex(turnIndex));
+					}
+					break;
+				}
+				else{
+					Bid bid = (Bid)decision;
+					
+				}
+			}
+			turnIndex = nextTurnIndex(turnIndex);
+		}
 		
 		/*
 		Game/Liars Dice (# of bots)
@@ -36,19 +82,19 @@ public class LiarsDiceGame implements Game {
 					initialize GameInfo & PlayerInfo - both deep copies, don't include anything original!
 					ask next Player to take a turn – get Decision
 					if invalid bid{
-						1. choose a valid bid for them (or challenge) (not good option)
-						2. ask them again – (infinite loop possibility)
-						3. they automatically lose the round 
+						they automatically lose the round 
 						report what happened
 					}
 					if throw exception{
 						automatically lose the round
 						report what happened
 					}
+					*****Think about this later*****
 					How to handle infinite loop in their function?{
 						automatically lose the round
 						report what happened
 					}
+					*****Think about this later*****
 					if(decision == challenge)
 						break;
 					if(decision == bid)
@@ -71,6 +117,37 @@ public class LiarsDiceGame implements Game {
 		
 	}
 	
+	private int nextTurnIndex(int turnIndex) {
+		
+		
+		return 0;
+	}
+
+	private int previousTurnIndex(int turnIndex) {
+		
+		
+		return 0;
+	}
+
+	private int numberOfDiceWithValue(int dieNumber) {
+		int count = 0;
+		for(LiarsDicePlayer p : players){
+			for(Die d : p.getDice()){
+				if(d.getValue() == dieNumber || d.getValue() == Die.WILD){
+					count++;
+				}
+			}
+		}
+		return count;
+	}
+
+	private void loseDie(int turnIndex) {
+		players.get(turnIndex).removeDie();
+		if(players.get(turnIndex).getDice().size() <= 0){
+			numPlayers--;
+		}
+	}
+
 	public static boolean isValidDecision(Decision decision, Bid currentBid){
 		if(decision == null){
 			return false;

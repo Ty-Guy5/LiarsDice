@@ -2,6 +2,7 @@ package liarsDiceModel;
 import java.util.Random;
 //done
 public class Die {
+	public static final int WILD = 1;
 	private int value;
 	
 	public Die(){

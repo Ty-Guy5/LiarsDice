@@ -2,6 +2,8 @@ package programmerTournamentModel;
 import java.util.ArrayList;
 import java.util.List;
 
+import liarsDiceModel.Player;
+
 
 public class Tournament {
 	private GameFactory gameFactory;
@@ -13,13 +15,12 @@ public class Tournament {
 	
 	public void runTournament()
 	{
-		Game game = gameFactory.getGameInstance();
+		List<Player> allPlayers = gameFactory.getPlayers(); //TODO this should be permanently stored in a map
 		
-		List<Bot> allBots = gameFactory.getBots(); //TODO this should be permanently stored in a map
+		//TODO replace below with tournament logic
+		Game game = gameFactory.getGameInstance(allPlayers);
 		
-		List<Bot> botsPlaying = new ArrayList<Bot>();
-		botsPlaying.add(allBots.get(0));
-		game.runGame(botsPlaying);
+		game.runGame();
 		//TODO finish
 	}
 }
