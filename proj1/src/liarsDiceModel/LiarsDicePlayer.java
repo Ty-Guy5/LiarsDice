@@ -2,6 +2,8 @@ package liarsDiceModel;
 
 import java.util.ArrayList;
 import java.util.List;
+
+import programmerTournamentModel.GameHistory;
 //done
 public class LiarsDicePlayer extends Player{
 	private static final int INITIAL_NUM_DICE = 5;
@@ -39,5 +41,8 @@ public class LiarsDicePlayer extends Player{
 	public List<Die> getDice() {
 		return dice;
 	}
-
+	
+	public void reportGameResults(GameHistory gameHistory){
+		bot.reportGameResults(gameHistory);
+	}
 }

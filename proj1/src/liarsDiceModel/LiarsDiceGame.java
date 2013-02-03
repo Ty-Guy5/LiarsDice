@@ -10,20 +10,22 @@ import programmerTournamentModel.GameHistory;
 public class LiarsDiceGame implements Game {
 	GameHistory history;
 	int numPlayers;
+	int turnIndex;
 	List<LiarsDicePlayer> players;
 	
 	public LiarsDiceGame(List<LiarsDicePlayer> players){
 		numPlayers = players.size();
 		this.players = players;
+		turnIndex = 0;
 	}
 	
 	public Player runGame() {
-		
 		//TODO make sure that tournament decides play order before passing the list here (pass in bots in play order)
-		int turnIndex = 0;
+		//turnIndex = 0;
 		while(numPlayers > 1){
 			boolean noChallenges = true;
 			Bid currentBid = null;
+			history.addRound(new Round());
 			while(noChallenges){
 				ArrayList<PlayerInfo> allPlayersInfo = new ArrayList<PlayerInfo>();
 				for(Player p : players){
@@ -47,17 +49,6 @@ public class LiarsDiceGame implements Game {
 				}
 				if(decision instanceof Challenge){
 					history.endRound(Result.CHALLENGE);
-					/*
-					determine who loses a die
-						if(current bid == valid)
-							challenger loses a die
-							if(0 dice left)
-								somehow remove from turn order
-						else
-							challenged loses a die
-							if(0 dice left)index
-								somehow remove from turn order
-					 */
 					if(numberOfDiceWithValue(currentBid.getDieNumber()) >= currentBid.getFrequency()){
 						loseDie(turnIndex);
 					}
@@ -67,66 +58,57 @@ public class LiarsDiceGame implements Game {
 					break;
 				}
 				else{
+					history.addTurn(new Turn(players.get(turnIndex).getID(), decision));
 					Bid bid = (Bid)decision;
-					
+					currentBid = bid;
+					turnIndex = nextTurnIndex(turnIndex);
 				}
 			}
-			turnIndex = nextTurnIndex(turnIndex);
 		}
-		
-		/*
-		Game/Liars Dice (# of bots)
-			initialize dice, etc.
-			while(>1 bot has dice){ -- (rounds)
-				while(no challenges){ -- (turns)
-					initialize GameInfo & PlayerInfo - both deep copies, don't include anything original!
-					ask next Player to take a turn – get Decision
-					if invalid bid{
-						they automatically lose the round 
-						report what happened
-					}
-					if throw exception{
-						automatically lose the round
-						report what happened
-					}
-					*****Think about this later*****
-					How to handle infinite loop in their function?{
-						automatically lose the round
-						report what happened
-					}
-					*****Think about this later*****
-					if(decision == challenge)
-						break;
-					if(decision == bid)
-						update history, current bid, update whose turn it is (skip if no dice)
+		LiarsDicePlayer winner = null;
+		for(LiarsDicePlayer p : players){
+			p.reportGameResults(new GameHistory(history));
+			if(p.getDice().size() > 0){
+				if(winner != null){
+					System.out.println("error: multiple winners???");
 				}
-				determine who loses a die
-					if(current bid == valid)
-						challenger loses a die
-						if(0 dice left)
-							somehow remove from turn order
-					else
-						challenged loses a die
-						if(0 dice left)
-							somehow remove from turn order	
+				winner = p;
 			}
-			(whoever has dice left wins game)
-			inform Bots who won: give them History
-			report winner to Tournament class (return value?)
-		 */
-		
+		}
+		if(winner == null){
+			System.out.println("error: runGame didn't have anyone with dice left!");
+		}
+		return winner;		
 	}
 	
 	private int nextTurnIndex(int turnIndex) {
-		
-		
-		return 0;
+		int temp = turnIndex;
+		do{
+			temp++;
+			if(temp >= players.size()){
+				temp = 0;
+			}
+			if(temp == turnIndex){
+				System.out.println("nextTurnIndex error: turn == turnIndex");
+				break;
+			}
+		}while(players.get(temp).getDice().size() <= 0);
+		return temp;
 	}
 
 	private int previousTurnIndex(int turnIndex) {
-		
-		
-		return 0;
+		int temp = turnIndex;
+		do{
+			temp--;
+			if(temp < 0){
+				temp = players.size() - 1;
+			}
+			if(temp == turnIndex){
+				System.out.println("previousTurnIndex error: turn == turnIndex");
+				break;
+			}
+		}while(players.get(temp).getDice().size() <= 0);
+		return temp;
 	}
 
 	private int numberOfDiceWithValue(int dieNumber) {
@@ -141,10 +123,14 @@ public class LiarsDiceGame implements Game {
 		return count;
 	}
 
-	private void loseDie(int turnIndex) {
-		players.get(turnIndex).removeDie();
-		if(players.get(turnIndex).getDice().size() <= 0){
+	private void loseDie(int loseIndex) {
+		players.get(loseIndex).removeDie();
+		if(players.get(loseIndex).getDice().size() <= 0){
 			numPlayers--;
+			this.turnIndex = nextTurnIndex(loseIndex);
+		}
+		else{
+			this.turnIndex = loseIndex;
 		}
 	}
 
