@@ -14,6 +14,7 @@ public class LiarsDiceGame implements Game {
 	List<LiarsDicePlayer> players;
 	
 	public LiarsDiceGame(List<LiarsDicePlayer> players){
+		history = new GameHistory();
 		numPlayers = players.size();
 		this.players = players;
 		turnIndex = 0;
@@ -23,64 +24,81 @@ public class LiarsDiceGame implements Game {
 		//TODO make sure that tournament decides play order before passing the list here (pass in bots in play order)
 		//turnIndex = 0;
 		while(numPlayers > 1){
-			boolean noChallenges = true;
-			Bid currentBid = null;
-			history.addRound(new Round());
-			while(noChallenges){
-				ArrayList<PlayerInfo> allPlayersInfo = new ArrayList<PlayerInfo>();
-				for(Player p : players){
-					allPlayersInfo.add(new PlayerInfo((LiarsDicePlayer)p));
-				}
-				GameInfo gi = new GameInfo(currentBid, new GameHistory(history), players.get(turnIndex).getDice(), allPlayersInfo);
-				Decision decision = null;
-				try{
-					decision = players.get(turnIndex).getDecision(gi);
-				}catch(Exception e){ //checking against exceptions thrown by bot
-					e.printStackTrace();
-					history.endRound(Result.EXCEPTION);
-					//maybe log later
-					loseDie(turnIndex);
-					break;
-				}
-				if(!isValidDecision(decision, currentBid)){
-					history.endRound(Result.INVALIDDECISION);
-					loseDie(turnIndex);
-					break;
-				}
-				if(decision instanceof Challenge){
-					history.endRound(Result.CHALLENGE);
-					if(numberOfDiceWithValue(currentBid.getDieNumber()) >= currentBid.getFrequency()){
-						loseDie(turnIndex);
-					}
-					else{
-						loseDie(previousTurnIndex(turnIndex));
-					}
-					break;
-				}
-				else{
-					history.addTurn(new Turn(players.get(turnIndex).getID(), decision));
-					Bid bid = (Bid)decision;
-					currentBid = bid;
-					turnIndex = nextTurnIndex(turnIndex);
-				}
-			}
+			playRound();
 		}
+		
+		//determine the winner and report the results to everyone
 		LiarsDicePlayer winner = null;
 		for(LiarsDicePlayer p : players){
 			p.reportGameResults(new GameHistory(history));
 			if(p.getDice().size() > 0){
-				if(winner != null){
-					System.out.println("error: multiple winners???");
-				}
+				assert (winner != null) : "error: multiple winners???";
 				winner = p;
 			}
 		}
-		if(winner == null){
-			System.out.println("error: runGame didn't have anyone with dice left!");
-		}
+		assert (winner == null) : "error: runGame didn't have anyone with dice left!";
 		return winner;		
 	}
 	
+	private void playRound() {
+		Result roundResult = Result.UNFINISHED;
+		Bid currentBid = null;
+		history.addRound(new Round());
+		while(roundResult == Result.UNFINISHED){
+			
+			//create the gameInfo object
+			ArrayList<PlayerInfo> allPlayersInfo = new ArrayList<PlayerInfo>();
+			for(Player p : players){
+				allPlayersInfo.add(new PlayerInfo((LiarsDicePlayer)p));
+			}
+			GameInfo gi = new GameInfo(currentBid, new GameHistory(history), 
+					players.get(turnIndex).getDice(), allPlayersInfo);
+			
+			//get the player's decision and dish out the consequences
+			collectAndProcessDecision(gi, currentBid, roundResult);
+		}
+		history.endRound(roundResult);
+		
+	}
+
+	private void collectAndProcessDecision(GameInfo gi, Bid currentBid, Result roundResult) {
+		
+		//collect decision
+		Decision decision = null;
+		try{
+			decision = players.get(turnIndex).getDecision(gi);
+		}catch(Exception e){ //checking against exceptions thrown by bot
+			e.printStackTrace(); //TODO log instead of printing error
+			roundResult = Result.EXCEPTION;
+			takeAwayDieAndSetNextTurn(turnIndex);
+			return;
+		}
+		
+		//process decision
+		if(!isValidDecision(decision, currentBid)){
+			roundResult = Result.INVALIDDECISION;
+			//maybe log later
+			takeAwayDieAndSetNextTurn(turnIndex);
+		}
+		else if(decision instanceof Challenge){
+			roundResult = Result.CHALLENGE;
+			if(numberOfDiceWithValue(currentBid.getDieNumber()) >= currentBid.getFrequency()){
+				takeAwayDieAndSetNextTurn(turnIndex);
+			}
+			else{
+				takeAwayDieAndSetNextTurn(previousTurnIndex(turnIndex));
+			}
+		}
+		else //normal bid
+		{
+			history.addTurn(new Turn(players.get(turnIndex).getID(), decision));
+			Bid bid = (Bid)decision;
+			currentBid = bid;
+			turnIndex = nextTurnIndex(turnIndex);
+		}
+		
+	}
+
 	private int nextTurnIndex(int turnIndex) {
 		int temp = turnIndex;
 		do{
@@ -123,7 +141,7 @@ public class LiarsDiceGame implements Game {
 		return count;
 	}
 
-	private void loseDie(int loseIndex) {
+	private void takeAwayDieAndSetNextTurn(int loseIndex) {
 		players.get(loseIndex).removeDie();
 		if(players.get(loseIndex).getDice().size() <= 0){
 			numPlayers--;
