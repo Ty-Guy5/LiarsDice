@@ -2,23 +2,23 @@ package liarsDiceModel;
 //done
 public class PlayerInfo {
 	private int numDice;
-	private int playerID;
+	private int id;
 	
 	public PlayerInfo(int numDice, int playerID) {
 		this.numDice = numDice;
-		this.playerID = playerID;
+		this.id = playerID;
 	}
 	
 	public PlayerInfo(LiarsDicePlayer p){
 		numDice = p.getDice().size();
-		playerID = p.getID();
+		id = p.getID();
 	}
 
 	public int getNumDice() {
 		return numDice;
 	}
 
-	public int getBotID() {
-		return playerID;
+	public int getID() {
+		return id;
 	}
 }
