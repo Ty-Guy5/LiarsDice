@@ -6,8 +6,6 @@ import programmerTournamentModel.Bot;
 import programmerTournamentModel.Game;
 import programmerTournamentModel.GameFactory;
 
-
-
 public class LiarsDiceGameFactory implements GameFactory {
 	private String name = "Liar's Dice";
 	public LiarsDiceGameFactory(){
@@ -25,7 +23,8 @@ public class LiarsDiceGameFactory implements GameFactory {
 	public List<Player> getPlayers() {
 		// TODO Reflection goes here - for now can hardcode here
 		ArrayList<Bot> bots = new ArrayList<Bot>();
-		bots.add(new TestBot2());
+		bots.add(new TestBot3());
+		bots.add(new TestBot1());
 		bots.add(new TestBot1());
 		
 		//wrap each bot in a Player object
