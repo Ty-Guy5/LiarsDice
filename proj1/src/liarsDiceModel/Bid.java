@@ -15,4 +15,8 @@ public class Bid implements Decision {
 	public int getFrequency() {
 		return frequency;
 	}
+	
+	public String toString(){
+		return frequency + " " + dieNumber + "'s";
+	}
 }

@@ -34,6 +34,14 @@ public class LiarsDicePlayer extends Player{
 		}
 	}
 	
+	public void resetDice(){
+		int numDice = INITIAL_NUM_DICE;
+		dice = new ArrayList<Die>();
+		for(int i = 0; i < numDice; i++){
+			dice.add(new Die());
+		}
+	}
+	
 	public Decision getDecision(GameInfo gameInfo) {
 		return bot.getDecision(gameInfo);
 	}

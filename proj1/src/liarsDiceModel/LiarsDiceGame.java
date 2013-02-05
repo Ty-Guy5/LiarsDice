@@ -12,12 +12,14 @@ public class LiarsDiceGame implements Game {
 	int numPlayers;
 	int turnIndex;
 	List<LiarsDicePlayer> players;
+	Bid currentBid;
 	
 	public LiarsDiceGame(List<LiarsDicePlayer> players){
 		history = new GameHistory();
 		numPlayers = players.size();
 		this.players = players;
 		turnIndex = 0;
+		currentBid = null;
 	}
 	
 	public Player runGame() {
@@ -32,17 +34,17 @@ public class LiarsDiceGame implements Game {
 		for(LiarsDicePlayer p : players){
 			p.reportGameResults(new GameHistory(history));
 			if(p.getDice().size() > 0){
-				assert (winner != null) : "error: multiple winners???";
+				assert (winner == null) : "error: multiple winners???";
 				winner = p;
 			}
 		}
-		assert (winner == null) : "error: runGame didn't have anyone with dice left!";
+		assert (winner != null) : "error: runGame didn't have anyone with dice left!";
 		return winner;		
 	}
 	
 	private void playRound() {
 		Result roundResult = Result.UNFINISHED;
-		Bid currentBid = null;
+		currentBid = null;
 		history.addRound(new Round());
 		while(roundResult == Result.UNFINISHED){
 			
@@ -55,23 +57,26 @@ public class LiarsDiceGame implements Game {
 					players.get(turnIndex).getDice(), allPlayersInfo);
 			
 			//get the player's decision and dish out the consequences
-			collectAndProcessDecision(gi, currentBid, roundResult);
+			roundResult = collectAndProcessDecision(gi, roundResult);
+//			System.out.println("currentBid after process: " + currentBid);
 		}
 		history.endRound(roundResult);
 		
 	}
 
-	private void collectAndProcessDecision(GameInfo gi, Bid currentBid, Result roundResult) {
+	private Result collectAndProcessDecision(GameInfo gi, Result roundResult) {
 		
 		//collect decision
 		Decision decision = null;
 		try{
+//			int dice = players.get(turnIndex).getDice().size();
+//			System.out.println(players.get(turnIndex).getID() + ": " + dice);
 			decision = players.get(turnIndex).getDecision(gi);
 		}catch(Exception e){ //checking against exceptions thrown by bot
 			e.printStackTrace(); //TODO log instead of printing error
 			roundResult = Result.EXCEPTION;
 			takeAwayDieAndSetNextTurn(turnIndex);
-			return;
+			return roundResult;
 		}
 		
 		//process decision
@@ -94,20 +99,24 @@ public class LiarsDiceGame implements Game {
 			history.addTurn(new Turn(players.get(turnIndex).getID(), decision));
 			Bid bid = (Bid)decision;
 			currentBid = bid;
+//			System.out.println("currentBid during process: " + currentBid);
 			turnIndex = nextTurnIndex(turnIndex);
 		}
-		
+		return roundResult;
 	}
 
 	private int nextTurnIndex(int turnIndex) {
 		int temp = turnIndex;
+		//System.out.println("turnIndex: " + turnIndex);
 		do{
 			temp++;
+			//System.out.println("temp: " + temp);
 			if(temp >= players.size()){
 				temp = 0;
 			}
 			if(temp == turnIndex){
-				System.out.println("nextTurnIndex error: turn == turnIndex");
+				//System.out.println("nextTurnIndex error: turn == turnIndex");
+				//not error - only one player left with dice
 				break;
 			}
 		}while(players.get(temp).getDice().size() <= 0);
@@ -122,7 +131,8 @@ public class LiarsDiceGame implements Game {
 				temp = players.size() - 1;
 			}
 			if(temp == turnIndex){
-				System.out.println("previousTurnIndex error: turn == turnIndex");
+				//System.out.println("previousTurnIndex error: turn == turnIndex");
+				//not error - only one player left with dice
 				break;
 			}
 		}while(players.get(temp).getDice().size() <= 0);
@@ -164,6 +174,8 @@ public class LiarsDiceGame implements Game {
 		}
 		else{
 			Bid bid = (Bid)decision;
+//			System.out.println("bid: " + bid);
+//			System.out.println("currentbid: " + currentBid);
 			if(bid.getDieNumber() < 2 || bid.getDieNumber() > 6){
 				return false; //invalid dieNumber
 			}
