@@ -52,4 +52,20 @@ public class GameInfo {
 	public List<PlayerInfo> getPlayersInfo() {
 		return playersInfo;
 	}
+	
+	//returns 0 if no winner
+	public int getWinnerID()
+	{
+		int winner = 0;
+		
+		for(PlayerInfo p : playersInfo){
+			if(p.getNumDice() > 0){
+				if (winner != 0)
+					return 0;
+				winner = p.getID();
+			}
+		}
+		
+		return winner;
+	}
 }
