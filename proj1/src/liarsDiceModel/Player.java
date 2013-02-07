@@ -10,4 +10,6 @@ public abstract class Player {
 	public int getID() {
 		return id;
 	}
+
+	public abstract String getBotName();
 }

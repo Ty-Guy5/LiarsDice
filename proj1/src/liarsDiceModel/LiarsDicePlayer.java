@@ -53,4 +53,8 @@ public class LiarsDicePlayer extends Player{
 	public void reportGameResults(GameHistory gameHistory){
 		bot.reportGameResults(gameHistory);
 	}
+
+	public String getBotName() {
+		return bot.getName();
+	}
 }

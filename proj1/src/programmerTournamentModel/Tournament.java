@@ -52,7 +52,7 @@ public class Tournament {
 					Game game = gameFactory.getGameInstance(playersSoFar);
 					Player winner = game.runGame();
 					//update stats
-					System.out.println("winner: " + winner.getClass().getSimpleName() + ", ID: " + winner.getID());
+					System.out.println("winner: " + winner.getBotName() + ", ID: " + winner.getID());
 				}
 				else{
 					runAllPermutations(botsPerGame, playersSoFar);
