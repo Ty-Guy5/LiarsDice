@@ -26,21 +26,21 @@ public class TestBot4 extends LiarsDiceBot {
 		int othersDice = totalDice - currentGameInfo.getMyDice().size();
 		Bid currentBid = currentGameInfo.getCurrentBid();
 		int onesGuess = othersDice/6 + myDiceFrequencies[0];
-		int bidFrequencyGuess = myDiceFrequencies[currentBid.getDieNumber() - 1] + othersDice/6;
+		int bidFrequencyGuess = myDiceFrequencies[currentBid.getFaceValue() - 1] + othersDice/6;
 		if(currentBid.getFrequency() > (onesGuess + bidFrequencyGuess)){ //I don't think there are that many in the game
 			return new Challenge();
 		}
 		else if(currentBid.getFrequency() < (onesGuess + bidFrequencyGuess)){
-			return new Bid(currentBid.getFrequency() + 1, currentBid.getDieNumber());
+			return new Bid(currentBid.getFrequency() + 1, currentBid.getFaceValue());
 		}
 		else{ //currentBid is spot on with my guess
-			int myDiceOfCurrentBid = myDiceFrequencies[currentBid.getDieNumber() - 1];
-			for(int i = currentBid.getDieNumber(); i < myDiceFrequencies.length; i++){
+			int myDiceOfCurrentBid = myDiceFrequencies[currentBid.getFaceValue() - 1];
+			for(int i = currentBid.getFaceValue(); i < myDiceFrequencies.length; i++){
 				if(myDiceFrequencies[i] >= myDiceOfCurrentBid){
 					return new Bid(currentBid.getFrequency(), i + 1);
 				}
 			}
-			for(int i = 1; i < currentBid.getDieNumber(); i++){
+			for(int i = 1; i < currentBid.getFaceValue(); i++){
 				if(myDiceFrequencies[i] > myDiceOfCurrentBid){
 					return new Bid(currentBid.getFrequency() + 1, i + 1);
 				}

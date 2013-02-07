@@ -8,7 +8,7 @@ import programmerTournamentModel.Tournament;
 public class Main {
 
 	/**
-	 * @param args
+	 * Runs the program
 	 */
 	public static void main(String[] args) {
 		

@@ -21,7 +21,7 @@ public class TestBot3 extends LiarsDiceBot {
 		}
 		/**/
 		else{
-			return new Bid(b.getFrequency() + 1, b.getDieNumber());
+			return new Bid(b.getFrequency() + 1, b.getFaceValue());
 		}
 	}
 	

@@ -1,22 +1,39 @@
 package liarsDiceModel;
 //done
+/**
+ * The Bid class holds the die number and the frequency of a bid.  For example: two 3's or seven 5's.
+ */
 public class Bid implements Decision {
-	private int dieNumber, frequency;
+	private int faceValue, frequency;
 	
-	public Bid(int frequency, int dieNumber){
+	/**
+	 * Constructor
+	 * @param frequency The number of dice in the bid.
+	 * @param faceValue The die face value of this bid.
+	 */
+	public Bid(int frequency, int faceValue){
 		this.frequency = frequency;
-		this.dieNumber = dieNumber;
+		this.faceValue = faceValue;
 	}
 	
-	public int getDieNumber(){
-		return dieNumber;
+	/**
+	 * @return The die face value of this bid.
+	 */
+	public int getFaceValue(){
+		return faceValue;
 	}
 
+	/**
+	 * @return The number of dice in the bid.
+	 */
 	public int getFrequency() {
 		return frequency;
 	}
 	
+	/**
+	 * @return A string representation of the bid.
+	 */
 	public String toString(){
-		return frequency + " " + dieNumber + "'s";
+		return frequency + " " + faceValue + "'s";
 	}
 }
