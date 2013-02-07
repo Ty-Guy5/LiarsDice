@@ -18,4 +18,6 @@ public abstract class Player {
 	public Statistics getStatistics() {
 		return stats;
 	}
+
+	public abstract String getBotName();
 }

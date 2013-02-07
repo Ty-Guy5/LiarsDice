@@ -41,6 +41,7 @@ public class Tournament {
 			if(!playersSoFar.contains(current)){
 				playersSoFar.add(current);
 				if(playersSoFar.size() == botsPerGame){
+
 					for(int j = 0; j < gameRepeats; j++){
 						Game game = gameFactory.getGameInstance(playersSoFar);
 //						long start = System.currentTimeMillis();
@@ -58,6 +59,12 @@ public class Tournament {
 //						System.out.println("winner: " + winner.getClass().getSimpleName() + ", ID: " + winner.getID());
 //						System.out.println("game time: " + (end - start));
 					}
+
+					Game game = gameFactory.getGameInstance(playersSoFar);
+					Player winner = game.runGame();
+					//update stats
+					System.out.println("winner: " + winner.getBotName() + ", ID: " + winner.getID());
+
 				}
 				else{
 					runAllPermutations(botsPerGame, gameRepeats, playersSoFar);

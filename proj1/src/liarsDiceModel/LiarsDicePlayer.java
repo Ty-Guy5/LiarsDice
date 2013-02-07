@@ -57,4 +57,8 @@ public class LiarsDicePlayer extends Player{
 	public String getName() {
 		return bot.getName();
 	}
+	
+	public String getBotName() {
+		return bot.getName();
+	}
 }

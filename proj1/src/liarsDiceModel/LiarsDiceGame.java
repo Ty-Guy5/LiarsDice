@@ -97,12 +97,13 @@ public class LiarsDiceGame implements Game {
 			takeAwayDieAndSetNextTurn(turnIndex);
 		}
 		else if(decision instanceof Challenge){
-			roundResult = Result.CHALLENGE;
 			if(numberOfDiceWithValue(currentBid.getDieNumber()) >= currentBid.getFrequency()){
 				takeAwayDieAndSetNextTurn(turnIndex);
+				roundResult = Result.LOSING_CHALLENGE;
 			}
 			else{
 				takeAwayDieAndSetNextTurn(previousTurnIndex(turnIndex));
+				roundResult = Result.WINNING_CHALLENGE;
 			}
 		}
 		else //normal bid
