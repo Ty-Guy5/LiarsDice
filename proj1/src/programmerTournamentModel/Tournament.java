@@ -16,6 +16,10 @@ public class Tournament {
 		gameFactory = gf;
 		allPlayers = gameFactory.getPlayers();
 	}
+
+	public List getPlayers() {
+		return allPlayers;
+	}
 	
 	public void runTournament(int botsPerGame, int gameRepeats)
 	{

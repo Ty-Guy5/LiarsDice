@@ -7,20 +7,30 @@ import java.awt.event.*;
 import javax.swing.*;
 import javax.swing.table.AbstractTableModel;
 
+import liarsDiceModel.Facade;
 import liarsDiceModel.LiarsDiceGameFactory;
-
-import programmerTournamentModel.Tournament;
+import liarsDiceModel.Player;
+import liarsDiceModel.Statistics;
 
 public class GUI extends JFrame {
    
-    private Tournament tournament;
+    private Facade facade;
     
     private JButton runButton;
+    private StatsTableModel statsTableModel;
     private JTable statsTable;
+    private int numPlayersPerGame;
+    private int numGamesRepeatsPerTournament;
    
     public GUI()
     {
-        tournament = new Tournament(new LiarsDiceGameFactory());
+    	facade = new Facade();
+    	
+    	//defaults for tournament setup
+    	facade.chooseGame(new LiarsDiceGameFactory());
+    	numPlayersPerGame = 2;
+    	numGamesRepeatsPerTournament = 1;
+    	
         Container pane = getContentPane();
         pane.setLayout(new BoxLayout(pane, BoxLayout.Y_AXIS));
        
@@ -29,7 +39,7 @@ public class GUI extends JFrame {
         runButton.addActionListener(new ButtonListener());
         pane.add(runButton);
         
-        StatsTableModel statsTableModel = new StatsTableModel();
+        statsTableModel = new StatsTableModel();
         statsTable = new JTable(statsTableModel);
         statsTable.setPreferredScrollableViewportSize(new Dimension(1000, 300));
         statsTable.setFillsViewportHeight(true);
@@ -44,17 +54,35 @@ public class GUI extends JFrame {
         pack();
     }
    
-   
-    private Object[][] getStatsTableData() {
-		// TODO Stub
-    	
-    	
-		return new Object[][] {{new Integer(1), "bot1", new Integer(14), new Integer(6)}};
-	}
     
     private class StatsTableModel extends AbstractTableModel {
-        private String[] columnNames = {"playerID", "botName", "wins", "losses"};
+        private String[] columnNames = {
+        		"Player ID", 
+        		"Bot Name", 
+        		"Wins", 
+        		"Losses", 
+        		"Exceptions", 
+        		"Invalid Decisions",
+        		"Timeouts"};
         private Object[][] data = new Object[][] {};
+        
+        public void loadTable(Facade f) {
+        	java.util.List<Player> players = f.getPlayers();
+        	data = new Object[players.size()][];
+        	for (int p=0; p<players.size(); p++)
+        	{
+            	data[p] = new Object[7];
+        		Statistics stats = players.get(p).getStatistics(); 
+        		
+        		setValueAt(players.get(p).getID(), p, 0);
+        		setValueAt(players.get(p).getName(), p, 1);
+        		setValueAt(stats.getWins(), p, 2);
+        		setValueAt(stats.getLosses(), p, 3);
+        		setValueAt(stats.getExceptions(), p, 4);
+        		setValueAt(stats.getInvalidDecisions(), p, 5);
+        		setValueAt(stats.getTimeouts(), p, 6);
+        	}
+        }
 
         public int getColumnCount() {
             return columnNames.length;
@@ -100,12 +128,13 @@ public class GUI extends JFrame {
 	private class ButtonListener implements ActionListener
     {
         public void actionPerformed(ActionEvent e) {
-            tournament.runTournament(2, 1);
-            runButton.setEnabled(false);
+			facade.runTournament(numPlayersPerGame, numGamesRepeatsPerTournament);
+			statsTableModel.loadTable(facade);
         }
     }
+	
     public static void main(String[] args)
     {
-        GUI gui = new GUI();
+    	GUI gui = new GUI();
     }
 }
