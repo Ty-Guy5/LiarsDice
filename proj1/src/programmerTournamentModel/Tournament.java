@@ -14,7 +14,7 @@ public class Tournament {
 	public Tournament(GameFactory gf)
 	{
 		gameFactory = gf;
-		allPlayers = gameFactory.getPlayers(); //TODO this should be permanently stored in a map
+		allPlayers = gameFactory.getPlayers();
 	}
 	
 	public void runTournament(int botsPerGame, int gameRepeats)
