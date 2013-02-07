@@ -30,9 +30,11 @@ public class LiarsDiceGameFactory implements GameFactory {
 	public List<Player> getPlayers() {
 		// TODO Reflection goes here - for now can hardcode here
 		ArrayList<Bot> bots = new ArrayList<Bot>();
+		bots.add(new TestBot0());
 		bots.add(new TestBot1());
 		bots.add(new TestBot2());
 		bots.add(new TestBot3());
+		bots.add(new TestBot4());
 		
 		//wrap each bot in a Player object
 		int playerNumber = 1;

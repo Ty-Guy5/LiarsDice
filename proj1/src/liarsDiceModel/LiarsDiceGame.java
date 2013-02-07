@@ -13,6 +13,8 @@ public class LiarsDiceGame implements Game {
 	int turnIndex;
 	List<LiarsDicePlayer> players;
 	Bid currentBid;
+//	int counter = 0;
+	boolean debug = false;
 	
 	public LiarsDiceGame(List<LiarsDicePlayer> players){
 		history = new GameHistory();
@@ -26,6 +28,7 @@ public class LiarsDiceGame implements Game {
 		//TODO make sure that tournament decides play order before passing the list here (pass in bots in play order)
 		//turnIndex = 0;
 		while(numPlayers > 1){
+//			System.out.println("new round " + counter++);
 			playRound();
 		}
 		
@@ -46,8 +49,9 @@ public class LiarsDiceGame implements Game {
 		Result roundResult = Result.UNFINISHED;
 		currentBid = null;
 		history.addRound(new Round());
+//		int roundcounter = 0;
 		while(roundResult == Result.UNFINISHED){
-			
+//			System.out.println("roundresult = unfinished " + roundcounter++);
 			//create the gameInfo object
 			ArrayList<PlayerInfo> allPlayersInfo = new ArrayList<PlayerInfo>();
 			for(Player p : players){
@@ -72,9 +76,15 @@ public class LiarsDiceGame implements Game {
 //			int dice = players.get(turnIndex).getDice().size();
 //			System.out.println(players.get(turnIndex).getID() + ": " + dice);
 			decision = players.get(turnIndex).getDecision(gi);
+			if(decision instanceof Bid){
+				Bid b = (Bid)decision;
+//				System.out.println("bid: " + b.getFrequency() + " " + b.getDieNumber() + "'s");
+			}
 		}catch(Exception e){ //checking against exceptions thrown by bot
-			e.printStackTrace(); //TODO log instead of printing error
+			if(debug)
+				e.printStackTrace(); //TODO log instead of printing error
 			roundResult = Result.EXCEPTION;
+			players.get(turnIndex).getStatistics().increaseExceptions();
 			takeAwayDieAndSetNextTurn(turnIndex);
 			return roundResult;
 		}
@@ -82,6 +92,7 @@ public class LiarsDiceGame implements Game {
 		//process decision
 		if(!isValidDecision(decision, currentBid)){
 			roundResult = Result.INVALIDDECISION;
+			players.get(turnIndex).getStatistics().increaseInvalidDecisions();
 			//maybe log later
 			takeAwayDieAndSetNextTurn(turnIndex);
 		}

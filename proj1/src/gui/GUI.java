@@ -37,7 +37,7 @@ public class GUI extends JFrame {
     private class ButtonListener implements ActionListener
     {
         public void actionPerformed(ActionEvent e) {
-            tournament.runTournament(2);
+            tournament.runTournament(2, 1);
             runButton.setEnabled(false);
         }
     }

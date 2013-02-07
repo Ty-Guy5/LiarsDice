@@ -18,7 +18,7 @@ public class Main {
 //		GameHistory gh2 = new GameHistory(gh);
 		
 		Tournament t = new Tournament(new LiarsDiceGameFactory());
-		t.runTournament(2);
+		t.runTournament(2, 4);
 	}
 
 }

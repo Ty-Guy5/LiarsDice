@@ -5,7 +5,7 @@ public class TestBot2 extends LiarsDiceBot {
 
 	@Override
 	public String getName() {
-		return "TestBot2";
+		return "Consistent";
 	}
 
 	@Override
