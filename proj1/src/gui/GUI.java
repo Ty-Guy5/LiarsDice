@@ -20,7 +20,7 @@ public class GUI extends JFrame {
     private StatsTableModel statsTableModel;
     private JTable statsTable;
     private int numPlayersPerGame;
-    private int numGamesRepeatsPerTournament;
+    private int numGameRepeatsPerTournament;
    
     public GUI()
     {
@@ -28,8 +28,8 @@ public class GUI extends JFrame {
     	
     	//defaults for tournament setup
     	facade.chooseGame(new LiarsDiceGameFactory());
-    	numPlayersPerGame = 2;
-    	numGamesRepeatsPerTournament = 1;
+    	numPlayersPerGame = 5;
+    	numGameRepeatsPerTournament = 1;
     	
         Container pane = getContentPane();
         pane.setLayout(new BoxLayout(pane, BoxLayout.Y_AXIS));
@@ -128,7 +128,7 @@ public class GUI extends JFrame {
 	private class ButtonListener implements ActionListener
     {
         public void actionPerformed(ActionEvent e) {
-			facade.runTournament(numPlayersPerGame, numGamesRepeatsPerTournament);
+			facade.runTournament(numPlayersPerGame, numGameRepeatsPerTournament);
 			statsTableModel.loadTable(facade);
         }
     }

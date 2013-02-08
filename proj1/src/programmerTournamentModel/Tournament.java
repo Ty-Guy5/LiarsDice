@@ -8,8 +8,9 @@ import liarsDiceModel.Player;
 
 public class Tournament {
 	private GameFactory gameFactory;
-	List<Player> allPlayers;
-//	int counter = 0;
+	private List<Player> allPlayers;
+//	private int counter = 0;
+	private double secBeforeTimeout;
 	
 	public Tournament(GameFactory gf)
 	{
@@ -17,7 +18,7 @@ public class Tournament {
 		allPlayers = gameFactory.getPlayers();
 	}
 
-	public List getPlayers() {
+	public List<Player> getPlayers() {
 		return allPlayers;
 	}
 	
@@ -76,5 +77,9 @@ public class Tournament {
 				playersSoFar.removeLast();
 			}
 		}		
+	}
+
+	public void setTimeout(double secBeforeTimeout) {
+		this.secBeforeTimeout = secBeforeTimeout;
 	}
 }

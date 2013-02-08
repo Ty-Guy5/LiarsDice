@@ -6,4 +6,5 @@ import liarsDiceModel.Player;
 
 public interface Game {
 	public Player runGame();
+	public void setTimeout(double secBeforeTimeout);
 }

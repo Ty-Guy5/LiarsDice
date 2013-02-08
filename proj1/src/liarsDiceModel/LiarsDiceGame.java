@@ -11,13 +11,14 @@ import programmerTournamentModel.GameHistory;
  * Contains the logic for running a game of Liar's Dice.  Keeps track of the game history and players.
  */
 public class LiarsDiceGame implements Game {
-	GameHistory history;
-	int numPlayers;
-	int turnIndex;
-	List<LiarsDicePlayer> players;
-	Bid currentBid;
-//	int counter = 0;
-	boolean debug = false;
+	private GameHistory history;
+	private int numPlayers;
+	private int turnIndex;
+	private List<LiarsDicePlayer> players;
+	private Bid currentBid;
+//	private int counter = 0;
+	private boolean debug = false;
+	private double timeout;
 	
 	/**
 	 * Constructor.
@@ -94,7 +95,7 @@ public class LiarsDiceGame implements Game {
 		try{
 //			int dice = players.get(turnIndex).getDice().size();
 //			System.out.println(players.get(turnIndex).getID() + ": " + dice);
-			decision = players.get(turnIndex).getDecision(gi);
+			decision = players.get(turnIndex).getDecision(gi); //TODO enact timeouts
 			if(decision instanceof Bid){
 				Bid b = (Bid)decision;
 //				System.out.println("bid: " + b.getFrequency() + " " + b.getDieNumber() + "'s");
@@ -263,5 +264,12 @@ public class LiarsDiceGame implements Game {
 				}
 			}
 		}
+	}
+	
+	/**
+	 * Sets the timeout in seconds for a single decision.
+	 */
+	public void setTimeout(double secBeforeTimeout) {
+		timeout = secBeforeTimeout;
 	}
 }
