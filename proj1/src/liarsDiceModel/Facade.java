@@ -12,10 +12,11 @@ public class Facade {
 	public Facade()
 	{
 		//default to Liar's Dice as the game choice
-        tournament = new Tournament(new LiarsDiceGameFactory());
+        chooseGame(new LiarsDiceGameFactory());
 	}
 
 	public List<Player> getPlayers() {
+		//TODO should this make a deep copy of the list, so a gui can't modify?
 		return tournament.getPlayers();
 	}
 
@@ -30,6 +31,11 @@ public class Facade {
 	public void setTimeout(double timeout) {
 		tournament.setTimeout(timeout);
 	}
+	
+	//TODO Still not sure how to step through turns in the Play view. May 
+	// need more methods for that here. Think about how the view will get 
+	// the info in the GameInfo object, including history of moves and 
+	// current bid.
 	
 	
 	/***************************TODO implement or scrap*************************/
