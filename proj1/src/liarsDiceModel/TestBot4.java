@@ -4,12 +4,10 @@ import java.util.List;
 
 public class TestBot4 extends LiarsDiceBot {
 
-	@Override
 	public String getName() {
 		return "Smart Bot";
 	}
 
-	@Override
 	public Decision getDecision(GameInfo currentGameInfo) {
 		Bid currentBid = currentGameInfo.getCurrentBid();
 		if(currentBid == null){

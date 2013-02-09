@@ -243,6 +243,9 @@ public class LiarsDiceGame implements Game {
 			if(bid.getFaceValue() < 2 || bid.getFaceValue() > 6){
 				return false; //invalid dieNumber
 			}
+			if(bidFrequencyTooHigh(bid)){
+				return false;
+			}
 			if(currentBid == null){ //first bid of round
 				if(bid.getFrequency() < 1){
 					return false; //can't bid 0 or less
@@ -266,6 +269,14 @@ public class LiarsDiceGame implements Game {
 		}
 	}
 	
+	private static boolean bidFrequencyTooHigh(Bid bid) {
+//		int totalDice = 0;
+//		for(PlayerInfo p : players){
+//			totalDice += p.getNumDice();
+//		}
+		return false; //TODO: will have to change the isValidDecision() method to require gameInfo instead of currentBid :(
+	}
+
 	/**
 	 * Sets the timeout in seconds for a single decision.
 	 */
