@@ -2,6 +2,9 @@ package liarsDiceModel;
 
 import java.util.List;
 
+/**
+ * Slightly more intelligent test bot which bids or challenges based on raw probabilities of dice rolls.
+ */
 public class TestBot4 extends LiarsDiceBot {
 
 	public String getName() {
