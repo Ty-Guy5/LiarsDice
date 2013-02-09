@@ -1,5 +1,5 @@
 package liarsDiceModel;
-//done
+
 /**
  * The Bid class holds the die number and the frequency of a bid.  For example: two 3's or seven 5's.
  */

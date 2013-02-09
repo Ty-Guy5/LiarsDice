@@ -3,7 +3,6 @@ package liarsDiceModel;
 import java.util.ArrayList;
 import java.util.List;
 
-import programmerTournamentModel.Bot;
 import programmerTournamentModel.Game;
 import programmerTournamentModel.GameHistory;
 

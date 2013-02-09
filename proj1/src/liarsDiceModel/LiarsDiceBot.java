@@ -2,7 +2,6 @@ package liarsDiceModel;
 import programmerTournamentModel.Bot;
 import programmerTournamentModel.GameHistory;
 
-//done
 /**
  * Parent class for all contest entries.  Each team will create a class which extends LiarsDiceBot.
  */

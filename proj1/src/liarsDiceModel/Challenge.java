@@ -1,5 +1,5 @@
 package liarsDiceModel;
-//done
+
 /**
  * Represents a challenge decision. (Challenges the validity of the current bid.)
  */

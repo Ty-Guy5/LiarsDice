@@ -4,7 +4,6 @@ import programmerTournamentModel.GameHistory;
 import programmerTournamentModel.Tournament;
 
 
-
 public class Main {
 
 	/**

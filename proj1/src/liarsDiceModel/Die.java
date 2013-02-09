@@ -1,6 +1,6 @@
 package liarsDiceModel;
 import java.util.Random;
-//done
+
 /**
  * Represents a single die.
  */
