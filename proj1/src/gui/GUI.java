@@ -31,22 +31,36 @@ public class GUI extends JFrame {
     	numPlayersPerGame = 5;
     	numGameRepeatsPerTournament = 1;
     	
+    	//setup the general layout
         Container pane = getContentPane();
-        pane.setLayout(new BoxLayout(pane, BoxLayout.Y_AXIS));
+        JPanel tournamentPane = new JPanel();
+        tournamentPane.setLayout(new BoxLayout(tournamentPane, BoxLayout.Y_AXIS));
+        JPanel playPane = new JPanel();
+        playPane.setLayout(new BoxLayout(playPane, BoxLayout.Y_AXIS));
+        
+        //tabs
+        JTabbedPane tabPane = new JTabbedPane();
+        tabPane.addTab("Tournament", tournamentPane);
+        tabPane.addTab("Play", playPane);
+        pane.add(tabPane);
        
+        //tournament view
         runButton = new JButton("Run Tournament");
         runButton.setPreferredSize(new Dimension(160,20));
         runButton.addActionListener(new ButtonListener());
-        pane.add(runButton);
+        tournamentPane.add(runButton);
         
         statsTableModel = new StatsTableModel();
         statsTable = new JTable(statsTableModel);
         statsTable.setPreferredScrollableViewportSize(new Dimension(1000, 300));
         statsTable.setFillsViewportHeight(true);
         JScrollPane statsTableScrollPane = new JScrollPane(statsTable);
-        pane.add(statsTableScrollPane);
-
+        tournamentPane.add(statsTableScrollPane);
         
+        //play view: unimplemented
+        
+
+        //wrapup
         setTitle("The Programmer's Tournament");
         setLocation(500, 600);
         setVisible(true);
