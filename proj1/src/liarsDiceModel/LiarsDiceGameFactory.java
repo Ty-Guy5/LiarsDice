@@ -54,6 +54,27 @@ public class LiarsDiceGameFactory implements GameFactory {
 		bots.add(new TestBot2());
 		bots.add(new TestBot3());
 		bots.add(new TestBot4());
+		bots.add(new TestBot4());
+		bots.add(new TestBot4());
+		bots.add(new TestBot4());
+		bots.add(new TestBot4());
+		bots.add(new TestBot4());	
+		bots.add(new TestBot4());
+		bots.add(new TestBot4());
+		bots.add(new TestBot4());
+		bots.add(new TestBot4());
+		bots.add(new TestBot0());
+		bots.add(new TestBot1());
+		bots.add(new TestBot2());
+		bots.add(new TestBot3());
+		bots.add(new TestBot0());
+		bots.add(new TestBot1());
+		bots.add(new TestBot2());
+		bots.add(new TestBot3());
+		bots.add(new TestBot0());
+		bots.add(new TestBot1());
+		bots.add(new TestBot2());
+		bots.add(new TestBot3());
 		
 		//wrap each bot in a Player object
 		int playerNumber = 1;

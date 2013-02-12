@@ -3,6 +3,7 @@ package gui;
 
 import java.awt.*;
 import java.awt.event.*;
+import java.util.Collections;
 
 import javax.swing.*;
 import javax.swing.table.AbstractTableModel;
@@ -21,6 +22,10 @@ public class GUI extends JFrame {
     private JTable statsTable;
     private int numPlayersPerGame;
     private int numGameRepeatsPerTournament;
+    
+    private JLabel botsPerGameLabel , repeatTimesLabel, messageLabel;
+    private JTextField botsPerGame, repeatTimes;
+    private JPanel tournamentOptionsPanel;
    
     public GUI()
     {
@@ -28,7 +33,7 @@ public class GUI extends JFrame {
     	
     	//defaults for tournament setup
     	facade.chooseGame(new LiarsDiceGameFactory());
-    	numPlayersPerGame = 3;
+    	numPlayersPerGame = 4;
     	numGameRepeatsPerTournament = 1;
     	
     	//setup the general layout
@@ -45,10 +50,27 @@ public class GUI extends JFrame {
         pane.add(tabPane);
        
         //tournament view
+        //--Andrew worked from here--
+        tournamentOptionsPanel = new JPanel();
+        tournamentOptionsPanel.setLayout(new FlowLayout(FlowLayout.LEFT));
+        tournamentOptionsPanel.setPreferredSize(new Dimension(1000, 60));
+        tournamentOptionsPanel.setMaximumSize(new Dimension(2000, 60));
         runButton = new JButton("Run Tournament");
-        runButton.setPreferredSize(new Dimension(160,20));
+        //runButton.setPreferredSize(new Dimension(160,20));
         runButton.addActionListener(new ButtonListener());
-        tournamentPane.add(runButton);
+        tournamentOptionsPanel.add(runButton);
+        botsPerGameLabel = new JLabel("Bots per game:");
+        tournamentOptionsPanel.add(botsPerGameLabel);
+        botsPerGame = new JTextField("4", 2);
+        tournamentOptionsPanel.add(botsPerGame);
+        repeatTimesLabel = new JLabel("Times to repeat each game:");
+        tournamentOptionsPanel.add(repeatTimesLabel);
+        repeatTimes = new JTextField("1", 2);
+        tournamentOptionsPanel.add(repeatTimes);
+        messageLabel = new JLabel();
+        tournamentOptionsPanel.add(messageLabel);
+        tournamentPane.add(tournamentOptionsPanel);
+        //--to here--
         
         statsTableModel = new StatsTableModel();
         statsTable = new JTable(statsTableModel);
@@ -61,8 +83,8 @@ public class GUI extends JFrame {
         
 
         //wrapup
-        setTitle("The Programmer's Tournament");
-        setLocation(500, 600);
+        setTitle("Programmer AI Tournament");
+        setLocation(500, 600); //TODO: Change this once we are done debugging (it's out of the way of code right now.)
         setVisible(true);
         setDefaultCloseOperation(EXIT_ON_CLOSE);
         pack();
@@ -71,6 +93,7 @@ public class GUI extends JFrame {
     
     private class StatsTableModel extends AbstractTableModel {
         private String[] columnNames = {
+        		"Place",
         		"Player ID", 
         		"Bot Name", 
         		"Wins", 
@@ -82,23 +105,43 @@ public class GUI extends JFrame {
         
         public void loadTable(Facade f) {
         	java.util.List<Player> players = f.getPlayers();
+        	Collections.sort(players); //sorts by number of wins
         	data = new Object[players.size()][];
         	for (int p=0; p<players.size(); p++)
         	{
-            	data[p] = new Object[7];
+            	data[p] = new Object[8];
         		Statistics stats = players.get(p).getStatistics(); 
         		
-        		setValueAt(players.get(p).getID(), p, 0);
-        		setValueAt(players.get(p).getName(), p, 1);
-        		setValueAt(stats.getWins(), p, 2);
-        		setValueAt(stats.getLosses(), p, 3);
-        		setValueAt(stats.getExceptions(), p, 4);
-        		setValueAt(stats.getInvalidDecisions(), p, 5);
-        		setValueAt(stats.getTimeouts(), p, 6);
+        		setValueAt(getPlace(p+1), p, 0);
+        		setValueAt(players.get(p).getID(), p, 1);
+        		setValueAt(players.get(p).getName(), p, 2);
+        		setValueAt(stats.getWins(), p, 3);
+        		setValueAt(stats.getLosses(), p, 4);
+        		setValueAt(stats.getExceptions(), p, 5);
+        		setValueAt(stats.getInvalidDecisions(), p, 6);
+        		setValueAt(stats.getTimeouts(), p, 7);
         	}
         }
 
-        public int getColumnCount() {
+        private String getPlace(int place) {
+        	int lastDigit = place % 10;
+        	int penultimateDigit = (place / 10) % 10;
+        	if(penultimateDigit == 1){
+        		return place + "th"; //teens
+        	}
+			if(lastDigit == 1){
+				return place + "st";
+			}
+			else if(lastDigit == 2){
+				return place + "nd";
+			}
+			else if(lastDigit == 3){
+				return place + "rd";
+			}
+			return place + "th";
+		}
+
+		public int getColumnCount() {
             return columnNames.length;
         }
 
@@ -142,8 +185,15 @@ public class GUI extends JFrame {
 	private class ButtonListener implements ActionListener
     {
         public void actionPerformed(ActionEvent e) {
-			facade.runTournament(numPlayersPerGame, numGameRepeatsPerTournament);
-			statsTableModel.loadTable(facade);
+        	try{
+        		messageLabel.setText("");
+        		numPlayersPerGame = Integer.parseInt(botsPerGame.getText());
+        		numGameRepeatsPerTournament = Integer.parseInt(repeatTimes.getText());
+				facade.runTournament(numPlayersPerGame, numGameRepeatsPerTournament);
+				statsTableModel.loadTable(facade);
+        	}catch(Exception ex){
+        		messageLabel.setText("Please only input positive integers.");
+        	}
         }
     }
 	

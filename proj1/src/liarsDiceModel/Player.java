@@ -4,9 +4,9 @@ package liarsDiceModel;
  * Abstract class which represents a generic Player - should be usable for any game implementation.
  * Keeps track of a unique ID as well as its tournament statistics.
  */
-public abstract class Player {
+public abstract class Player implements Comparable {
 	private int id;
-	private Statistics stats;
+	protected Statistics stats;
 
 	/**
 	 * Constructor.
@@ -34,5 +34,12 @@ public abstract class Player {
 	 */
 	public Statistics getStatistics() {
 		return stats;
+	}
+	
+	public int compareTo(Object o){
+		if(stats.getWins() > ((Player)o).getStatistics().getWins()){
+			return -1;
+		}
+		return 1;
 	}
 }

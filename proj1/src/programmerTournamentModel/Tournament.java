@@ -62,10 +62,10 @@ public class Tournament {
 		long end = System.currentTimeMillis();
 		System.out.println("tournament time: " + (end - start) + "ms");
 		
-		System.out.println("\nTournament Statistics:\n");
-		for(Player p : allPlayers){
-			System.out.println("Player " + p.getID() + " \"" + p.getName() + "\":\t" + p.getStatistics());
-		}
+//		System.out.println("\nTournament Statistics:\n");
+//		for(Player p : allPlayers){
+//			System.out.println("Player " + p.getID() + " \"" + p.getName() + "\":\t" + p.getStatistics());
+//		}
 	}
 	
 	/**
@@ -104,7 +104,7 @@ public class Tournament {
 					Game game = gameFactory.getGameInstance(playersSoFar);
 					Player winner = game.runGame();
 					//update stats
-					System.out.println("winner: " + winner.getName() + ", ID: " + winner.getID());
+//					System.out.println("winner: " + winner.getName() + ", ID: " + winner.getID());
 
 				}
 				else{
