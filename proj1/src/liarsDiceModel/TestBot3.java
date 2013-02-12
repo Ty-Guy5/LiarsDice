@@ -2,6 +2,10 @@ package liarsDiceModel;
 
 import java.util.List;
 
+/**
+ * Test bot which simply adds one to the frequency of the current bid, 
+ * or Challenges if the current bid's frequency is more than the total number of dice.
+ */
 public class TestBot3 extends LiarsDiceBot {
 
 	@Override

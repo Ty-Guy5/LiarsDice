@@ -1,6 +1,8 @@
 package liarsDiceModel;
 
-
+/**
+ * Very simple test bot which always returns the same bid. (Will probably be invalid decision a lot.)
+ */
 public class TestBot2 extends LiarsDiceBot {
 
 	@Override

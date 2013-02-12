@@ -1,5 +1,8 @@
 package liarsDiceModel;
-//done
+
+/**
+ * Enum which contains the possible endings to a Round.
+ */
 public enum Result {
 	EXCEPTION,
 	TIMEOUT,

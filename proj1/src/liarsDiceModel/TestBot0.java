@@ -1,5 +1,8 @@
 package liarsDiceModel;
 
+/**
+ * Very simple test bot which randomly throws exceptions or Challenges.
+ */
 public class TestBot0 extends LiarsDiceBot {
 
 	public String getName() {

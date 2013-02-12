@@ -1,6 +1,8 @@
 package liarsDiceModel;
 
-
+/**
+ * Very simple test bot which always Challenges.
+ */
 public class TestBot1 extends LiarsDiceBot {
 
 	@Override

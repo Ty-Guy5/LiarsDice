@@ -2,14 +2,15 @@ package liarsDiceModel;
 
 import java.util.List;
 
+/**
+ * Slightly more intelligent test bot which bids or challenges based on raw probabilities of dice rolls.
+ */
 public class TestBot4 extends LiarsDiceBot {
 
-	@Override
 	public String getName() {
 		return "Smart Bot";
 	}
 
-	@Override
 	public Decision getDecision(GameInfo currentGameInfo) {
 		Bid currentBid = currentGameInfo.getCurrentBid();
 		if(currentBid == null){

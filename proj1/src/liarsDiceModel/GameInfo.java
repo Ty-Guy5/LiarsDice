@@ -4,7 +4,6 @@ import java.util.Collections;
 import java.util.List;
 
 import programmerTournamentModel.GameHistory;
-//done
 
 /**
  * Holds the relevant information for the current state of the game, including the current bid, the game history so far, 
