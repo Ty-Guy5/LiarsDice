@@ -5,6 +5,7 @@ import java.util.List;
 
 import programmerTournamentModel.Game;
 import programmerTournamentModel.GameHistory;
+import java.util.concurrent.*;
 
 /**
  * Contains the logic for running a game of Liar's Dice.  Keeps track of the game history and players.
@@ -17,7 +18,7 @@ public class LiarsDiceGame implements Game {
 	private Bid currentBid;
 //	private int counter = 0;
 	private boolean debug = false;
-	private double timeout;
+	private long timeout;
 	
 	/**
 	 * Constructor.
@@ -29,6 +30,7 @@ public class LiarsDiceGame implements Game {
 		this.players = players;
 		turnIndex = 0;
 		currentBid = null;
+		timeout = Long.MAX_VALUE;
 	}
 	
 	/**
@@ -94,12 +96,19 @@ public class LiarsDiceGame implements Game {
 		try{
 //			int dice = players.get(turnIndex).getDice().size();
 //			System.out.println(players.get(turnIndex).getID() + ": " + dice);
-			decision = players.get(turnIndex).getDecision(gi); //TODO enact timeouts
+			decision = getDecisionTimed(players.get(turnIndex), gi);
 			if(decision instanceof Bid){
 				Bid b = (Bid)decision;
 //				System.out.println("bid: " + b.getFrequency() + " " + b.getDieNumber() + "'s");
 			}
-		}catch(Exception e){ //checking against exceptions thrown by bot
+		}
+		catch(DecisionTimout dt) {
+			roundResult = Result.TIMEOUT;
+			players.get(turnIndex).getStatistics().increaseTimeouts();
+			takeAwayDieAndSetNextTurn(turnIndex);
+			return roundResult;
+		}
+		catch(Exception e){ //checking against exceptions thrown by bot
 			if(debug)
 				e.printStackTrace(); //TODO log instead of printing error
 			roundResult = Result.EXCEPTION;
@@ -135,6 +144,39 @@ public class LiarsDiceGame implements Game {
 		}
 		return roundResult;
 	}
+
+	private Decision getDecisionTimed(LiarsDicePlayer player,
+			GameInfo gi) throws Exception {
+		
+		Decision decision = null;
+		
+		ExecutorService svc = Executors.newFixedThreadPool( 1 ) ;
+		svc.submit( new DecisionGettingCallable(player, gi) {
+		  public Decision call() {
+			return player.getDecision(gi);
+		  }
+		} ) ;
+		svc.shutdown() ;
+		if (!svc.awaitTermination(timeout, TimeUnit.MICROSECONDS))
+			throw new DecisionTimout();
+		
+		return decision;
+	}
+	
+	private class DecisionGettingCallable implements Callable<Decision>
+	{
+		public DecisionGettingCallable(LiarsDicePlayer player, GameInfo gi) {
+			this.player = player;
+			this.gi = gi;
+		}
+		public LiarsDicePlayer player;
+		public GameInfo gi;
+		public Decision call() throws Exception {
+			return player.getDecision(gi);
+		  }
+	}
+	
+	private class DecisionTimout extends Exception {}
 
 	/**
 	 * Determines whose turn it is next. (Skips over players with no dice.)
@@ -278,9 +320,9 @@ public class LiarsDiceGame implements Game {
 	}
 
 	/**
-	 * Sets the timeout in seconds for a single decision.
+	 * Sets the timeout in microseconds for a single decision.
 	 */
-	public void setTimeout(double secBeforeTimeout) {
+	public void setTimeout(long secBeforeTimeout) {
 		timeout = secBeforeTimeout;
 	}
 }

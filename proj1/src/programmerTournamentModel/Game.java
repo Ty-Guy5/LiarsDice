@@ -19,7 +19,7 @@ public interface Game {
 	
 	/**
 	 * Sets the limit on turn times for each bot.  (If a player goes over that time, they lose the round/game.)
-	 * @param secBeforeTimeout Number of seconds allowed for each player to take a turn. (Can be less than 1.)
+	 * @param microsBeforeTimeout Number of microseconds allowed for each player to take a turn.
 	 */
-	public void setTimeout(double secBeforeTimeout);
+	public void setTimeout(long secBeforeTimeout);
 }
