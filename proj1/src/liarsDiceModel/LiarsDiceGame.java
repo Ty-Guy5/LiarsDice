@@ -274,7 +274,7 @@ public class LiarsDiceGame implements Game {
 		for(PlayerInfo p : gi.getPlayersInfo()){
 			totalDice += p.getNumDice();
 		}
-		return (gi.getCurrentBid().getFrequency() > totalDice);
+		return (bid.getFrequency() > totalDice);
 	}
 
 	/**

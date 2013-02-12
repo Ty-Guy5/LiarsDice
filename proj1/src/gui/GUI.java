@@ -28,7 +28,7 @@ public class GUI extends JFrame {
     	
     	//defaults for tournament setup
     	facade.chooseGame(new LiarsDiceGameFactory());
-    	numPlayersPerGame = 5;
+    	numPlayersPerGame = 3;
     	numGameRepeatsPerTournament = 1;
     	
     	//setup the general layout
