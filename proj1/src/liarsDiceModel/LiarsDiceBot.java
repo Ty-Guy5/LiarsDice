@@ -23,22 +23,22 @@ public abstract class LiarsDiceBot implements Bot {
 	 * @param gameHistory The history of the game.
 	 */
 	public void reportGameResults(GameHistory gameHistory){
-		//don't have to implement this method. At the end of a game, we will report the results
+		//don't have to implement this method. At the end of a game, we will report the results to each bot
 	}
 	
 	/**
-	 * Checks the validity of the given decision against the current bid.
+	 * Checks the validity of the given decision against the current state of the game.
 	 * 
 	 * Validity rules:
-	 * 1. A Challenge when the current bid is null (first turn of the round) is invalid.
-	 * 2. A Bid with frequency greater than the total number of dice remaining in the game (among all players) is invalid.
-	 * 3. To be valid, a new bid must increase (in relation to the current bid) either the frequency, or the face value, or both.
-	 * 4. As long as it is not the first turn of a round (currentBid == null), a Challenge is always valid.
+	 * 1. A Challenge when the current bid is null is INVALID. (The current bid will be null on the first turn of each round.) 
+	 * 2. A Bid with frequency greater than the total number of dice left in the game is INVALID.
+	 * 3. To be VALID, a new bid must increase either the frequency, or the face value, or both (in relation to the current bid).
+	 * 4. As long as the current bid is not null, a Challenge is always VALID. (The current bid will be null on the first turn of each round.)
 	 * @param decision The decision to be checked for validity.
-	 * @param currentBid The current bid. (The current bid will be null on the first turn of the round).
+	 * @param currentGameInfo The current state of the game.
 	 * @return true if the given decision is valid, false otherwise
 	 */
-	public static boolean checkValidDecision(Decision decision, Bid currentBid){
-		return LiarsDiceGame.isValidDecision(decision, currentBid);
+	public static boolean checkValidDecision(Decision decision, GameInfo currentGameInfo){
+		return LiarsDiceGame.isValidDecision(decision, currentGameInfo);
 	}
 }

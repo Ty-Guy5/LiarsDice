@@ -109,7 +109,7 @@ public class LiarsDiceGame implements Game {
 		}
 		
 		//process decision
-		if(!isValidDecision(decision, currentBid)){
+		if(!isValidDecision(decision, gi)){
 			roundResult = Result.INVALIDDECISION;
 			players.get(turnIndex).getStatistics().increaseInvalidDecisions();
 			//maybe log later
@@ -214,21 +214,22 @@ public class LiarsDiceGame implements Game {
 	}
 
 	/**
-	 * Checks the validity of the given decision against the current bid.
+	 * Checks the validity of the given decision against the current state of the game.
 	 * 
 	 * Validity rules:
-	 * 1. A Challenge when the current bid is null (first turn of the round) is invalid.
+	 * 1. A Challenge when the current bid is null is invalid. (The current bid will be null on the first turn of each round.) 
 	 * 2. A Bid with frequency greater than the total number of dice left in the game is invalid.
-	 * 3. To be valid, a new bid must increase (in relation to the current bid) either the frequency, or the face value, or both.
-	 * 4. As long as it is not the first turn of a round (currentBid == null), a Challenge is always valid.
+	 * 3. To be valid, a new bid must increase either the frequency, or the face value, or both (in relation to the current bid).
+	 * 4. As long as the current bid is not null, a Challenge is always valid. (The current bid will be null on the first turn of each round.)
 	 * @param decision The decision to be checked for validity.
-	 * @param currentBid The current bid. (The current bid will be null on the first turn of the round).
+	 * @param currentGameInfo The current state of the game.
 	 * @return true if the given decision is valid, false otherwise
 	 */
-	public static boolean isValidDecision(Decision decision, Bid currentBid){
-		if(decision == null){
+	public static boolean isValidDecision(Decision decision, GameInfo currentGameInfo){
+		if(decision == null || currentGameInfo == null){
 			return false;
 		}
+		Bid currentBid = currentGameInfo.getCurrentBid();
 		if(decision instanceof Challenge){
 			if(currentBid == null){
 				return false; //can't challenge first turn of the round
@@ -242,7 +243,7 @@ public class LiarsDiceGame implements Game {
 			if(bid.getFaceValue() < 2 || bid.getFaceValue() > 6){
 				return false; //invalid dieNumber
 			}
-			if(bidFrequencyTooHigh(bid)){
+			if(bidFrequencyTooHigh(bid, currentGameInfo)){
 				return false;
 			}
 			if(currentBid == null){ //first bid of round
@@ -268,12 +269,12 @@ public class LiarsDiceGame implements Game {
 		}
 	}
 	
-	private static boolean bidFrequencyTooHigh(Bid bid) {
-//		int totalDice = 0;
-//		for(PlayerInfo p : players){
-//			totalDice += p.getNumDice();
-//		}
-		return false; //TODO: will have to change the isValidDecision() method to require gameInfo instead of currentBid :(
+	private static boolean bidFrequencyTooHigh(Bid bid, GameInfo gi) {
+		int totalDice = 0;
+		for(PlayerInfo p : gi.getPlayersInfo()){
+			totalDice += p.getNumDice();
+		}
+		return (gi.getCurrentBid().getFrequency() > totalDice);
 	}
 
 	/**

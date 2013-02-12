@@ -100,4 +100,14 @@ public class GameInfo {
 		
 		return winner;
 	}
+	/**
+	 * @return The total number of dice (between all players) remaining in the game.
+	 */
+	public int getTotalDice() {
+		int totalDice = myDice.size();
+		for(PlayerInfo p : playersInfo){
+			totalDice += p.getNumDice();
+		}
+		return totalDice;
+	}
 }
