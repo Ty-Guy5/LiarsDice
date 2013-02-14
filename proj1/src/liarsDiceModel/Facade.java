@@ -23,6 +23,18 @@ public class Facade {
 	public void chooseGame(GameFactory factory) {
 		tournament = new Tournament(factory);
 	}
+	
+	public void changeGame(String gameName){
+		//When adding in new games, expand this switch statement:
+		switch(gameName){ //note: switching on a string will not work on anything before Java 1.7
+			case "LiarsDice":
+				tournament = new Tournament(new LiarsDiceGameFactory());
+				break;
+			default:
+				tournament = new Tournament(new LiarsDiceGameFactory());
+				break;
+		}
+	}
 
 	public void runTournament(int botsPerGame, int gameRepeats) {
 		tournament.runTournament(botsPerGame, gameRepeats);
