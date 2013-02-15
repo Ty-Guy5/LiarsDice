@@ -12,7 +12,7 @@ public class TestBot2 extends LiarsDiceBot {
 
 	@Override
 	public Decision getDecision(GameInfo currentGameInfo) {
-		return new Bid(5,5);
+		return new Bid(20,5);
 	}
 
 }

@@ -43,6 +43,15 @@ public class Facade {
 	public void setTimeout(double timeout) {
 		tournament.setTimeout(timeout);
 	}
+
+	public void addOrRemovePlayer(Boolean b, int index) {
+		if(b){
+			tournament.addPlayer(index);
+		}
+		else{
+			tournament.removePlayer(index);
+		}
+	}
 	
 	//TODO Still not sure how to step through turns in the Play view. May 
 	// need more methods for that here. Think about how the view will get 

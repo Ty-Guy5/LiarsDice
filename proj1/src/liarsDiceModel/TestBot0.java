@@ -10,7 +10,7 @@ public class TestBot0 extends LiarsDiceBot {
 	}
 
 	public Decision getDecision(GameInfo currentGameInfo) {
-		if(Math.random() > .7){
+		if(Math.random() > 0){
 			int[] array = new int[1];
 			array[2] = 3; //throw Exception
 		}

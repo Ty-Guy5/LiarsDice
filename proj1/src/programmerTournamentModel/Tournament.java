@@ -10,7 +10,7 @@ import liarsDiceModel.Player;
  */
 public class Tournament {
 	private GameFactory gameFactory;
-	private List<Player> allPlayers;
+	private List<Player> allPlayers, participatingPlayers;
 //	private int counter = 0;
 	private double secBeforeTimeout;
 	
@@ -24,6 +24,7 @@ public class Tournament {
 	{
 		gameFactory = gf;
 		allPlayers = gameFactory.getPlayers();
+		participatingPlayers = new LinkedList<Player>();
 	}
 
 	/**
@@ -31,6 +32,20 @@ public class Tournament {
 	 */
 	public List<Player> getPlayers() {
 		return allPlayers;
+	}
+	
+	public void addPlayer(int index){
+		Player p = allPlayers.get(index);
+		if(!participatingPlayers.contains(p)){
+			participatingPlayers.add(p);
+		}
+	}
+	
+	public void removePlayer(int index){
+		Player p = allPlayers.get(index);
+		if(participatingPlayers.contains(p)){
+			participatingPlayers.remove(p);
+		}
 	}
 	
 	/**
@@ -47,14 +62,18 @@ public class Tournament {
 	 */
 	public void runTournament(int botsPerGame, int gameRepeats)
 	{
-		if(allPlayers.size() < 2 || gameRepeats < 1){
+		if(participatingPlayers.size() < 2 || gameRepeats < 1){
 			return;
 		}
-		if(botsPerGame > allPlayers.size()){
-			botsPerGame = allPlayers.size();
+		if(botsPerGame > participatingPlayers.size()){
+			botsPerGame = participatingPlayers.size();
 		}
 		else if(botsPerGame < 2){
 			botsPerGame = 2;
+		}
+		System.out.println("before tourney");
+		for(Player p : participatingPlayers){
+			System.out.println(p.getID() + ": " + p.getStatistics());
 		}
 		
 		long start = System.currentTimeMillis();
@@ -62,10 +81,10 @@ public class Tournament {
 		long end = System.currentTimeMillis();
 		System.out.println("tournament time: " + (end - start) + "ms");
 		
-//		System.out.println("\nTournament Statistics:\n");
-//		for(Player p : allPlayers){
-//			System.out.println("Player " + p.getID() + " \"" + p.getName() + "\":\t" + p.getStatistics());
-//		}
+		System.out.println("\nTournament Statistics:\n");
+		for(Player p : allPlayers){
+			System.out.println("Player " + p.getID() + " \"" + p.getName() + "\":\t" + p.getStatistics());
+		}
 	}
 	
 	/**
@@ -77,8 +96,8 @@ public class Tournament {
 	 */
 	private void runAllPermutations(int botsPerGame, int gameRepeats, LinkedList<Player> playersSoFar){
 //		System.out.println("in run all permutations " + counter++);
-		for(int i = 0; i < allPlayers.size(); i++){
-			Player current = allPlayers.get(i);
+		for(int i = 0; i < participatingPlayers.size(); i++){
+			Player current = participatingPlayers.get(i);
 			if(!playersSoFar.contains(current)){
 				playersSoFar.add(current);
 				if(playersSoFar.size() == botsPerGame){
@@ -86,6 +105,10 @@ public class Tournament {
 					for(int j = 0; j < gameRepeats; j++){
 						Game game = gameFactory.getGameInstance(playersSoFar);
 //						long start = System.currentTimeMillis();
+						System.out.println("before game");
+						for(Player p : playersSoFar){
+							System.out.println(p.getID() + ": " + p.getStatistics());
+						}
 						Player winner = game.runGame();
 //						long end = System.currentTimeMillis();
 						//update stats
@@ -97,13 +120,14 @@ public class Tournament {
 								p.getStatistics().increaseLosses();
 							}
 						}
+						System.out.println("after game");
+						for(Player p : playersSoFar){
+							System.out.println(p.getID() + ": " + p.getStatistics());
+						}
 //						System.out.println("winner: " + winner.getClass().getSimpleName() + ", ID: " + winner.getID());
 //						System.out.println("game time: " + (end - start));
 					}
 
-					Game game = gameFactory.getGameInstance(playersSoFar);
-					Player winner = game.runGame();
-					//update stats
 //					System.out.println("winner: " + winner.getName() + ", ID: " + winner.getID());
 
 				}

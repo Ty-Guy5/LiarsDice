@@ -22,6 +22,9 @@ public class GUI extends JFrame {
     private JRadioButtonMenuItem liarsDiceRadioButton, exampleRadioButton;
     private JMenuItem exitMenuItem;
 //    private JCheckBoxMenuItem cbMenuItem;
+    
+    private TournamentView tournamentPane;
+    private LiarsDiceView playPane;
    
     public GUI()
     {
@@ -90,9 +93,10 @@ public class GUI extends JFrame {
 
     	//end of menu bar
     	
-        TournamentView tournamentPane = new TournamentView(facade);
+    	tournamentPane = new TournamentView(facade);
+    	tournamentPane.loadTable();
         
-        JPanel playPane = new LiarsDiceView(facade);
+        playPane = new LiarsDiceView(facade);
         
         //tabs
         JTabbedPane tabPane = new JTabbedPane();
@@ -102,7 +106,7 @@ public class GUI extends JFrame {
         
         //wrapup
         setTitle("Programmer AI Tournament");
-        setLocation(500, 600); //TODO: Change this once we are done debugging (it's out of the way of code right now.)
+        setLocation(100, 100); //TODO: Change this once we are done debugging (it's out of the way of code right now.)
         setVisible(true);
         setDefaultCloseOperation(EXIT_ON_CLOSE);
         pack();
