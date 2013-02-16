@@ -1,4 +1,10 @@
 package liarsDiceModel;
+import java.io.BufferedReader;
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.FileReader;
+import java.io.FilenameFilter;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -47,7 +53,7 @@ public class LiarsDiceGameFactory implements GameFactory {
 	 * @return List of Players made from bots contained in the "/bots" folder.
 	 */
 	public List<Player> getPlayers() {
-		// TODO Reflection goes here - for now can hardcode here
+		//hardcoded bots
 		ArrayList<Bot> bots = new ArrayList<Bot>();
 		bots.add(new TestBot0());
 		bots.add(new TestBot1());
@@ -55,6 +61,17 @@ public class LiarsDiceGameFactory implements GameFactory {
 		bots.add(new TestBot3());
 		bots.add(new TestBot4());
 		//bots.add(new TestBot5());
+		
+		//gather bots in file via reflection
+		ArrayList<String> botNames = findBotsInFolder("/src/liarsDiceModel/bots");
+		System.out.println(botNames);
+		for (String botName : botNames)
+		{
+			try{
+				bots.add((LiarsDiceBot)Class.forName("liarsDiceModel.bots." + botName).newInstance());
+			}catch (Exception e) {e.printStackTrace();}
+		}
+		
 		
 		//wrap each bot in a Player object
 		int playerNumber = 1;
@@ -65,6 +82,49 @@ public class LiarsDiceGameFactory implements GameFactory {
 		}
 		
 		return players;
+	}
+
+	private ArrayList<String> findBotsInFolder(String string) {
+		ArrayList<String> botNames = new ArrayList<String>();
+		
+		File dir = new File(System.getProperty("user.dir") + string);
+		FilenameFilter filter = new FilenameFilter() {
+			public boolean accept (File dir, String name) {
+				return name.endsWith(".java");
+			}
+		};
+		String[] javaFilenames = dir.list(filter);
+		if (javaFilenames == null) {
+			System.err.println("Either dir does not exist or is not a directory");
+		} 
+		else {
+			for (int i=0; i< javaFilenames.length; i++) {
+				String filename = javaFilenames[i];
+				File javaFile = new File(dir, filename);
+				try {
+					BufferedReader in = new BufferedReader(new FileReader(javaFile));
+					String line = "";
+					line = in.readLine();
+					while (line != null) {
+						String[] wordsInLine = line.split(" ");
+						if (wordsInLine.length >= 4 
+								&& wordsInLine[0].equals("public")
+								&& wordsInLine[1].equals("class")
+								&& wordsInLine[3].equals("extends")
+								&& wordsInLine[4].equals("LiarsDiceBot")) {
+							botNames.add(wordsInLine[2]);
+						}
+						line = in.readLine();
+					}
+				} catch (FileNotFoundException e) {
+					e.printStackTrace();
+				} catch (IOException e) {
+					e.printStackTrace();
+				}
+			}
+		} 
+		
+		return botNames;
 	}
 
 	/**
