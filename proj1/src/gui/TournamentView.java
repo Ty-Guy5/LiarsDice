@@ -80,7 +80,7 @@ public class TournamentView extends JPanel {
 	
 	public void loadTable(){
 		if(facade != null && statsTableModel != null){
-			statsTableModel.initTable(facade);
+			statsTableModel.loadTable(facade);
 		}
 	}
 	
@@ -97,15 +97,7 @@ public class TournamentView extends JPanel {
         		"Timeouts"};
         private Object[][] data = new Object[][] {};
         
-        public void initTable(Facade f) {
-        	refreshTable(f);
-        	for (int i=0; i<data.length; i++) {
-        		setValueAt(true, i, 0); //initialize check boxes to true
-        	}
-        }
-        
-        public void refreshTable(Facade f) {
-
+        public void loadTable(Facade f) {
         	List<Player> players = f.getPlayers();
         	List<Player> participants = f.getParticipants();
         	Collections.sort(players); //sorts by number of wins
@@ -127,7 +119,6 @@ public class TournamentView extends JPanel {
         		setValueAt(stats.getInvalidDecisions(), p, 7);
         		setValueAt(stats.getTimeouts(), p, 8);
         	}
-        	
         }
 
         private String getPlace(int place) {
@@ -205,8 +196,8 @@ public class TournamentView extends JPanel {
         		numPlayersPerGame = Integer.parseInt(botsPerGame.getText());
         		numGameRepeatsPerTournament = Integer.parseInt(repeatTimes.getText());
 				facade.runTournament(numPlayersPerGame, numGameRepeatsPerTournament);
-				statsTableModel.refreshTable(facade);
-        	}catch(Exception ex){
+				statsTableModel.loadTable(facade);
+        	}catch(NumberFormatException ex){
         		messageLabel.setText("Please only input positive integers.");
         	}
         }

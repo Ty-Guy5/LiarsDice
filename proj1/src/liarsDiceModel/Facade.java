@@ -16,8 +16,11 @@ public class Facade {
 	}
 
 	public List<Player> getPlayers() {
-		//TODO should this make a deep copy of the list, so a gui can't modify?
 		return tournament.getPlayers();
+	}
+
+	public List<Player> getParticipants() {
+		return tournament.getParticipatingPlayers();
 	}
 
 	public void chooseGame(GameFactory factory) {
@@ -63,32 +66,6 @@ public class Facade {
 	
 	public int numGamesForSettings(int botsPerGame, int gameRepeats) {
 		return 0;
-	}
-	
-	/* The idea for getParticipants and setParticipants is that the GUI will want 
-	 * to tell the Tournament which bots are participating. I'm not sure yet all 
-	 * the details of these transactions. Maybe the GameFactory will have to 
-	 * offer a list of the class names of the bots so that the Play view can 
-	 * display them for the user to select from. Then the GameFactory would 
-	 * have a getPlayers function that takes a list of class names and returns 
-	 * only players on the list.
-	 * 
-	 * Maybe we should just make Bot a generic class again.
-	 */
-	public List<Player> getParticipants() {
-		return tournament.getParticipatingPlayers();
-		
-		/*
-		List<String> participants = new ArrayList<String>(); 
-		for (Player p : tournament.getPlayers()) {
-			participants.add(p.getName()); //here we might want to get the bots' class names
-		}
-		return participants;
-		*/
-	}
-	
-	public void setParticipants(List<String> botsParticipating) {
-		
 	}
 	
 	/* If we want to have a faster tournament, we could randomize turn order 

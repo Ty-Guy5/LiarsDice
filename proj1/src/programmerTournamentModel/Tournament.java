@@ -17,7 +17,7 @@ public class Tournament {
 	//TODO: Add in functionality to add/remove players - for the checkboxes.
 	
 	/**
-	 * Constructor. (Pass in the GameFactory associated with the game you want to play.
+	 * Constructor. (Pass in the GameFactory associated with the game you want to play.)
 	 * @param gf The specific GameFactory to be used for the tournament.
 	 */
 	public Tournament(GameFactory gf)
@@ -25,15 +25,21 @@ public class Tournament {
 		gameFactory = gf;
 		allPlayers = gameFactory.getPlayers();
 		participatingPlayers = new LinkedList<Player>();
+		for (Player p : allPlayers) {
+			participatingPlayers.add(p);
+		}
+	}
+
+	/**
+	 * @return List of all player implementations.
+	 */
+	public List<Player> getPlayers() {
+		return allPlayers;
 	}
 
 	/**
 	 * @return List of all player implementations competing in the tournament.
 	 */
-	public List<Player> getPlayers() {
-		return allPlayers;
-	}
-	
 	public List<Player> getParticipatingPlayers() {
 		return participatingPlayers;
 	}
