@@ -102,7 +102,7 @@ public class LiarsDiceGame implements Game {
 //				System.out.println("bid: " + b.getFrequency() + " " + b.getDieNumber() + "'s");
 			}
 		}
-		catch(DecisionTimout dt) {
+		catch(DecisionTimeout dt) {
 			roundResult = Result.TIMEOUT;
 			players.get(turnIndex).getStatistics().increaseTimeouts();
 			takeAwayDieAndSetNextTurn(turnIndex);
@@ -155,7 +155,7 @@ public class LiarsDiceGame implements Game {
 				svc.submit( new DecisionGettingCallable(player, gi) ) ;
 		svc.shutdown() ;
 		if (!svc.awaitTermination(microsecBeforeTimeout, TimeUnit.MICROSECONDS))
-			throw new DecisionTimout();
+			throw new DecisionTimeout();
 		decision = decisionFuture.get();
 		
 		return decision;
@@ -170,11 +170,13 @@ public class LiarsDiceGame implements Game {
 		public LiarsDicePlayer player;
 		public GameInfo gi;
 		public Decision call() throws Exception {
+			//TODO exceptions can be logged here before they are probably turned into 
+			// ExecutionExceptions at decisionFuture.get() in getDecisionTimed(). 
 			return player.getDecision(gi);
 		  }
 	}
 	
-	private class DecisionTimout extends Exception {}
+	private class DecisionTimeout extends Exception {}
 
 	/**
 	 * Determines whose turn it is next. (Skips over players with no dice.)

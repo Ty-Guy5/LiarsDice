@@ -2,7 +2,7 @@ package liarsDiceModel.bots;
 import liarsDiceModel.*;
 
 /**
- * Tyler Coleman's bot so far.
+ * Tyler's bot so far.
  */
 public class TylerColemanBot extends LiarsDiceBot {
 

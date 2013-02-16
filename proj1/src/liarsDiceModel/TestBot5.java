@@ -7,7 +7,11 @@ public class TestBot5 extends LiarsDiceBot {
 	}
 
 	public Decision getDecision(GameInfo currentGameInfo) {
-		while (true) ;
+		try {
+			Thread.sleep(10000);
+		} catch (InterruptedException e) {
+		}
+		return new Challenge();
 	}
 
 }
