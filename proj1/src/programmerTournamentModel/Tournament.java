@@ -12,7 +12,7 @@ public class Tournament {
 	private GameFactory gameFactory;
 	private List<Player> allPlayers, participatingPlayers;
 //	private int counter = 0;
-	private double secBeforeTimeout;
+	private long microsecBeforeTimeout;
 	
 	//TODO: Add in functionality to add/remove players - for the checkboxes.
 	
@@ -32,6 +32,10 @@ public class Tournament {
 	 */
 	public List<Player> getPlayers() {
 		return allPlayers;
+	}
+	
+	public List<Player> getParticipatingPlayers() {
+		return participatingPlayers;
 	}
 	
 	public void addPlayer(int index){
@@ -104,6 +108,7 @@ public class Tournament {
 
 					for(int j = 0; j < gameRepeats; j++){
 						Game game = gameFactory.getGameInstance(playersSoFar);
+						game.setTimeout(microsecBeforeTimeout);
 //						long start = System.currentTimeMillis();
 						System.out.println("before game");
 						for(Player p : playersSoFar){
@@ -143,7 +148,7 @@ public class Tournament {
 	 * Sets the limit on turn times for each bot.  (If a player goes over that time, they lose the round/game.)
 	 * @param secBeforeTimeout Number of seconds allowed for each player to take a turn. (Can be less than 1.)
 	 */
-	public void setTimeout(double secBeforeTimeout) {
-		this.secBeforeTimeout = secBeforeTimeout;
+	public void setTimeout(long microsecBeforeTimeout) {
+		this.microsecBeforeTimeout = microsecBeforeTimeout;
 	}
 }

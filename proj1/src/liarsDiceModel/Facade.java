@@ -40,8 +40,8 @@ public class Facade {
 		tournament.runTournament(botsPerGame, gameRepeats);
 	}
 	
-	public void setTimeout(double timeout) {
-		tournament.setTimeout(timeout);
+	public void setTimeout(long microsecBeforeTimeout) {
+		tournament.setTimeout(microsecBeforeTimeout);
 	}
 
 	public void addOrRemovePlayer(Boolean b, int index) {
@@ -75,12 +75,16 @@ public class Facade {
 	 * 
 	 * Maybe we should just make Bot a generic class again.
 	 */
-	public List<String> getParticipants() {
+	public List<Player> getParticipants() {
+		return tournament.getParticipatingPlayers();
+		
+		/*
 		List<String> participants = new ArrayList<String>(); 
 		for (Player p : tournament.getPlayers()) {
 			participants.add(p.getName()); //here we might want to get the bots' class names
 		}
 		return participants;
+		*/
 	}
 	
 	public void setParticipants(List<String> botsParticipating) {

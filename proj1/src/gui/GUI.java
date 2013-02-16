@@ -32,6 +32,7 @@ public class GUI extends JFrame {
     	
     	//defaults for tournament setup
     	facade.chooseGame(new LiarsDiceGameFactory());
+    	facade.setTimeout(1000);
     	
     	//setup the general layout
         Container pane = getContentPane();

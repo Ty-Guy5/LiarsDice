@@ -7,6 +7,7 @@ import java.awt.FlowLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.Collections;
+import java.util.List;
 
 import javax.swing.BoxLayout;
 import javax.swing.JButton;
@@ -79,7 +80,7 @@ public class TournamentView extends JPanel {
 	
 	public void loadTable(){
 		if(facade != null && statsTableModel != null){
-			statsTableModel.loadTable(facade);
+			statsTableModel.initTable(facade);
 		}
 	}
 	
@@ -96,8 +97,17 @@ public class TournamentView extends JPanel {
         		"Timeouts"};
         private Object[][] data = new Object[][] {};
         
-        public void loadTable(Facade f) {
-        	java.util.List<Player> players = f.getPlayers();
+        public void initTable(Facade f) {
+        	refreshTable(f);
+        	for (int i=0; i<data.length; i++) {
+        		setValueAt(true, i, 0); //initialize check boxes to true
+        	}
+        }
+        
+        public void refreshTable(Facade f) {
+
+        	List<Player> players = f.getPlayers();
+        	List<Player> participants = f.getParticipants();
         	Collections.sort(players); //sorts by number of wins
         	data = new Object[players.size()][];
         	for (int p=0; p<players.size(); p++)
@@ -106,7 +116,7 @@ public class TournamentView extends JPanel {
         		Statistics stats = players.get(p).getStatistics();
         		System.out.println(stats);
         		
-        		setValueAt(true, p, 0); //initialize check boxes to true
+        		setValueAt(participants.contains(players.get(p)), p, 0); //refresh check boxes
         		
         		setValueAt(getPlace(p+1), p, 1);
         		setValueAt(players.get(p).getID(), p, 2);
@@ -117,6 +127,7 @@ public class TournamentView extends JPanel {
         		setValueAt(stats.getInvalidDecisions(), p, 7);
         		setValueAt(stats.getTimeouts(), p, 8);
         	}
+        	
         }
 
         private String getPlace(int place) {
@@ -194,7 +205,7 @@ public class TournamentView extends JPanel {
         		numPlayersPerGame = Integer.parseInt(botsPerGame.getText());
         		numGameRepeatsPerTournament = Integer.parseInt(repeatTimes.getText());
 				facade.runTournament(numPlayersPerGame, numGameRepeatsPerTournament);
-				statsTableModel.loadTable(facade);
+				statsTableModel.refreshTable(facade);
         	}catch(Exception ex){
         		messageLabel.setText("Please only input positive integers.");
         	}

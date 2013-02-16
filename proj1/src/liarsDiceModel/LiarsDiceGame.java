@@ -18,7 +18,7 @@ public class LiarsDiceGame implements Game {
 	private Bid currentBid;
 //	private int counter = 0;
 	private boolean debug = false;
-	private long timeout;
+	private long microsecBeforeTimeout;
 	
 	/**
 	 * Constructor.
@@ -30,7 +30,7 @@ public class LiarsDiceGame implements Game {
 		this.players = players;
 		turnIndex = 0;
 		currentBid = null;
-		timeout = Long.MAX_VALUE;
+		microsecBeforeTimeout = Long.MAX_VALUE;
 	}
 	
 	/**
@@ -151,14 +151,12 @@ public class LiarsDiceGame implements Game {
 		Decision decision = null;
 		
 		ExecutorService svc = Executors.newFixedThreadPool( 1 ) ;
-		svc.submit( new DecisionGettingCallable(player, gi) {
-		  public Decision call() {
-			return player.getDecision(gi);
-		  }
-		} ) ;
+		Future<Decision> decisionFuture = 
+				svc.submit( new DecisionGettingCallable(player, gi) ) ;
 		svc.shutdown() ;
-		if (!svc.awaitTermination(timeout, TimeUnit.MICROSECONDS))
+		if (!svc.awaitTermination(microsecBeforeTimeout, TimeUnit.MICROSECONDS))
 			throw new DecisionTimout();
+		decision = decisionFuture.get();
 		
 		return decision;
 	}
@@ -322,7 +320,7 @@ public class LiarsDiceGame implements Game {
 	/**
 	 * Sets the timeout in microseconds for a single decision.
 	 */
-	public void setTimeout(long secBeforeTimeout) {
-		timeout = secBeforeTimeout;
+	public void setTimeout(long microsecBeforeTimeout) {
+		this.microsecBeforeTimeout = microsecBeforeTimeout;
 	}
 }
