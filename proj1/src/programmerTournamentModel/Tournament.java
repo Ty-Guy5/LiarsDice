@@ -62,11 +62,11 @@ public class Tournament {
 	 */
 	public void runTournament(int botsPerGame, int gameRepeats)
 	{
-		if(allPlayers.size() < 2 || gameRepeats < 1){
+		if(participatingPlayers.size() < 2 || gameRepeats < 1){
 			return;
 		}
-		if(botsPerGame > allPlayers.size()){
-			botsPerGame = allPlayers.size();
+		if(botsPerGame > participatingPlayers.size()){
+			botsPerGame = participatingPlayers.size();
 		}
 		else if(botsPerGame < 2){
 			botsPerGame = 2;
@@ -78,7 +78,7 @@ public class Tournament {
 		System.out.println("tournament time: " + (end - start) + "ms");
 		
 		System.out.println("\nTournament Statistics:\n");
-		for(Player p : allPlayers){
+		for(Player p : participatingPlayers){
 			System.out.println("Player " + p.getID() + " \"" + p.getName() + "\":\t" + p.getStatistics());
 		}
 	}
@@ -92,8 +92,8 @@ public class Tournament {
 	 */
 	private void runAllPermutations(int botsPerGame, int gameRepeats, LinkedList<Player> playersSoFar){
 //		System.out.println("in run all permutations " + counter++);
-		for(int i = 0; i < allPlayers.size(); i++){
-			Player current = allPlayers.get(i);
+		for(int i = 0; i < participatingPlayers.size(); i++){
+			Player current = participatingPlayers.get(i);
 			if(!playersSoFar.contains(current)){
 				playersSoFar.add(current);
 				if(playersSoFar.size() == botsPerGame){
