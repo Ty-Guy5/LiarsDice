@@ -40,8 +40,8 @@ public class Facade {
 		tournament.runTournament(botsPerGame, gameRepeats);
 	}
 	
-	public void setTimeout(double timeout) {
-		tournament.setTimeout(timeout);
+	public void setTimeout(double timeoutInSeconds) {
+		tournament.setTimeout(timeoutInSeconds);
 	}
 
 	public void addOrRemovePlayer(Boolean b, int index) {

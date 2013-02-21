@@ -62,18 +62,14 @@ public class Tournament {
 	 */
 	public void runTournament(int botsPerGame, int gameRepeats)
 	{
-		if(participatingPlayers.size() < 2 || gameRepeats < 1){
+		if(allPlayers.size() < 2 || gameRepeats < 1){
 			return;
 		}
-		if(botsPerGame > participatingPlayers.size()){
-			botsPerGame = participatingPlayers.size();
+		if(botsPerGame > allPlayers.size()){
+			botsPerGame = allPlayers.size();
 		}
 		else if(botsPerGame < 2){
 			botsPerGame = 2;
-		}
-		System.out.println("before tourney");
-		for(Player p : participatingPlayers){
-			System.out.println(p.getID() + ": " + p.getStatistics());
 		}
 		
 		long start = System.currentTimeMillis();
@@ -96,19 +92,16 @@ public class Tournament {
 	 */
 	private void runAllPermutations(int botsPerGame, int gameRepeats, LinkedList<Player> playersSoFar){
 //		System.out.println("in run all permutations " + counter++);
-		for(int i = 0; i < participatingPlayers.size(); i++){
-			Player current = participatingPlayers.get(i);
+		for(int i = 0; i < allPlayers.size(); i++){
+			Player current = allPlayers.get(i);
 			if(!playersSoFar.contains(current)){
 				playersSoFar.add(current);
 				if(playersSoFar.size() == botsPerGame){
 
 					for(int j = 0; j < gameRepeats; j++){
 						Game game = gameFactory.getGameInstance(playersSoFar);
+						game.setTimeout((long)(secBeforeTimeout*1000000));
 //						long start = System.currentTimeMillis();
-						System.out.println("before game");
-						for(Player p : playersSoFar){
-							System.out.println(p.getID() + ": " + p.getStatistics());
-						}
 						Player winner = game.runGame();
 //						long end = System.currentTimeMillis();
 						//update stats
@@ -120,15 +113,14 @@ public class Tournament {
 								p.getStatistics().increaseLosses();
 							}
 						}
-						System.out.println("after game");
-						for(Player p : playersSoFar){
-							System.out.println(p.getID() + ": " + p.getStatistics());
-						}
 //						System.out.println("winner: " + winner.getClass().getSimpleName() + ", ID: " + winner.getID());
 //						System.out.println("game time: " + (end - start));
 					}
 
-//					System.out.println("winner: " + winner.getName() + ", ID: " + winner.getID());
+					Game game = gameFactory.getGameInstance(playersSoFar);
+					Player winner = game.runGame();
+					//update stats
+					System.out.println("winner: " + winner.getName() + ", ID: " + winner.getID());
 
 				}
 				else{
