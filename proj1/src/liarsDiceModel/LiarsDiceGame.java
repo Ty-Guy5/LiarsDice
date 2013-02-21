@@ -148,10 +148,8 @@ public class LiarsDiceGame implements Game {
 	private Decision getDecisionTimed(LiarsDicePlayer player,
 			GameInfo gi) throws Exception {
 		
-		Decision decision = null;
-		
 		ExecutorService svc = Executors.newFixedThreadPool( 1 ) ;
-		svc.submit( new DecisionGettingCallable(player, gi) {
+		Future<Decision> decisionFuture = svc.submit( new DecisionGettingCallable(player, gi) {
 		  public Decision call() {
 			return player.getDecision(gi);
 		  }
@@ -160,7 +158,7 @@ public class LiarsDiceGame implements Game {
 		if (!svc.awaitTermination(timeout, TimeUnit.MICROSECONDS))
 			throw new DecisionTimout();
 		
-		return decision;
+		return decisionFuture.get();
 	}
 	
 	private class DecisionGettingCallable implements Callable<Decision>
@@ -176,6 +174,7 @@ public class LiarsDiceGame implements Game {
 		  }
 	}
 	
+	@SuppressWarnings("serial")
 	private class DecisionTimout extends Exception {}
 
 	/**
