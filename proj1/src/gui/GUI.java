@@ -33,7 +33,7 @@ public class GUI extends JFrame {
     	
     	//defaults for tournament setup
     	facade.chooseGame(new LiarsDiceGameFactory());
-    	timeoutInMicroseconds = 10000
+    	timeoutInMicroseconds = 10000;
     	facade.setTimeout(timeoutInMicroseconds);
     	
     	//setup the general layout
