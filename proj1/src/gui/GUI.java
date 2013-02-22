@@ -25,6 +25,7 @@ public class GUI extends JFrame {
     
     private TournamentView tournamentPane;
     private LiarsDiceView playPane;
+    private long timeoutInMicroseconds;
    
     public GUI()
     {
@@ -32,7 +33,8 @@ public class GUI extends JFrame {
     	
     	//defaults for tournament setup
     	facade.chooseGame(new LiarsDiceGameFactory());
-    	facade.setTimeout(10000);
+    	timeoutInMicroseconds = 10000
+    	facade.setTimeout(timeoutInMicroseconds);
     	
     	//setup the general layout
         Container pane = getContentPane();

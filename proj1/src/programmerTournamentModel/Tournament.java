@@ -116,10 +116,6 @@ public class Tournament {
 						Game game = gameFactory.getGameInstance(playersSoFar);
 						game.setTimeout(microsecBeforeTimeout);
 //						long start = System.currentTimeMillis();
-						System.out.println("before game");
-						for(Player p : playersSoFar){
-							System.out.println(p.getID() + ": " + p.getStatistics());
-						}
 						Player winner = game.runGame();
 //						long end = System.currentTimeMillis();
 						//update stats
@@ -131,16 +127,15 @@ public class Tournament {
 								p.getStatistics().increaseLosses();
 							}
 						}
-						System.out.println("after game");
-						for(Player p : playersSoFar){
-							System.out.println(p.getID() + ": " + p.getStatistics());
-						}
 //						System.out.println("winner: " + winner.getClass().getSimpleName() + ", ID: " + winner.getID());
 //						System.out.println("game time: " + (end - start));
 					}
-
-//					System.out.println("winner: " + winner.getName() + ", ID: " + winner.getID());
-
+/*
+					Game game = gameFactory.getGameInstance(playersSoFar);
+					Player winner = game.runGame();
+					//update stats
+					System.out.println("winner: " + winner.getName() + ", ID: " + winner.getID());
+*/
 				}
 				else{
 					runAllPermutations(botsPerGame, gameRepeats, playersSoFar);
