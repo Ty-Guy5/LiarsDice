@@ -1,7 +1,7 @@
 package liarsDiceModel;
 
 /**
- * Very simple test bot which randomly throws exceptions or Challenges.
+ * Test bot which loops infinitely.
  */
 public class TestBot5 extends LiarsDiceBot {
 

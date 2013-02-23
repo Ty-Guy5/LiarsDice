@@ -14,8 +14,6 @@ public class Tournament {
 //	private int counter = 0;
 	private double secBeforeTimeout;
 	
-	//TODO: Add in functionality to add/remove players - for the checkboxes.
-	
 	/**
 	 * Constructor. (Pass in the GameFactory associated with the game you want to play.
 	 * @param gf The specific GameFactory to be used for the tournament.
@@ -34,6 +32,10 @@ public class Tournament {
 		return allPlayers;
 	}
 	
+	/**
+	 * Adds a player to the collection of players to be included in the tournament.
+	 * @param index The index (with respect to all players) of the player to be added to the collection of participating players.
+	 */
 	public void addPlayer(int index){
 		Player p = allPlayers.get(index);
 		if(!participatingPlayers.contains(p)){
@@ -41,6 +43,11 @@ public class Tournament {
 		}
 	}
 	
+	/**
+	 * Removes a player from the collection of players to be included in the tournament.
+	 * If that player is not currently participating, this method does nothing.
+	 * @param index The index (with respect to all players) of the player to be removed from the collection of participating players.
+	 */
 	public void removePlayer(int index){
 		Player p = allPlayers.get(index);
 		if(participatingPlayers.contains(p)){
@@ -139,6 +146,9 @@ public class Tournament {
 		this.secBeforeTimeout = secBeforeTimeout;
 	}
 
+	/**
+	 * Resets all of the statistics of all players to zero.
+	 */
 	public void resetPlayerStats() {
 		for(Player p : allPlayers){
 			p.resetStatistics();

@@ -23,7 +23,7 @@ public abstract class LiarsDiceBot implements Bot {
 	 * @param gameHistory The history of the game.
 	 */
 	public void reportGameResults(GameHistory gameHistory){
-		//don't have to implement this method. At the end of a game, we will report the results to each bot
+		//You don't have to implement this method. At the end of a game, we will report the results to each bot in case they are interested.
 	}
 	
 	/**

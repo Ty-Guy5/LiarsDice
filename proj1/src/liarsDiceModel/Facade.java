@@ -6,24 +6,42 @@ import java.util.List;
 import programmerTournamentModel.GameFactory;
 import programmerTournamentModel.Tournament;
 
+/**
+ * This class serves as an interface for the view.  The view classes only need to call methods on this class.  
+ * They don't need to rely on other classes in the model.
+ */
 public class Facade {
 	private Tournament tournament;
 	
+	/**
+	 * Constructor.
+	 */
 	public Facade()
 	{
 		//default to Liar's Dice as the game choice
         chooseGame(new LiarsDiceGameFactory());
 	}
 
+	/**
+	 * @return A list of all players which can be used in the tournament.
+	 */
 	public List<Player> getPlayers() {
 		//TODO should this make a deep copy of the list, so a gui can't modify?
 		return tournament.getPlayers();
 	}
 
+	/**
+	 * Sets which game the tournament should run.
+	 * @param factory A GameFactory instance specific to the game which should be used for the tournament.
+	 */
 	public void chooseGame(GameFactory factory) {
 		tournament = new Tournament(factory);
 	}
 	
+	/**
+	 * Changes which game the tournament should be running.
+	 * @param gameName Name of the game which should be changed to.
+	 */
 	public void changeGame(String gameName){
 		//When adding in new games, expand this switch statement:
 		switch(gameName){ //note: switching on a string will not work on anything before Java 1.7
@@ -36,14 +54,28 @@ public class Facade {
 		}
 	}
 
+	/**
+	 * Runs a tournament with the given constraints.
+	 * @param botsPerGame How many bots will participate in each game.
+	 * @param gameRepeats How many times to repeat each game.
+	 */
 	public void runTournament(int botsPerGame, int gameRepeats) {
 		tournament.runTournament(botsPerGame, gameRepeats);
 	}
 	
+	/**
+	 * Sets the allowed length of time each bot will have to take a turn.
+	 * @param timeoutInSeconds Time (in milliseconds) allowed for each bot's turn.
+	 */
 	public void setTimeout(double timeoutInSeconds) {
 		tournament.setTimeout(timeoutInSeconds);
 	}
 
+	/**
+	 * Adds or removes a player from the collection of players which will participate in the tournament.
+	 * @param b true if the player should be added, false if the player should be removed.
+	 * @param index The index (with respect to all players) of the player to be added to or removed from the collection of participating players.
+	 */
 	public void addOrRemovePlayer(Boolean b, int index) {
 		if(b){
 			tournament.addPlayer(index);
