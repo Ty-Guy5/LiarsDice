@@ -110,4 +110,8 @@ public class Facade {
 		
 	}
 
+	public void resetPlayerStats() {
+		tournament.resetPlayerStats();		
+	}
+
 }

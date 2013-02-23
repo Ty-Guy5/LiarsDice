@@ -138,4 +138,10 @@ public class Tournament {
 	public void setTimeout(double secBeforeTimeout) {
 		this.secBeforeTimeout = secBeforeTimeout;
 	}
+
+	public void resetPlayerStats() {
+		for(Player p : allPlayers){
+			p.resetStatistics();
+		}
+	}
 }
