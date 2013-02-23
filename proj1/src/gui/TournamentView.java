@@ -192,6 +192,7 @@ public class TournamentView extends JPanel {
     {
         public void actionPerformed(ActionEvent e) {
         	try{
+        		facade.resetPlayerStats();
         		messageLabel.setText("");
         		numPlayersPerGame = Integer.parseInt(botsPerGame.getText());
         		numGameRepeatsPerTournament = Integer.parseInt(repeatTimes.getText());

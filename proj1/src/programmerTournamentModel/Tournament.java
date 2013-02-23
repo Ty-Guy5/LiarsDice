@@ -44,6 +44,10 @@ public class Tournament {
 		return participatingPlayers;
 	}
 	
+	/**
+	 * Adds a player to the collection of players to be included in the tournament.
+	 * @param index The index (with respect to all players) of the player to be added to the collection of participating players.
+	 */
 	public void addPlayer(int index){
 		Player p = allPlayers.get(index);
 		if(!participatingPlayers.contains(p)){
@@ -51,6 +55,11 @@ public class Tournament {
 		}
 	}
 	
+	/**
+	 * Removes a player from the collection of players to be included in the tournament.
+	 * If that player is not currently participating, this method does nothing.
+	 * @param index The index (with respect to all players) of the player to be removed from the collection of participating players.
+	 */
 	public void removePlayer(int index){
 		Player p = allPlayers.get(index);
 		if(participatingPlayers.contains(p)){
@@ -136,6 +145,7 @@ public class Tournament {
 //						System.out.println("winner: " + winner.getClass().getSimpleName() + ", ID: " + winner.getID());
 //						System.out.println("game time: " + (end - start));
 					}
+//TODO why is the below code necessary? Is it?
 /*
 					Game game = gameFactory.getGameInstance(playersSoFar);
 					Player winner = game.runGame();
@@ -157,5 +167,14 @@ public class Tournament {
 	 */
 	public void setTimeout(long microsecBeforeTimeout) {
 		this.microsecBeforeTimeout = microsecBeforeTimeout;
+	}
+	
+	/**
+	 * Resets all of the statistics of all players to zero.
+	 */
+	public void resetPlayerStats() {
+		for(Player p : allPlayers){
+			p.resetStatistics();
+		}
 	}
 }

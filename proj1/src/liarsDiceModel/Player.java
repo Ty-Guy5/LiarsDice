@@ -36,6 +36,9 @@ public abstract class Player implements Comparable {
 		return stats;
 	}
 	
+	/**
+	 * Overrides the default compareTo. Compares players based on number of wins (more wins gets higher priority).
+	 */
 	public int compareTo(Object o){
 		if(stats.getWins() > ((Player)o).getStatistics().getWins()){
 			return -1;
@@ -43,6 +46,9 @@ public abstract class Player implements Comparable {
 		return 1;
 	}
 
+	/**
+	 * Resets this player's statistics to zero.
+	 */
 	public void resetStatistics() {
 		stats = new Statistics();
 	}

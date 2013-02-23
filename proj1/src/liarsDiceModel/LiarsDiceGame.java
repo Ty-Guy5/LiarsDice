@@ -145,6 +145,13 @@ public class LiarsDiceGame implements Game {
 		return roundResult;
 	}
 
+	/**
+	 * TODO: Tyler, please explain this method for the javadoc...
+	 * @param player
+	 * @param gi
+	 * @return
+	 * @throws Exception
+	 */
 	private Decision getDecisionTimed(LiarsDicePlayer player,
 			GameInfo gi) throws Exception {
 		
@@ -161,6 +168,9 @@ public class LiarsDiceGame implements Game {
 		return decision;
 	}
 	
+	/**
+	 * TODO: Tyler, please explain this class for the javadoc...
+	 */
 	private class DecisionGettingCallable implements Callable<Decision>
 	{
 		public DecisionGettingCallable(LiarsDicePlayer player, GameInfo gi) {
@@ -176,6 +186,9 @@ public class LiarsDiceGame implements Game {
 		  }
 	}
 	
+	/**
+	 * TODO: Tyler, please explain this class for the javadoc...
+	 */
 	private class DecisionTimeout extends Exception {}
 
 	/**
@@ -311,6 +324,12 @@ public class LiarsDiceGame implements Game {
 		}
 	}
 	
+	/**
+	 * Private method to check whether the bid frequency is higher than the total number of dice left in the game.
+	 * @param bid The current bid.
+	 * @param gi The current state of the game.
+	 * @return true if the given bid's frequency is too high, false otherwise
+	 */
 	private static boolean bidFrequencyTooHigh(Bid bid, GameInfo gi) {
 		int totalDice = 0;
 		for(PlayerInfo p : gi.getPlayersInfo()){

@@ -59,8 +59,8 @@ public class LiarsDiceGameFactory implements GameFactory {
 		bots.add(new TestBot1());
 //		bots.add(new TestBot2());
 //		bots.add(new TestBot3());
-//		bots.add(new TestBot4());
-		bots.add(new TestBot5());
+		bots.add(new TestBot4());
+//		bots.add(new TestBot5());
 		
 		//gather bots in file via reflection
 		ArrayList<String> botNames = findBotsInFolder("/src/liarsDiceModel/bots");
