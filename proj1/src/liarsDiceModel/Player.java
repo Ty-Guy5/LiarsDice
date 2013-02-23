@@ -42,4 +42,8 @@ public abstract class Player implements Comparable {
 		}
 		return 1;
 	}
+
+	public void resetStatistics() {
+		stats = new Statistics();
+	}
 }

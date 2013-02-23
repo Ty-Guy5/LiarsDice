@@ -72,6 +72,11 @@ public class Tournament {
 	 */
 	public void runTournament(int botsPerGame, int gameRepeats)
 	{
+		//reset stats for all players
+		for(Player p : allPlayers){
+			p.resetStatistics();
+		}
+		
 		if(participatingPlayers.size() < 2 || gameRepeats < 1){
 			return;
 		}
@@ -95,6 +100,7 @@ public class Tournament {
 		for(Player p : allPlayers){
 			System.out.println("Player " + p.getID() + " \"" + p.getName() + "\":\t" + p.getStatistics());
 		}
+		
 	}
 	
 	/**
