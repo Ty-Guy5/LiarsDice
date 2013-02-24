@@ -177,4 +177,19 @@ public class Tournament {
 			p.resetStatistics();
 		}
 	}
+
+	/**
+	 * @param botsPerGame The number of players to play in each individual game. (2 <= botsPerGame <= total # players)
+	 * @param gameRepeats The number of times to repeat each permutation of the tournament.
+	 * @return The number of games that would be run if runTournament were run now with these parameters.
+	 */
+	public int getNumGamesForSettings(int botsPerGame, int gameRepeats) {
+		if (botsPerGame > participatingPlayers.size())
+			botsPerGame = participatingPlayers.size();
+		int numGames = gameRepeats;
+		for (int i=0; i<botsPerGame; i++) {
+			numGames *= (participatingPlayers.size() - i);
+		}
+		return numGames;
+	}
 }

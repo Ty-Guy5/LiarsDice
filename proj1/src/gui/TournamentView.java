@@ -15,6 +15,7 @@ import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTable;
+import javax.swing.JTextArea;
 import javax.swing.JTextField;
 import javax.swing.table.AbstractTableModel;
 
@@ -25,6 +26,7 @@ import liarsDiceModel.Statistics;
 public class TournamentView extends JPanel {
     
     private JLabel botsPerGameLabel , repeatTimesLabel, messageLabel;
+    private JTextArea numberTimesLabel;
     private JTextField botsPerGame, repeatTimes;
     private JPanel tournamentOptionsPanel, tablePanel;
     private JTable statsTable;
@@ -53,11 +55,19 @@ public class TournamentView extends JPanel {
         botsPerGameLabel = new JLabel("Bots per game:");
         tournamentOptionsPanel.add(botsPerGameLabel);
         botsPerGame = new JTextField("4", 2);
+        botsPerGame.addActionListener(new TextBoxListener());
         tournamentOptionsPanel.add(botsPerGame);
         repeatTimesLabel = new JLabel("Repeat each game:");
         tournamentOptionsPanel.add(repeatTimesLabel);
         repeatTimes = new JTextField("1", 2);
+        repeatTimes.addActionListener(new TextBoxListener());
         tournamentOptionsPanel.add(repeatTimes);
+        numberTimesLabel = new JTextArea("Number of games that will be played: 0");
+        numberTimesLabel.setPreferredSize(new Dimension(160, 35));
+        numberTimesLabel.setLineWrap(true);
+        numberTimesLabel.setWrapStyleWord(true);
+        numberTimesLabel.setText("Number of games that will be played: " + facade.numGamesForSettings(4, 1));
+        tournamentOptionsPanel.add(numberTimesLabel);
         runButton = new JButton("Run Tournament");
         runButton.addActionListener(new ButtonListener());
         tournamentOptionsPanel.add(runButton);
@@ -82,6 +92,17 @@ public class TournamentView extends JPanel {
 		if(facade != null && statsTableModel != null){
 			statsTableModel.loadTable(facade);
 		}
+	}
+
+	public void updateNumberOfGamesText() {
+		try{
+			numPlayersPerGame = Integer.parseInt(botsPerGame.getText());
+			numGameRepeatsPerTournament = Integer.parseInt(repeatTimes.getText());
+			numberTimesLabel.setText("Number of games that will be played: " 
+        		+ facade.numGamesForSettings(numPlayersPerGame, numGameRepeatsPerTournament));
+		}catch(NumberFormatException ex){
+    		messageLabel.setText("Please only input positive integers.");
+    	}
 	}
 	
     private class StatsTableModel extends AbstractTableModel {
@@ -162,29 +183,26 @@ public class TournamentView extends JPanel {
             return getValueAt(0, c).getClass();
         }
         
-
-        ///*
-        // * Don't need to implement this method unless your table's
-        // * editable.
         public boolean isCellEditable(int row, int col) {
-            //Note that the data/cell address is constant,
-            //no matter where the cell appears onscreen.
-            if (col == 0){
-                return true;
-            } 
-            else{
-                return true;
-            }
+            return true;
         }
-        //*/
 
         public void setValueAt(Object value, int row, int col) {
             data[row][col] = value;
             if(col == 0){ //including/excluding a player
             	facade.addOrRemovePlayer(((Boolean)value), row);
+            	updateNumberOfGamesText();
             }
             fireTableCellUpdated(row, col);
         }
+    }
+    
+    
+    private class TextBoxListener implements ActionListener
+    {
+		public void actionPerformed(ActionEvent arg0) {
+			updateNumberOfGamesText();
+		}
     }
 
 
@@ -203,4 +221,5 @@ public class TournamentView extends JPanel {
         	}
         }
     }
+
 }

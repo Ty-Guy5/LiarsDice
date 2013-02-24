@@ -107,7 +107,7 @@ public class Facade {
 	/***************************TODO implement or scrap*************************/
 	
 	public int numGamesForSettings(int botsPerGame, int gameRepeats) {
-		return 0;
+		return tournament.getNumGamesForSettings(botsPerGame, gameRepeats);
 	}
 	
 	/* If we want to have a faster tournament, we could randomize turn order 
