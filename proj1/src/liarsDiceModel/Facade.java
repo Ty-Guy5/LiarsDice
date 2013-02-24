@@ -30,7 +30,7 @@ public class Facade {
 	}
 
 	/**
-	 *  TODO
+	 *  @return A list of the players currently used in the tournament.
 	 */
 	public List<Player> getParticipants() {
 		return tournament.getParticipatingPlayers();
@@ -90,6 +90,13 @@ public class Facade {
 			tournament.removePlayer(index);
 		}
 	}
+
+	/**
+	 * Resets statistics for every player.
+	 */
+	public void resetPlayerStats() {
+		tournament.resetPlayerStats();		
+	}
 	
 	//TODO Still not sure how to step through turns in the Play view. May 
 	// need more methods for that here. Think about how the view will get 
@@ -111,7 +118,7 @@ public class Facade {
 	 * players in the tournament equal to a power of n, where n is the number of 
 	 * bots in a single game. But that seems too drastic, don't you think?)
 	 */
-	public void setAllPermutations(boolean choice) {
+	public void setAllPermutationsVsRandomFirstturn(boolean choice) {
 		
 	}
 	
@@ -124,10 +131,6 @@ public class Facade {
 	
 	public void setNumGameRepeatsPerTournament(int numPerTournament) {
 		
-	}
-
-	public void resetPlayerStats() {
-		tournament.resetPlayerStats();		
 	}
 
 }

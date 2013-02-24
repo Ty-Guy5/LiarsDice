@@ -108,7 +108,7 @@ public class LiarsDiceGame implements Game {
 			takeAwayDieAndSetNextTurn(turnIndex);
 			return roundResult;
 		}
-		catch(Exception e){ //checking against exceptions thrown by bot
+		catch(ExecutionException e){ //checking against exceptions thrown by bot
 			if(debug)
 				e.printStackTrace(); //TODO log instead of printing error
 			roundResult = Result.EXCEPTION;
@@ -150,10 +150,10 @@ public class LiarsDiceGame implements Game {
 	 * @param player
 	 * @param gi
 	 * @return
-	 * @throws Exception
+	 * @throws DecisionTimeout, ExecutionException
 	 */
 	private Decision getDecisionTimed(LiarsDicePlayer player,
-			GameInfo gi) throws Exception {
+			GameInfo gi) throws DecisionTimeout, ExecutionException {
 		
 		Decision decision = null;
 		
@@ -161,9 +161,16 @@ public class LiarsDiceGame implements Game {
 		Future<Decision> decisionFuture = 
 				svc.submit( new DecisionGettingCallable(player, gi) ) ;
 		svc.shutdown() ;
-		if (!svc.awaitTermination(microsecBeforeTimeout, TimeUnit.MICROSECONDS))
-			throw new DecisionTimeout();
-		decision = decisionFuture.get();
+		
+		try {
+			if (!svc.awaitTermination(microsecBeforeTimeout, TimeUnit.MICROSECONDS))
+				throw new DecisionTimeout();
+			decision = decisionFuture.get();
+		} 
+		catch (InterruptedException e) {
+			if (debug)
+				e.printStackTrace();
+		}
 		
 		return decision;
 	}
@@ -179,9 +186,7 @@ public class LiarsDiceGame implements Game {
 		}
 		public LiarsDicePlayer player;
 		public GameInfo gi;
-		public Decision call() throws Exception {
-			//TODO exceptions can be logged here before they are probably turned into 
-			// ExecutionExceptions at decisionFuture.get() in getDecisionTimed(). 
+		public Decision call() {
 			return player.getDecision(gi);
 		  }
 	}

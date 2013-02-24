@@ -4,7 +4,7 @@ import liarsDiceModel.*;
 /**
  * Tyler's bot so far.
  */
-public class TylerColemanBot extends LiarsDiceBot {
+public class TylerBot extends LiarsDiceBot {
 
 	public String getName() {
 		return "TylerColemanBot";
