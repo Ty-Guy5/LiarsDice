@@ -23,7 +23,21 @@ public class HumanController extends LiarsDiceBot {
 	public Decision getDecision(GameInfo currentGameInfo) {
 		//TODO stubbed out
 		//will need to talk up at the View level to get the human input
-		return new Challenge();
+		
+		Decision userDecision = null;
+		
+		//update view
+		//request input from view to make decision
+		
+		return userDecision;
+	}
+
+	/**
+	 * @param gameInfo The current state of the game. (Probably don't need this - human can see it.)
+	 */
+	public void reportGameResults(GameHistory gameHistory) {
+		//update view
+		//wait for user choosing to continue
 	}
 
 }

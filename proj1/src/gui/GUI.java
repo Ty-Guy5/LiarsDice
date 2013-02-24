@@ -109,7 +109,7 @@ public class GUI extends JFrame {
         
         //wrapup
         setTitle("Programmer AI Tournament");
-        setLocation(100, 100); //TODO: Change this once we are done debugging (it's out of the way of code right now.)
+        setLocation(100, 100); 
         setVisible(true);
         setDefaultCloseOperation(EXIT_ON_CLOSE);
         pack();
