@@ -35,6 +35,7 @@ public class LiarsDiceGame implements Game {
 	
 	/**
 	 * Plays out the game with the players given to the constructor. (Until only one player has dice.)
+	 * @return The victorious player.
 	 */
 	public Player runGame() {
 		//TODO make sure that tournament decides play order before passing the list here (pass in bots in play order)
@@ -146,11 +147,14 @@ public class LiarsDiceGame implements Game {
 	}
 
 	/**
-	 * TODO: Tyler, please explain this method for the javadoc...
-	 * @param player
-	 * @param gi
-	 * @return
-	 * @throws DecisionTimeout, ExecutionException
+	 * Retrieves a player's decision for the current game, with a hard time cutoff
+	 * defined by microsecBeforeTimeout.
+	 * @param player The player object being queried for its decision
+	 * @param gi The history of the current game, to be handed to the player
+	 * @return The player's decision
+	 * @throws DecisionTimeout If the player exceeds the time limit.
+	 * @throws ExecutionException If the player throws an exception. This will include all
+	 * 		the information of the exception that was thrown.
 	 */
 	private Decision getDecisionTimed(LiarsDicePlayer player,
 			GameInfo gi) throws DecisionTimeout, ExecutionException {
@@ -176,7 +180,9 @@ public class LiarsDiceGame implements Game {
 	}
 	
 	/**
-	 * TODO: Tyler, please explain this class for the javadoc...
+	 * A helper class for getDecisionTimed, this represents a function to call getDecision 
+	 * on a player with the given gameInfo object. The player and gameInfo objects are 
+	 * passed into the constructor, and the call() method returns the decision.
 	 */
 	private class DecisionGettingCallable implements Callable<Decision>
 	{
@@ -192,7 +198,7 @@ public class LiarsDiceGame implements Game {
 	}
 	
 	/**
-	 * TODO: Tyler, please explain this class for the javadoc...
+	 * The exception thrown when a player exceeds the time limit in getDecision().
 	 */
 	private class DecisionTimeout extends Exception {}
 
@@ -345,6 +351,7 @@ public class LiarsDiceGame implements Game {
 
 	/**
 	 * Sets the timeout in microseconds for a single decision.
+	 * @param microsecBeforeTimeout Number of microseconds before timeout
 	 */
 	public void setTimeout(long microsecBeforeTimeout) {
 		this.microsecBeforeTimeout = microsecBeforeTimeout;
