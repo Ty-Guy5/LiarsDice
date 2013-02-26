@@ -130,10 +130,6 @@ public class Tournament {
 		else if(botsPerGame < 2){
 			botsPerGame = 2;
 		}
-		System.out.println("before tourney");
-		for(Player p : participatingPlayers){
-			System.out.println(p.getID() + ": " + p.getStatistics());
-		}
 		
 		long start = System.currentTimeMillis();
 		for(int j = 0; j < gameRepeats; j++){
@@ -141,11 +137,6 @@ public class Tournament {
 		}
 		long end = System.currentTimeMillis();
 		System.out.println("tournament time: " + (end - start) + "ms");
-		
-		System.out.println("\nTournament Statistics:\n");
-		for(Player p : allPlayers){
-			System.out.println("Player " + p.getID() + " \"" + p.getName() + "\":\t" + p.getStatistics());
-		}
 	}
 	
 	/**

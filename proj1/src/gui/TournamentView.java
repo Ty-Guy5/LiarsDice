@@ -133,7 +133,7 @@ public class TournamentView extends JPanel {
         		
         		setValueAt(getPlace(p+1), p, 1);
         		setValueAt(players.get(p).getID(), p, 2);
-        		setValueAt(players.get(p).getName(), p, 3);
+        		setValueAt(players.get(p).getName(), p, 3); //TODO assumes that getName() will be fast and exception free
         		setValueAt(stats.getWins(), p, 4);
         		setValueAt(stats.getLosses(), p, 5);
         		setValueAt(stats.getExceptions(), p, 6);

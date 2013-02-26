@@ -70,6 +70,7 @@ public class LiarsDiceGameFactory implements GameFactory {
 			try{
 				bots.add((LiarsDiceBot)Class.forName("liarsDiceModel.bots." + botName).newInstance());
 			}catch (Exception e) {e.printStackTrace();}
+			//TODO assumes that bot constructor will be fast and error free
 		}
 		
 		

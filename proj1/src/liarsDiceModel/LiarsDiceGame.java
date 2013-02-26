@@ -47,7 +47,7 @@ public class LiarsDiceGame implements Game {
 		//determine the winner and report the results to everyone
 		LiarsDicePlayer winner = null;
 		for(LiarsDicePlayer p : players){
-			p.reportGameResults(new GameHistory(history));
+			p.reportGameResults(new GameHistory(history)); //TODO assumes bot will be fast and exception-free
 			if(p.getDice().size() > 0){
 				assert (winner == null) : "error: multiple winners???";
 				winner = p;
