@@ -16,7 +16,6 @@ public class LiarsDiceGame implements Game {
 	private int turnIndex;
 	private List<LiarsDicePlayer> players;
 	private Bid currentBid;
-//	private int counter = 0;
 	private boolean debug = false;
 	private long microsecBeforeTimeout;
 	

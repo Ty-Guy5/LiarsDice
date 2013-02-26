@@ -1,5 +1,4 @@
 package programmerTournamentModel;
-import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -9,12 +8,16 @@ import liarsDiceModel.Player;
  * This class runs the overall tournament.
  */
 public class Tournament {
-	private GameFactory gameFactory;
+	/**
+	 * gameFactory: Tournament delegates to this factory the job of creating the right kind 
+	 * 				of game to run and the right kinds of players.
+	 * allPlayers: Tournament keeps a master list of all players that could play.
+	 * participatingPlayers: The subset of players that are selected to play in this tournament.
+	 * microsecBeforeTimeout: How long this tournament allows player functions to run.
+	 */
+	private GameFactory gameFactory; 
 	private List<Player> allPlayers, participatingPlayers;
-//	private int counter = 0;
 	private long microsecBeforeTimeout;
-	
-	//TODO: Add in functionality to add/remove players - for the checkboxes.
 	
 	/**
 	 * Constructor. (Pass in the GameFactory associated with the game you want to play.)
@@ -66,6 +69,38 @@ public class Tournament {
 			participatingPlayers.remove(p);
 		}
 	}
+
+	/**
+	 * Sets the limit on turn times for each bot.  (If a player goes over that time, they lose the round/game.)
+	 * @param secBeforeTimeout Number of seconds allowed for each player to take a turn. (Can be less than 1.)
+	 */
+	public void setTimeout(long microsecBeforeTimeout) {
+		this.microsecBeforeTimeout = microsecBeforeTimeout;
+	}
+	
+	/**
+	 * Resets all of the statistics of all players to zero.
+	 */
+	public void resetPlayerStats() {
+		for(Player p : allPlayers){
+			p.resetStatistics();
+		}
+	}
+
+	/**
+	 * @param botsPerGame The number of players to play in each individual game. (2 <= botsPerGame <= total # players)
+	 * @param gameRepeats The number of times to repeat each permutation of the tournament.
+	 * @return The number of games that would be run if runTournament were run now with these parameters.
+	 */
+	public int getNumGamesForSettings(int botsPerGame, int gameRepeats) {
+		if (botsPerGame > participatingPlayers.size())
+			botsPerGame = participatingPlayers.size();
+		int numGames = gameRepeats;
+		for (int i=0; i<botsPerGame; i++) {
+			numGames *= (participatingPlayers.size() - i);
+		}
+		return numGames;
+	}
 	
 	/**
 	 * Runs the tournament with all the players.  Runs every possible permutation of the 
@@ -81,7 +116,6 @@ public class Tournament {
 	 */
 	public void runTournament(int botsPerGame, int gameRepeats)
 	{
-		//reset stats for all players
 		for(Player p : allPlayers){
 			p.resetStatistics();
 		}
@@ -109,7 +143,6 @@ public class Tournament {
 		for(Player p : allPlayers){
 			System.out.println("Player " + p.getID() + " \"" + p.getName() + "\":\t" + p.getStatistics());
 		}
-		
 	}
 	
 	/**
@@ -159,37 +192,5 @@ public class Tournament {
 				playersSoFar.removeLast();
 			}
 		}		
-	}
-
-	/**
-	 * Sets the limit on turn times for each bot.  (If a player goes over that time, they lose the round/game.)
-	 * @param secBeforeTimeout Number of seconds allowed for each player to take a turn. (Can be less than 1.)
-	 */
-	public void setTimeout(long microsecBeforeTimeout) {
-		this.microsecBeforeTimeout = microsecBeforeTimeout;
-	}
-	
-	/**
-	 * Resets all of the statistics of all players to zero.
-	 */
-	public void resetPlayerStats() {
-		for(Player p : allPlayers){
-			p.resetStatistics();
-		}
-	}
-
-	/**
-	 * @param botsPerGame The number of players to play in each individual game. (2 <= botsPerGame <= total # players)
-	 * @param gameRepeats The number of times to repeat each permutation of the tournament.
-	 * @return The number of games that would be run if runTournament were run now with these parameters.
-	 */
-	public int getNumGamesForSettings(int botsPerGame, int gameRepeats) {
-		if (botsPerGame > participatingPlayers.size())
-			botsPerGame = participatingPlayers.size();
-		int numGames = gameRepeats;
-		for (int i=0; i<botsPerGame; i++) {
-			numGames *= (participatingPlayers.size() - i);
-		}
-		return numGames;
 	}
 }
