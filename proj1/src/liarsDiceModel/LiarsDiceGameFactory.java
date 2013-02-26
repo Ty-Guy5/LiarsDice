@@ -8,6 +8,8 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
+import liarsDiceModel.bots.SmartBot;
+
 import programmerTournamentModel.Bot;
 import programmerTournamentModel.Game;
 import programmerTournamentModel.GameFactory;
@@ -55,11 +57,11 @@ public class LiarsDiceGameFactory implements GameFactory {
 	public List<Player> getPlayers() {
 		//hardcoded bots
 		ArrayList<Bot> bots = new ArrayList<Bot>();
-		bots.add(new TestBot0());
-		bots.add(new TestBot1());
+//		bots.add(new TestBot0());
+//		bots.add(new TestBot1());
 //		bots.add(new TestBot2());
 //		bots.add(new TestBot3());
-		bots.add(new TestBot4());
+//		bots.add(new SmartBot());
 //		bots.add(new TestBot5());
 		
 		//gather bots in file via reflection

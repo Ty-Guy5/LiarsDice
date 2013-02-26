@@ -1,11 +1,19 @@
-package liarsDiceModel;
+package liarsDiceModel.bots;
 
 import java.util.List;
+
+import liarsDiceModel.Bid;
+import liarsDiceModel.Challenge;
+import liarsDiceModel.Decision;
+import liarsDiceModel.Die;
+import liarsDiceModel.GameInfo;
+import liarsDiceModel.LiarsDiceBot;
+import liarsDiceModel.PlayerInfo;
 
 /**
  * Slightly more intelligent test bot which bids or challenges based on raw probabilities of dice rolls.
  */
-public class TestBot4 extends LiarsDiceBot {
+public class SmartBot extends LiarsDiceBot {
 
 	public String getName() {
 		return "Smart Bot";

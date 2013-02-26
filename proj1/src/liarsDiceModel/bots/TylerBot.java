@@ -7,7 +7,7 @@ import liarsDiceModel.*;
 public class TylerBot extends LiarsDiceBot {
 
 	public String getName() {
-		return "TylerColemanBot";
+		return "Tyler's Bot";
 	}
 
 	public Decision getDecision(GameInfo gi) {

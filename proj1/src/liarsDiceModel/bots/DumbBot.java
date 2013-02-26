@@ -1,12 +1,19 @@
-package liarsDiceModel;
+package liarsDiceModel.bots;
 
 import java.util.List;
+
+import liarsDiceModel.Bid;
+import liarsDiceModel.Challenge;
+import liarsDiceModel.Decision;
+import liarsDiceModel.GameInfo;
+import liarsDiceModel.LiarsDiceBot;
+import liarsDiceModel.PlayerInfo;
 
 /**
  * Test bot which simply adds one to the frequency of the current bid, 
  * or Challenges if the current bid's frequency is more than the total number of dice.
  */
-public class TestBot3 extends LiarsDiceBot {
+public class DumbBot extends LiarsDiceBot {
 
 	@Override
 	public String getName() {
