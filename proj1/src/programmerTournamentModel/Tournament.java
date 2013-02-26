@@ -1,4 +1,5 @@
 package programmerTournamentModel;
+import java.util.Collections;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -135,7 +136,9 @@ public class Tournament {
 		}
 		
 		long start = System.currentTimeMillis();
-		runAllPermutations(botsPerGame, gameRepeats, new LinkedList<Player>());
+		for(int j = 0; j < gameRepeats; j++){
+			runAllPermutations(botsPerGame, new LinkedList<Player>());
+		}
 		long end = System.currentTimeMillis();
 		System.out.println("tournament time: " + (end - start) + "ms");
 		
@@ -152,45 +155,38 @@ public class Tournament {
 	 * @param gameRepeats The number of times to repeat each permutation of the tournament.
 	 * @param playersSoFar The players who are already included in the current game being constructed.
 	 */
-	private void runAllPermutations(int botsPerGame, int gameRepeats, LinkedList<Player> playersSoFar){
-//		System.out.println("in run all permutations " + counter++);
-		for(int i = 0; i < participatingPlayers.size(); i++){
-			Player current = participatingPlayers.get(i);
-			if(!playersSoFar.contains(current)){
+	private void runAllPermutations(int botsPerGame, LinkedList<Player> playersSoFar){
+		for(Player current : participatingPlayers){
+			if(!playersSoFar.contains(current)) {
 				playersSoFar.add(current);
 				if(playersSoFar.size() == botsPerGame){
-
-					for(int j = 0; j < gameRepeats; j++){
-						Game game = gameFactory.getGameInstance(playersSoFar);
-						game.setTimeout(microsecBeforeTimeout);
-//						long start = System.currentTimeMillis();
-						Player winner = game.runGame();
-//						long end = System.currentTimeMillis();
-						//update stats
-						for(Player p : playersSoFar){
-							if(p == winner){
-								p.getStatistics().increaseWins();
-							}
-							else{
-								p.getStatistics().increaseLosses();
-							}
-						}
-//						System.out.println("winner: " + winner.getClass().getSimpleName() + ", ID: " + winner.getID());
-//						System.out.println("game time: " + (end - start));
-					}
-//TODO why is the below code necessary? Is it?
-/*
-					Game game = gameFactory.getGameInstance(playersSoFar);
-					Player winner = game.runGame();
-					//update stats
-					System.out.println("winner: " + winner.getName() + ", ID: " + winner.getID());
-*/
+					runSingleGame(playersSoFar);
 				}
 				else{
-					runAllPermutations(botsPerGame, gameRepeats, playersSoFar);
+					runAllPermutations(botsPerGame, playersSoFar);
 				}
 				playersSoFar.removeLast();
 			}
-		}		
+		}
+	}
+
+	/**
+	 * Runs a game using the local game factory and the given players. Updates 
+	 * the statistics for the players accordingly.
+	 * @param players Those which are to play in the game.
+	 */
+	private void runSingleGame(LinkedList<Player> players) {
+		Game game = gameFactory.getGameInstance(players);
+		game.setTimeout(microsecBeforeTimeout);
+		Player winner = game.runGame();
+		//update stats
+		for(Player p : players){
+			if(p == winner){
+				p.getStatistics().increaseWins();
+			}
+			else{
+				p.getStatistics().increaseLosses();
+			}
+		}
 	}
 }
