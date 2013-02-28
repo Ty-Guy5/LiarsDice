@@ -1,7 +1,6 @@
 package gui;
 
-import java.awt.Color;
-import java.awt.FlowLayout;
+import java.awt.*;
 
 import javax.swing.*;
 
@@ -11,30 +10,26 @@ import liarsDiceModel.Player;
 public class LiarsDiceView extends JPanel {
 
     private Facade facade;
-    private SpringLayout layout;
+    private GridLayout layout;
     private PlayerPanel playerPanel1, playerPanel2, playerPanel3;
     private JPanel optionsPanel, humanPanel;
     private JButton startGame, nextRound;
     
 	public LiarsDiceView(Facade f){
 		facade = f;
-		
-		layout = new SpringLayout();
+
+		layout = new GridLayout(3,3);
 		setLayout(layout);
 
+		add(new JPanel(), 0);
+
 		playerPanel1 = new PlayerPanel();
-		add(playerPanel1);
-		layout.putConstraint(SpringLayout.WEST, playerPanel1, 100, SpringLayout.WEST, this);
+		add(playerPanel1, 1);
 		
+		add(new JPanel(), 2);
+
 		playerPanel2 = new PlayerPanel();
-		add(playerPanel2);
-		layout.putConstraint(SpringLayout.WEST, playerPanel2, 100, SpringLayout.WEST, this);
-		
-		playerPanel3 = new PlayerPanel();
-		add(playerPanel3);
-		layout.putConstraint(SpringLayout.WEST, playerPanel3, 100, SpringLayout.WEST, this);
-		
-		setupPlayers();
+		add(playerPanel2, 3);
 		
 		optionsPanel = new JPanel();
 		optionsPanel.setLayout(new BoxLayout(optionsPanel, BoxLayout.Y_AXIS));
@@ -42,18 +37,28 @@ public class LiarsDiceView extends JPanel {
 		optionsPanel.add(startGame);
 		nextRound = new JButton("Next Round");
 		optionsPanel.add(nextRound);
-		add(optionsPanel);
-		
+		add(optionsPanel, 4);
+
 		humanPanel = new JPanel();
-		add(humanPanel);
+		add(humanPanel, 5);
+		
+		add(new JPanel(), 6);
+		
+		playerPanel3 = new PlayerPanel();
+		add(playerPanel3, 7);
+
+		add(new JPanel(), 8);
+
+		setupPlayers();
 
         this.setBackground(Color.black);
 	}
 	
 	private void setupPlayers() {
+		//TODO this is just a method to do the default. Instead, the user should fill the player slots.
 		playerPanel1.setPlayer(facade.getPlayers().get(0));
-		playerPanel1.setPlayer(facade.getPlayers().get(1));
-		playerPanel1.setPlayer(facade.getPlayers().get(2));
+		playerPanel2.setPlayer(facade.getPlayers().get(1));
+		playerPanel3.setPlayer(facade.getPlayers().get(2));
 	}
     
     private class PlayerPanel extends JPanel 
