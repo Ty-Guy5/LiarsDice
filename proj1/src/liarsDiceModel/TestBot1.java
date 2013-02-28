@@ -1,5 +1,6 @@
 package liarsDiceModel;
 
+
 /**
  * Very simple test bot which always Challenges.
  */
