@@ -10,7 +10,7 @@ import liarsDiceModel.*;
  */
 public class TylerBot extends LiarsDiceBot 
 {
-	boolean verbose = true;
+	boolean verbose = false;
 	public String getName() 
 	{
 		return "Tyler's Bot";
