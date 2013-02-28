@@ -18,7 +18,6 @@ public class GameHistory {
 	 */
 	public GameHistory(){
 		rounds = new ArrayList<Round>();
-		rounds.add(new Round());
 	}
 	
 	/**

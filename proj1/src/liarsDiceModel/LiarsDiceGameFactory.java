@@ -66,7 +66,6 @@ public class LiarsDiceGameFactory implements GameFactory {
 		
 		//gather bots in file via reflection
 		ArrayList<String> botNames = findBotsInFolder("/src/liarsDiceModel/bots");
-		System.out.println(botNames);
 		for (String botName : botNames)
 		{
 			try{

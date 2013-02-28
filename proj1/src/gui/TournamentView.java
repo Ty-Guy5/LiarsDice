@@ -127,7 +127,6 @@ public class TournamentView extends JPanel {
         	{
             	data[p] = new Object[9];
         		Statistics stats = players.get(p).getStatistics();
-        		System.out.println(stats);
         		
         		setValueAt(participants.contains(players.get(p)), p, 0); //refresh check boxes
         		

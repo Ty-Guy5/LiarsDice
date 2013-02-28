@@ -133,6 +133,7 @@ public class Tournament {
 		
 		long start = System.currentTimeMillis();
 		for(int j = 0; j < gameRepeats; j++){
+			Collections.shuffle(participatingPlayers);
 			runAllPermutations(botsPerGame, new LinkedList<Player>());
 		}
 		long end = System.currentTimeMillis();
