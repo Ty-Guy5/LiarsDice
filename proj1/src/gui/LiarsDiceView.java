@@ -26,13 +26,13 @@ public class LiarsDiceView extends JPanel implements LDView {
 		
 		add(new JPanel(), 0);
 
-		playerPanel1 = new PlayerPanel();
-		add(playerPanel1, 1);
-		
-		add(new JPanel(), 2);
-
 		playerPanel2 = new PlayerPanel();
-		add(playerPanel2, 3);
+		add(playerPanel2, 1);
+
+		add(new JPanel(), 2);
+		
+		playerPanel1 = new PlayerPanel();
+		add(playerPanel1, 3);
 		
 		optionsPanel = new JPanel();
 		optionsPanel.setLayout(new BoxLayout(optionsPanel, BoxLayout.Y_AXIS));
@@ -42,13 +42,13 @@ public class LiarsDiceView extends JPanel implements LDView {
 		optionsPanel.add(nextRound);
 		add(optionsPanel, 4);
 
-		humanPanel = new JPanel();
-		add(humanPanel, 5);
+		playerPanel3 = new PlayerPanel();
+		add(playerPanel3, 5);
 		
 		add(new JPanel(), 6);
-		
-		playerPanel3 = new PlayerPanel();
-		add(playerPanel3, 7);
+
+		humanPanel = new JPanel();
+		add(humanPanel, 7);
 
 		add(new JPanel(), 8);
 		
@@ -73,18 +73,20 @@ public class LiarsDiceView extends JPanel implements LDView {
     	private GridLayout layout;
     	private JLabel[][] diceLabels;
     	private Dimension[] diceIndices;
+    	private JPanel dicePanel;
     	
     	public PlayerPanel() {
+    		this.setLayout(new BoxLayout(this, BoxLayout.Y_AXIS));
     		nameLabel = new JLabel("No player selected");
     		add(nameLabel);
-    		layout = new GridLayout(5,6);
-    		this.setLayout(layout);
-    		diceLabels = new JLabel[5][6];
-    		for(int i = 0; i < 5; i++){
-    			for(int j = 0; j < 6; j++){
-    				diceLabels[i][j] = new JLabel("i:" + i + " j:" + j);
-    				System.out.println("i:" + i + " j:"+ j + " " + (i*6 + j));
-    				add(diceLabels[i][j], (i*6 + j));
+    		dicePanel = new JPanel();
+    		layout = new GridLayout(6,5);
+    		dicePanel.setLayout(layout);
+    		diceLabels = new JLabel[6][5];
+    		for(int i = 0; i < 6; i++){
+    			for(int j = 0; j < 5; j++){
+    				diceLabels[i][j] = new JLabel(" " + i + "," + j + " ");
+    				dicePanel.add(diceLabels[i][j]);
     			}
     		}
     		diceIndices = new Dimension[5];
@@ -94,8 +96,9 @@ public class LiarsDiceView extends JPanel implements LDView {
     		diceIndices[3] = new Dimension(5,3);
     		diceIndices[4] = new Dimension(2,4);
     		for(Dimension d : diceIndices){
-    			diceLabels[d.height][d.width].setText("1");
+    			diceLabels[d.width][d.height].setText("  1  ");
     		}
+    		add(dicePanel);
     	}
 
 		public void setPlayer(Player player) {
