@@ -65,10 +65,32 @@ public class LiarsDiceView extends JPanel {
     {
     	private Player player;
     	private JLabel nameLabel;
+    	private GridLayout layout;
+    	private JLabel[][] diceLabels;
+    	private Dimension[] diceIndices;
     	
     	public PlayerPanel() {
     		nameLabel = new JLabel("No player selected");
     		add(nameLabel);
+    		layout = new GridLayout(5,6);
+    		this.setLayout(layout);
+    		diceLabels = new JLabel[5][6];
+    		for(int i = 0; i < 5; i++){
+    			for(int j = 0; j < 6; j++){
+    				diceLabels[i][j] = new JLabel("i:" + i + " j:" + j);
+    				System.out.println("i:" + i + " j:"+ j + " " + (i*6 + j));
+    				add(diceLabels[i][j], (i*6 + j));
+    			}
+    		}
+    		diceIndices = new Dimension[5];
+    		diceIndices[0] = new Dimension(0,2);
+    		diceIndices[1] = new Dimension(2,0);
+    		diceIndices[2] = new Dimension(5,1);
+    		diceIndices[3] = new Dimension(5,3);
+    		diceIndices[4] = new Dimension(2,4);
+    		for(Dimension d : diceIndices){
+    			diceLabels[d.height][d.width].setText("1");
+    		}
     	}
 
 		public void setPlayer(Player player) {
