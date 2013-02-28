@@ -1,5 +1,6 @@
 package liarsDiceModel;
 
+
 public class TestBot5 extends LiarsDiceBot {
 
 	public String getName() {

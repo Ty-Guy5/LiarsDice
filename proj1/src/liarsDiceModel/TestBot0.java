@@ -1,5 +1,6 @@
 package liarsDiceModel;
 
+
 /**
  * Very simple test bot which randomly throws exceptions or Challenges.
  */

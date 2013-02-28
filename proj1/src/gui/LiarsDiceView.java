@@ -5,9 +5,10 @@ import java.awt.*;
 import javax.swing.*;
 
 import liarsDiceModel.Facade;
+import liarsDiceModel.LDView;
 import liarsDiceModel.Player;
 
-public class LiarsDiceView extends JPanel {
+public class LiarsDiceView extends JPanel implements LDView {
 
     private Facade facade;
     private GridLayout layout;
@@ -21,6 +22,8 @@ public class LiarsDiceView extends JPanel {
 		layout = new GridLayout(3,3);
 		setLayout(layout);
 
+		
+		
 		add(new JPanel(), 0);
 
 		playerPanel1 = new PlayerPanel();
@@ -48,6 +51,8 @@ public class LiarsDiceView extends JPanel {
 		add(playerPanel3, 7);
 
 		add(new JPanel(), 8);
+		
+		
 
 		setupPlayers();
 
@@ -103,4 +108,16 @@ public class LiarsDiceView extends JPanel {
 		}
     	
     }
+
+	@Override
+	public void decisionRequest() {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void reportGameResults() {
+		// TODO Auto-generated method stub
+		
+	}
 }
