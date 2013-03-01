@@ -1,4 +1,9 @@
-package liarsDiceModel;
+package liarsDiceModel.interfaceToFrontEnd;
+import genericModel.Bot;
+import genericModel.Game;
+import genericModel.GameFactory;
+import genericModel.Player;
+
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileNotFoundException;
@@ -9,10 +14,10 @@ import java.util.ArrayList;
 import java.util.List;
 
 import liarsDiceModel.bots.SmartBot;
+import liarsDiceModel.gameLogic.LiarsDiceBot;
+import liarsDiceModel.gameLogic.LiarsDiceGame;
+import liarsDiceModel.gameLogic.LiarsDicePlayer;
 
-import programmerTournamentModel.Bot;
-import programmerTournamentModel.Game;
-import programmerTournamentModel.GameFactory;
 
 /**
  * This class is a factory which returns an instance of the LiarsDiceGame class (and the players associated with it.

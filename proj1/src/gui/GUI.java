@@ -1,6 +1,10 @@
 package gui;
 
 
+import genericModel.Facade;
+import genericModel.Player;
+import genericModel.Statistics;
+
 import java.awt.*;
 import java.awt.event.*;
 import java.util.Collections;
@@ -8,10 +12,8 @@ import java.util.Collections;
 import javax.swing.*;
 import javax.swing.table.AbstractTableModel;
 
-import liarsDiceModel.Facade;
-import liarsDiceModel.LiarsDiceGameFactory;
-import liarsDiceModel.Player;
-import liarsDiceModel.Statistics;
+
+import liarsDiceModel.interfaceToFrontEnd.LiarsDiceGameFactory;
 
 public class GUI extends JFrame {
    
@@ -24,7 +26,7 @@ public class GUI extends JFrame {
 //    private JCheckBoxMenuItem cbMenuItem;
     
     private TournamentView tournamentPane;
-    private LiarsDiceView playPane;
+    private LiarsDicePlayView playPane;
     private long timeoutInMicroseconds;
    
     public GUI()
@@ -99,7 +101,7 @@ public class GUI extends JFrame {
     	tournamentPane = new TournamentView(facade);
     	tournamentPane.loadTable();
         
-        playPane = new LiarsDiceView(facade);
+        playPane = new LiarsDicePlayView(facade);
         
         //tabs
         JTabbedPane tabPane = new JTabbedPane();

@@ -1,4 +1,4 @@
-package liarsDiceModel;
+package liarsDiceModel.gameInfo;
 import java.util.ArrayList;
 import java.util.List;
 

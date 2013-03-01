@@ -1,11 +1,8 @@
-package programmerTournamentModel;
+package liarsDiceModel.gameInfo;
 import java.util.ArrayList;
 import java.util.List;
 //done
 
-import liarsDiceModel.Result;
-import liarsDiceModel.Round;
-import liarsDiceModel.Turn;
 
 /**
  * Keeps track of the history of a game (in the form of a collection of Rounds, which are a collection of Turns).

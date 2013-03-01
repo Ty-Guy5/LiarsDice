@@ -1,4 +1,4 @@
-package liarsDiceModel;
+package liarsDiceModel.gameLogic;
 
 /**
  * Represents a challenge decision. (Challenges the validity of the current bid.)

@@ -1,8 +1,7 @@
-package programmerTournamentModel;
+package genericModel;
 import java.util.List;
 //done
 
-import liarsDiceModel.Player;
 
 /**
  * Generic GameFactory class which all specific game factory classes should implement.

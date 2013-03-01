@@ -1,4 +1,4 @@
-package programmerTournamentModel;
+package genericModel;
 
 /**
  * Generic interface for a bot - each game will have a specific version of this which contestants will implement/extend.

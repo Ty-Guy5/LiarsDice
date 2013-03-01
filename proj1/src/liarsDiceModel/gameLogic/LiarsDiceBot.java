@@ -1,6 +1,7 @@
-package liarsDiceModel;
-import programmerTournamentModel.Bot;
-import programmerTournamentModel.GameHistory;
+package liarsDiceModel.gameLogic;
+import genericModel.Bot;
+import liarsDiceModel.gameInfo.GameHistory;
+import liarsDiceModel.gameInfo.GameInfo;
 
 /**
  * Parent class for all contest entries.  Each team will create a class which extends LiarsDiceBot.

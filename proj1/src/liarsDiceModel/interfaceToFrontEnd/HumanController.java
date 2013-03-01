@@ -1,8 +1,12 @@
-package liarsDiceModel;
+package liarsDiceModel.interfaceToFrontEnd;
 import java.util.concurrent.Semaphore;
 
+import liarsDiceModel.gameInfo.GameHistory;
+import liarsDiceModel.gameInfo.GameInfo;
+import liarsDiceModel.gameLogic.Decision;
+import liarsDiceModel.gameLogic.LiarsDiceBot;
 
-import programmerTournamentModel.GameHistory;
+
 
 
 /**
@@ -67,7 +71,7 @@ public class HumanController extends LiarsDiceBot {
 	public class ViewCommunication
 	{
 		private Semaphore s;
-		private LDView view;
+		private LiarsDiceView view;
 		private Decision currentDecision;
 		
 		public ViewCommunication() {
@@ -96,7 +100,7 @@ public class HumanController extends LiarsDiceBot {
 		
 		/*********** View-end methods ***********/
 		
-		public void registerView(LDView view) {
+		public void registerView(LiarsDiceView view) {
 			this.view = view;
 		}
 		

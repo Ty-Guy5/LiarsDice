@@ -1,9 +1,8 @@
-package programmerTournamentModel;
+package genericModel;
 import java.util.Collections;
 import java.util.LinkedList;
 import java.util.List;
 
-import liarsDiceModel.Player;
 
 /**
  * This class runs the overall tournament.

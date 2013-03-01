@@ -1,4 +1,4 @@
-package liarsDiceModel;
+package liarsDiceModel.gameLogic;
 
 /**
  * Interface for the two types of decisions: Bid and Challenge.

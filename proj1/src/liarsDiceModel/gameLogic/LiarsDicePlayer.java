@@ -1,10 +1,14 @@
-package liarsDiceModel;
+package liarsDiceModel.gameLogic;
+
+import genericModel.Player;
 
 import java.util.ArrayList;
 import java.util.List;
 
+import liarsDiceModel.gameInfo.GameHistory;
+import liarsDiceModel.gameInfo.GameInfo;
 
-import programmerTournamentModel.GameHistory;
+
 
 /**
  * An extension of the Player class specific for LiarsDiceGame.  Keeps track of its bot and dice.
@@ -12,7 +16,7 @@ import programmerTournamentModel.GameHistory;
 public class LiarsDicePlayer extends Player{
 	private static final int INITIAL_NUM_DICE = 5;
 	
-	LiarsDiceBot bot;
+	private LiarsDiceBot bot;
 	private List<Die> dice;
 
 	/**

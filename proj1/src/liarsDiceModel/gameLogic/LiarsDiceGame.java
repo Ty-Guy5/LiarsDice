@@ -1,11 +1,20 @@
-package liarsDiceModel;
+package liarsDiceModel.gameLogic;
+
+import genericModel.Game;
+import genericModel.Player;
 
 import java.util.ArrayList;
 import java.util.List;
 
-import programmerTournamentModel.Game;
-import programmerTournamentModel.GameHistory;
+
 import java.util.concurrent.*;
+
+import liarsDiceModel.gameInfo.GameHistory;
+import liarsDiceModel.gameInfo.GameInfo;
+import liarsDiceModel.gameInfo.PlayerInfo;
+import liarsDiceModel.gameInfo.Result;
+import liarsDiceModel.gameInfo.Round;
+import liarsDiceModel.gameInfo.Turn;
 
 
 /**

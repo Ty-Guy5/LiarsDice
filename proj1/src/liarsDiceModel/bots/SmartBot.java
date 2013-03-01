@@ -2,13 +2,13 @@ package liarsDiceModel.bots;
 
 import java.util.List;
 
-import liarsDiceModel.Bid;
-import liarsDiceModel.Challenge;
-import liarsDiceModel.Decision;
-import liarsDiceModel.Die;
-import liarsDiceModel.GameInfo;
-import liarsDiceModel.LiarsDiceBot;
-import liarsDiceModel.PlayerInfo;
+import liarsDiceModel.gameInfo.GameInfo;
+import liarsDiceModel.gameInfo.PlayerInfo;
+import liarsDiceModel.gameLogic.Bid;
+import liarsDiceModel.gameLogic.Challenge;
+import liarsDiceModel.gameLogic.Decision;
+import liarsDiceModel.gameLogic.Die;
+import liarsDiceModel.gameLogic.LiarsDiceBot;
 
 /**
  * Slightly more intelligent test bot which bids or challenges based on raw probabilities of dice rolls.

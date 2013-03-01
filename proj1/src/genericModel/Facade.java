@@ -1,11 +1,12 @@
-package liarsDiceModel;
+package genericModel;
+
 
 import java.util.ArrayList;
 import java.util.List;
 
+import liarsDiceModel.interfaceToFrontEnd.LiarsDiceGameFactory;
 
-import programmerTournamentModel.GameFactory;
-import programmerTournamentModel.Tournament;
+
 
 /**
  * This class serves as an interface for the view.  The view classes only need to call methods on this class.  

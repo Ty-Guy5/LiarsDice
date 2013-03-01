@@ -1,4 +1,9 @@
-package liarsDiceModel;
+package liarsDiceModel.testBots;
+
+import liarsDiceModel.gameInfo.GameInfo;
+import liarsDiceModel.gameLogic.Bid;
+import liarsDiceModel.gameLogic.Decision;
+import liarsDiceModel.gameLogic.LiarsDiceBot;
 
 
 /**

@@ -1,4 +1,6 @@
-package liarsDiceModel;
+package liarsDiceModel.gameInfo;
+
+import liarsDiceModel.gameLogic.Decision;
 
 
 /**

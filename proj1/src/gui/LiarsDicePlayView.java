@@ -1,14 +1,16 @@
 package gui;
 
+import genericModel.Facade;
+import genericModel.Player;
+
 import java.awt.*;
 
 import javax.swing.*;
 
-import liarsDiceModel.Facade;
-import liarsDiceModel.LDView;
-import liarsDiceModel.Player;
 
-public class LiarsDiceView extends JPanel implements LDView {
+import liarsDiceModel.interfaceToFrontEnd.LiarsDiceView;
+
+public class LiarsDicePlayView extends JPanel implements LiarsDiceView {
 
     private Facade facade;
     private GridLayout layout;
@@ -16,7 +18,7 @@ public class LiarsDiceView extends JPanel implements LDView {
     private JPanel optionsPanel, humanPanel;
     private JButton startGame, nextRound;
     
-	public LiarsDiceView(Facade f){
+	public LiarsDicePlayView(Facade f){
 		facade = f;
 
 		layout = new GridLayout(3,3);

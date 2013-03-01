@@ -1,6 +1,6 @@
-package liarsDiceModel;
+package liarsDiceModel.interfaceToFrontEnd;
 
-public interface LDView {
+public interface LiarsDiceView {
 
 	void decisionRequest();
 

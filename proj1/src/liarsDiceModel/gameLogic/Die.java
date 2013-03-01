@@ -1,4 +1,4 @@
-package liarsDiceModel;
+package liarsDiceModel.gameLogic;
 import java.util.Random;
 
 /**

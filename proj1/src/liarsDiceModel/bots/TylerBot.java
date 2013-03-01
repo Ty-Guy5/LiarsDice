@@ -2,8 +2,15 @@ package liarsDiceModel.bots;
 import java.util.ArrayList;
 import java.util.List;
 
-import programmerTournamentModel.GameHistory;
 import liarsDiceModel.*;
+import liarsDiceModel.gameInfo.GameHistory;
+import liarsDiceModel.gameInfo.GameInfo;
+import liarsDiceModel.gameInfo.Round;
+import liarsDiceModel.gameInfo.Turn;
+import liarsDiceModel.gameLogic.Bid;
+import liarsDiceModel.gameLogic.Challenge;
+import liarsDiceModel.gameLogic.Decision;
+import liarsDiceModel.gameLogic.LiarsDiceBot;
 
 /**
  * Tyler's bot so far.

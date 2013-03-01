@@ -1,4 +1,5 @@
-package liarsDiceModel;
+package genericModel;
+
 
 
 /**
@@ -13,7 +14,7 @@ public abstract class Player implements Comparable {
 	 * Constructor.
 	 * @param id The unique ID this Player will use for the tournament.
 	 */
-	Player(int id){
+	public Player(int id){
 		this.id = id;
 		stats = new Statistics();
 	}

@@ -1,7 +1,6 @@
-package programmerTournamentModel;
+package genericModel;
 import java.util.List;
 
-import liarsDiceModel.Player;
 
 /**
  * Generic version of a Game class. Each game added to this project will implement this 

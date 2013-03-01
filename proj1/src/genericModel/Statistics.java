@@ -1,4 +1,4 @@
-package liarsDiceModel;
+package genericModel;
 
 /**
  * Keeps track of the tournament statistics of a player: number of wins and losses, 

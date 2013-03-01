@@ -1,10 +1,12 @@
-package liarsDiceModel;
+package liarsDiceModel.gameInfo;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
+import liarsDiceModel.gameLogic.Bid;
+import liarsDiceModel.gameLogic.Die;
 
-import programmerTournamentModel.GameHistory;
+
 
 /**
  * Holds the relevant information for the current state of the game, including the current bid, the game history so far, 

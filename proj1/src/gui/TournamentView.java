@@ -1,5 +1,9 @@
 package gui;
 
+import genericModel.Facade;
+import genericModel.Player;
+import genericModel.Statistics;
+
 import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Dimension;
@@ -19,9 +23,7 @@ import javax.swing.JTextArea;
 import javax.swing.JTextField;
 import javax.swing.table.AbstractTableModel;
 
-import liarsDiceModel.Facade;
-import liarsDiceModel.Player;
-import liarsDiceModel.Statistics;
+
 
 public class TournamentView extends JPanel {
     

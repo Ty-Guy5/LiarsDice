@@ -1,4 +1,4 @@
-package liarsDiceModel;
+package liarsDiceModel.gameInfo;
 
 /**
  * Enum which contains the possible endings to a Round.
