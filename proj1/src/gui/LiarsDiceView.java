@@ -123,4 +123,10 @@ public class LiarsDiceView extends JPanel implements LDView {
 		// TODO Auto-generated method stub
 		
 	}
+
+	@Override
+	public void reportInterruption() {
+		// TODO Auto-generated method stub
+		
+	}
 }

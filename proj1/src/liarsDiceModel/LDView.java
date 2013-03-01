@@ -6,4 +6,6 @@ public interface LDView {
 
 	void reportGameResults();
 
+	void reportInterruption();
+
 }

@@ -12,7 +12,11 @@ public class HumanController extends LiarsDiceBot {
 	
 	ViewCommunication viewCommunication;
 
-    private static HumanController instance = null;
+    public ViewCommunication getViewCommunication() {
+		return viewCommunication;
+	}
+
+	private static HumanController instance = null;
 	
 	private HumanController() {
 		viewCommunication = new ViewCommunication();
@@ -43,8 +47,12 @@ public class HumanController extends LiarsDiceBot {
 	public Decision getDecision(GameInfo currentGameInfo) {
 		Decision userDecision = null;
 		
-		//update view
-		//request input from view to make decision
+		viewCommunication.sendDecisionRequest(currentGameInfo);
+		try {
+			userDecision = viewCommunication.getDecision();
+		} catch (InterruptedException e) {
+			viewCommunication.reportInterruption();
+		} 
 		
 		return userDecision;
 	}
@@ -53,22 +61,22 @@ public class HumanController extends LiarsDiceBot {
 	 * @param gameInfo The current state of the game.
 	 */
 	public void reportGameResults(GameHistory gameHistory) {
-		//update view
-		//wait for user choosing to continue
+		viewCommunication.reportGameResults(gameHistory);
 	}
 	
 	public class ViewCommunication
 	{
-		Semaphore s;
-		LDView view;
-		Decision currentDecision;
+		private Semaphore s;
+		private LDView view;
+		private Decision currentDecision;
 		
-		public void registerView(LDView view) {
-			this.view = view;
+		public ViewCommunication() {
+			s = new Semaphore(1);
 		}
 		
-		public void sendViewDecisionRequest(GameHistory gameHistory) {
-			currentDecision = null;
+		/*********** HumanController-end methods ***********/
+		
+		public void sendDecisionRequest(GameInfo gameInfo) {
 			view.decisionRequest();
 		}
 		
@@ -76,8 +84,25 @@ public class HumanController extends LiarsDiceBot {
 			view.reportGameResults();
 		}
 		
+		public Decision getDecision() throws InterruptedException {
+			s.acquire();
+			Decision rVal = currentDecision;
+			return rVal;
+		}
+		
+		public void reportInterruption() {
+			view.reportInterruption();
+		}
+		
+		/*********** View-end methods ***********/
+		
+		public void registerView(LDView view) {
+			this.view = view;
+		}
+		
 		public void setDecision(Decision d) {
 			currentDecision = d;
+			s.release();
 		}
 	}
 
