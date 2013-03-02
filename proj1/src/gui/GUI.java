@@ -27,7 +27,7 @@ public class GUI extends JFrame {
     	facade = new Facade();
     	
     	//defaults for tournament setup
-    	facade.chooseGame(new LiarsDiceGameFactory());
+    	facade.changeGame("LiarsDice");
     	timeoutInMicroseconds = 10000;
     	facade.setTimeout(timeoutInMicroseconds);
     	

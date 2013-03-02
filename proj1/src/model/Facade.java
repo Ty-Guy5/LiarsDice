@@ -2,6 +2,7 @@ package model;
 
 import java.util.List;
 
+import model.liarsDice.HumanController;
 import model.liarsDice.LiarsDiceGameFactory;
 
 
@@ -19,7 +20,7 @@ public class Facade {
 	public Facade()
 	{
 		//default to Liar's Dice as the game choice
-        chooseGame(new LiarsDiceGameFactory());
+        changeGame("LiarsDice");
 	}
 
 	/**
@@ -35,28 +36,27 @@ public class Facade {
 	public List<Player> getParticipants() {
 		return tournament.getParticipatingPlayers();
 	}
-
-	/**
-	 * Sets which game the tournament should run.
-	 * @param factory A GameFactory instance specific to the game which should be used for the tournament.
-	 */
-	public void chooseGame(GameFactory factory) {
-		tournament = new Tournament(factory);
-	}
 	
 	/**
 	 * Changes which game the tournament should be running.
 	 * @param gameName Name of the game which should be changed to.
 	 */
 	public void changeGame(String gameName){
+		tournament = new Tournament(chooseGameFactory(gameName));
+	}
+
+	/**
+	 * Chooses a GameFactory based on the name of the game.
+	 * @param gameName Name of the associated game.
+	 * @return The GameFactory specific to the game name.
+	 */
+	private GameFactory chooseGameFactory(String gameName) {
 		//When adding in new games, expand this switch statement:
 		switch(gameName){ //note: switching on a string will not work on anything before Java 1.7
 			case "LiarsDice":
-				tournament = new Tournament(new LiarsDiceGameFactory());
-				break;
+				return new LiarsDiceGameFactory();
 			default:
-				tournament = new Tournament(new LiarsDiceGameFactory());
-				break;
+				return new LiarsDiceGameFactory();
 		}
 	}
 
@@ -67,6 +67,14 @@ public class Facade {
 	 */
 	public void runTournament(int botsPerGame, int gameRepeats) {
 		tournament.runTournament(botsPerGame, gameRepeats);
+	}
+
+	public Player runGame(String gameName, List<Player> players, long microsecBeforeTimeout) {
+		GameFactory gameFactory = chooseGameFactory(gameName);
+		Game game = gameFactory.getGameInstance(players);
+		game.setTimeout(microsecBeforeTimeout);
+		Player winner = game.runGame();
+		return winner;
 	}
 	
 	/**

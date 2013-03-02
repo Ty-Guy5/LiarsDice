@@ -58,16 +58,14 @@ public class LiarsDiceGameFactory implements GameFactory {
 //		bots.add(new TestBot0());
 //		bots.add(new TestBot1());
 //		bots.add(new TestBot2());
-//		bots.add(new TestBot3());
-//		bots.add(new SmartBot());
 //		bots.add(new TestBot5());
 		
 		//gather bots in file via reflection
-		ArrayList<String> botNames = findBotsInFolder("/src/liarsDiceModel/bots");
+		ArrayList<String> botNames = findBotsInFolder("/src/model/liarsDice/bots");
 		for (String botName : botNames)
 		{
 			try{
-				bots.add((LiarsDiceBot)Class.forName("liarsDiceModel.bots." + botName).newInstance());
+				bots.add((LiarsDiceBot)Class.forName("model.liarsDice.bots." + botName).newInstance());
 			}catch (Exception e) {e.printStackTrace();}
 			//TODO assumes that bot constructor will be fast and error free
 		}
@@ -84,6 +82,13 @@ public class LiarsDiceGameFactory implements GameFactory {
 		return players;
 	}
 
+	/**
+	 * Finds bot files in a folder. Bot files end in .java and contain the line
+	 * "public class <botName> extends LiarsDiceBot..."
+	 * 
+	 * @param The folder to be searched
+	 * @return A list of the class names for all bot files found
+	 */
 	private ArrayList<String> findBotsInFolder(String string) {
 		ArrayList<String> botNames = new ArrayList<String>();
 		
@@ -111,7 +116,7 @@ public class LiarsDiceGameFactory implements GameFactory {
 								&& wordsInLine[0].equals("public")
 								&& wordsInLine[1].equals("class")
 								&& wordsInLine[3].equals("extends")
-								&& wordsInLine[4].equals("LiarsDiceBot")) {
+								&& wordsInLine[4].contains("LiarsDiceBot")) {
 							botNames.add(wordsInLine[2]);
 						}
 						line = in.readLine();

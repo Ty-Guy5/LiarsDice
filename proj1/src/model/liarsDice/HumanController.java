@@ -1,12 +1,11 @@
 package model.liarsDice;
+
 import java.util.concurrent.Semaphore;
 
 import model.liarsDice.gameInfo.GameHistory;
 import model.liarsDice.gameInfo.GameInfo;
 import model.liarsDice.gameLogic.Decision;
 import model.liarsDice.gameLogic.LiarsDiceBot;
-
-
 
 
 /**
@@ -20,22 +19,22 @@ public class HumanController extends LiarsDiceBot {
 		return viewCommunication;
 	}
 
-	private static HumanController instance = null;
+	//private static HumanController instance = null;
 	
-	private HumanController() {
+	public HumanController() {
 		viewCommunication = new ViewCommunication();
 	}
 
-    public static HumanController getInstance() {
+    /*public static HumanController getInstance() {
     	if (instance == null) {
-    		synchronized (HumanController .class){
+    		synchronized (HumanController.class){
     			if (instance == null) {
     				instance = new HumanController ();
     			}
     		}
     	}
     	return instance;
-    }
+    }*/
 
 	/**
 	 * @return The name of the human player.
