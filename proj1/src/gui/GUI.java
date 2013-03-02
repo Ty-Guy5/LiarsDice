@@ -1,19 +1,12 @@
 package gui;
 
-
-import genericModel.Facade;
-import genericModel.Player;
-import genericModel.Statistics;
-
 import java.awt.*;
 import java.awt.event.*;
-import java.util.Collections;
 
 import javax.swing.*;
-import javax.swing.table.AbstractTableModel;
 
-
-import liarsDiceModel.interfaceToFrontEnd.LiarsDiceGameFactory;
+import model.Facade;
+import model.liarsDice.LiarsDiceGameFactory;
 
 public class GUI extends JFrame {
    

@@ -1,14 +1,13 @@
 package gui;
 
-import genericModel.Facade;
-import genericModel.Player;
 
 import java.awt.*;
 
 import javax.swing.*;
 
-
-import liarsDiceModel.interfaceToFrontEnd.LiarsDiceView;
+import model.Facade;
+import model.Player;
+import model.liarsDice.LiarsDiceView;
 
 public class LiarsDicePlayView extends JPanel implements LiarsDiceView {
 

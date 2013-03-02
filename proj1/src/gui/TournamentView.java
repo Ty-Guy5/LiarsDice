@@ -1,8 +1,5 @@
 package gui;
 
-import genericModel.Facade;
-import genericModel.Player;
-import genericModel.Statistics;
 
 import java.awt.BorderLayout;
 import java.awt.Color;
@@ -13,7 +10,6 @@ import java.awt.event.ActionListener;
 import java.util.Collections;
 import java.util.List;
 
-import javax.swing.BoxLayout;
 import javax.swing.JButton;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
@@ -22,6 +18,10 @@ import javax.swing.JTable;
 import javax.swing.JTextArea;
 import javax.swing.JTextField;
 import javax.swing.table.AbstractTableModel;
+
+import model.Facade;
+import model.Player;
+import model.Statistics;
 
 
 
