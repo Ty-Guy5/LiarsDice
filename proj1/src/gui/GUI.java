@@ -105,6 +105,7 @@ public class GUI extends JFrame {
         //wrapup
         setTitle("Programmer AI Tournament");
         setLocation(100, 100); 
+        this.setMinimumSize(new Dimension(850, 700));
         setVisible(true);
         setDefaultCloseOperation(EXIT_ON_CLOSE);
         pack();

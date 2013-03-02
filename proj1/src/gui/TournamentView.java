@@ -79,11 +79,11 @@ public class TournamentView extends JPanel {
         
         statsTableModel = new StatsTableModel();
         statsTable = new JTable(statsTableModel);
-        statsTable.setPreferredScrollableViewportSize(new Dimension(800, 500));
+        statsTable.setPreferredScrollableViewportSize(new Dimension(600, 500));
         statsTable.setAutoResizeMode(JTable.AUTO_RESIZE_ALL_COLUMNS);
         statsTable.setFillsViewportHeight(true);
         JScrollPane statsTableScrollPane = new JScrollPane(statsTable);
-        statsTableScrollPane.setPreferredSize(new Dimension(800,400));
+        statsTableScrollPane.setPreferredSize(new Dimension(600,400));
         statsTableScrollPane.setMinimumSize(new Dimension(400, 200));
         
         this.add(statsTableScrollPane, BorderLayout.CENTER);
