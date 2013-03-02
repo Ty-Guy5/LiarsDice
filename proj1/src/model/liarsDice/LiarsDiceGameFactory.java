@@ -13,7 +13,6 @@ import model.Bot;
 import model.Game;
 import model.GameFactory;
 import model.Player;
-import model.liarsDice.bots.SmartBot;
 import model.liarsDice.gameLogic.LiarsDiceBot;
 import model.liarsDice.gameLogic.LiarsDiceGame;
 import model.liarsDice.gameLogic.LiarsDicePlayer;
@@ -24,13 +23,6 @@ import model.liarsDice.gameLogic.LiarsDicePlayer;
  */
 public class LiarsDiceGameFactory implements GameFactory {
 	private String name = "Liar's Dice";
-	
-	/**
-	 * Constructor. (Does nothing.)
-	 */
-	public LiarsDiceGameFactory(){
-		
-	}
 	
 	/**
 	 * @param players A list of players who will be included in the current Game instance.
@@ -60,8 +52,9 @@ public class LiarsDiceGameFactory implements GameFactory {
 	 * @return List of Players made from bots contained in the "/bots" folder.
 	 */
 	public List<Player> getPlayers() {
-		//hardcoded bots
 		ArrayList<Bot> bots = new ArrayList<Bot>();
+		
+		//hardcoded bots
 //		bots.add(new TestBot0());
 //		bots.add(new TestBot1());
 //		bots.add(new TestBot2());
