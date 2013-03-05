@@ -27,11 +27,18 @@ public class LiarsDicePlayView extends JPanel implements LiarsDiceView {
     
     private GridLayout layout;
     private PlayerPanel playerPanel1, playerPanel2, playerPanel3, humanPanel;
-    private JPanel optionsPanel, player1InfoPanel, player2InfoPanel, player3InfoPanel, humanInputPanel;
+    private JPanel player1InfoPanel, player2InfoPanel, player3InfoPanel, humanInputPanel;
     private JLabel player1InfoLabel, player2InfoLabel, player3InfoLabel, player1Decision, player2Decision, player3Decision;
     private JButton startGame, nextRound, humanBid, humanChallenge;
     private JTextField bidQuantity;
     private JRadioButton rb2, rb3, rb4, rb5, rb6;
+    
+    private JTextArea history; // Text area
+    private JScrollPane scrollPane; // Scroll pane for text area
+    
+    private Color tablegreen = new Color(80, 200, 120); //paris green
+    //private Color tablegreen = new Color(8, 138, 75)); //internet poker table
+    private boolean coloredGUI = true; //set to false if don't want color
     
 	public LiarsDicePlayView(Facade f){
 		facade = f;
@@ -42,6 +49,7 @@ public class LiarsDicePlayView extends JPanel implements LiarsDiceView {
 		setLayout(layout);
 		
 		player2InfoPanel = new JPanel();
+		if(coloredGUI) player2InfoPanel.setBackground(tablegreen);
 		player2InfoPanel.setLayout(new FlowLayout(FlowLayout.RIGHT));
 		player2InfoLabel = new JLabel("Last Decision:  ");
 		player2Decision = new JLabel();
@@ -50,9 +58,11 @@ public class LiarsDicePlayView extends JPanel implements LiarsDiceView {
 		add(player2InfoPanel, 0);
 
 		playerPanel2 = new PlayerPanel();
+		if(coloredGUI) playerPanel2.setBackground(tablegreen);
 		add(playerPanel2, 1);
 
 		player3InfoPanel = new JPanel();
+		if(coloredGUI) player3InfoPanel.setBackground(tablegreen);
 		player3InfoPanel.setLayout(new BorderLayout());
 		player3InfoLabel = new JLabel("Last Decision:  ");
 		player3Decision = new JLabel();
@@ -64,22 +74,22 @@ public class LiarsDicePlayView extends JPanel implements LiarsDiceView {
 		add(player3InfoPanel, 2);
 		
 		playerPanel1 = new PlayerPanel();
+		if(coloredGUI) playerPanel1.setBackground(tablegreen);
 		add(playerPanel1, 3);
 		
-		optionsPanel = new JPanel();
-		optionsPanel.setLayout(new BoxLayout(optionsPanel, BoxLayout.Y_AXIS));
-		startGame = new JButton("Start Game");
-		startGame.addActionListener(new ButtonListener());
-		optionsPanel.add(startGame);
-		nextRound = new JButton("Next Round");
-		nextRound.addActionListener(new ButtonListener());
-		optionsPanel.add(nextRound);
-		add(optionsPanel, 4);
+		history = new JTextArea();
+		if(coloredGUI) history.setBackground(tablegreen);
+		history.setLineWrap(true);
+		history.setEditable(false);
+		scrollPane = new JScrollPane(history);
+		add(scrollPane, 4);
 
 		playerPanel3 = new PlayerPanel();
+		if(coloredGUI) playerPanel3.setBackground(tablegreen);
 		add(playerPanel3, 5);
 		
 		player1InfoPanel = new JPanel();
+		if(coloredGUI) player1InfoPanel.setBackground(tablegreen);
 		player1InfoPanel.setLayout(new FlowLayout(FlowLayout.LEFT));
 		player1InfoLabel = new JLabel("Last Decision:  ");
 		player1Decision = new JLabel();
@@ -88,9 +98,11 @@ public class LiarsDicePlayView extends JPanel implements LiarsDiceView {
 		add(player1InfoPanel, 6);
 
 		humanPanel = new PlayerPanel();
+		if(coloredGUI) humanPanel.setBackground(tablegreen);
 		add(humanPanel, 7);
 
 		humanInputPanel = new JPanel();
+		if(coloredGUI) humanInputPanel.setBackground(tablegreen);
 		GridLayout g = new GridLayout(2,1);
 		humanInputPanel.setLayout(g);
 		JPanel wrapperPanel = new JPanel();
@@ -131,14 +143,31 @@ public class LiarsDicePlayView extends JPanel implements LiarsDiceView {
 	    bidPanel.add(radioPanel);
 	    wrapperPanel.add(bidPanel, BorderLayout.SOUTH);
 		humanInputPanel.add(wrapperPanel, 0);
-		JPanel buttonPanel = new JPanel();
-		buttonPanel.setLayout(new FlowLayout(FlowLayout.CENTER));
+		JPanel buttonPanel1 = new JPanel();
+		buttonPanel1.setLayout(new FlowLayout(FlowLayout.CENTER));
 		humanBid = new JButton(" Submit Bid ");
 		humanBid.addActionListener(new ButtonListener());
 		humanChallenge = new JButton(" Challenge ");
 		humanChallenge.addActionListener(new ButtonListener());
-		buttonPanel.add(humanBid);
-		buttonPanel.add(humanChallenge);
+		
+		startGame = new JButton("New Game");
+		startGame.addActionListener(new ButtonListener());
+		nextRound = new JButton("Next Round");
+		nextRound.addActionListener(new ButtonListener());
+		
+		buttonPanel1.add(humanBid);
+		buttonPanel1.add(humanChallenge);
+		
+		JPanel buttonPanel2 = new JPanel();
+		buttonPanel2.add(startGame);
+		buttonPanel2.add(nextRound);
+		
+		JPanel buttonPanel = new JPanel();
+		buttonPanel.setLayout(new BorderLayout());
+		
+		buttonPanel.add(buttonPanel1, BorderLayout.NORTH);
+		buttonPanel.add(buttonPanel2, BorderLayout.SOUTH);
+		
 		humanInputPanel.add(buttonPanel, 1);
 		add(humanInputPanel, 8);
 
@@ -194,7 +223,6 @@ public class LiarsDicePlayView extends JPanel implements LiarsDiceView {
 		playerPanel2.updateDicePanel(false);
 		playerPanel3.updateDicePanel(false);
 		humanPanel.updateDicePanel(true);
-		
 	}
     
     private class PlayerPanel extends JPanel 
@@ -218,6 +246,7 @@ public class LiarsDicePlayView extends JPanel implements LiarsDiceView {
     		
     		this.setLayout(new BoxLayout(this, BoxLayout.Y_AXIS));
     		dicePanel = new JPanel();
+    		if(coloredGUI) dicePanel.setBackground(tablegreen);
     		layout = new GridLayout(5,5);
     		dicePanel.setLayout(layout);
     		diceLabels = new JLabel[5][5];
@@ -314,11 +343,18 @@ public class LiarsDicePlayView extends JPanel implements LiarsDiceView {
 	
 	private class ButtonListener implements ActionListener
     {
-        public void actionPerformed(ActionEvent e) {
-        	if (e.getSource() == startGame) {
+        public void actionPerformed(ActionEvent e){
+        	if(e.getSource() == startGame) {
         		runGame();
         	}
-        	else if (e.getSource() == nextRound) {
+        	else if(e.getSource() == nextRound){
+        		history.setText(history.getText() + "Proceed to next round.\n");
+        	}
+        	else if(e.getSource() == humanBid){
+        		history.setText(history.getText() + "You bid some amount.\n");
+        	}
+        	else if(e.getSource() == humanChallenge){
+        		history.setText(history.getText() + "You challenged!!!\n");
         	}
         }
     }
