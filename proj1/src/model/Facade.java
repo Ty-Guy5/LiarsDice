@@ -76,6 +76,13 @@ public class Facade {
 		Player winner = game.runGame();
 		return winner;
 	}
+
+	public Game getGame(String gameName, List<Player> players, long microsecBeforeTimeout) {
+		GameFactory gameFactory = chooseGameFactory(gameName);
+		Game game = gameFactory.getGameInstance(players);
+		game.setTimeout(microsecBeforeTimeout);
+		return game;
+	}
 	
 	/**
 	 * Sets the allowed length of time each bot will have to take a turn.
