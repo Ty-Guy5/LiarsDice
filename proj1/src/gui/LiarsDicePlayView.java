@@ -5,16 +5,22 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.Vector;
 import java.util.List;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+import java.util.concurrent.Future;
+import java.util.concurrent.TimeUnit;
 
 import javax.swing.*;
 import javax.swing.border.Border;
 import javax.swing.border.TitledBorder;
 
 import model.Facade;
+import model.Game;
 import model.Player;
 import model.liarsDice.HumanController;
 import model.liarsDice.LiarsDiceGameFactory;
 import model.liarsDice.LiarsDiceView;
+import model.liarsDice.gameLogic.Decision;
 import model.liarsDice.gameLogic.Die;
 import model.liarsDice.gameLogic.LiarsDicePlayer;
 
@@ -33,13 +39,15 @@ public class LiarsDicePlayView extends JPanel implements LiarsDiceView {
     private JTextField bidQuantity;
     private JRadioButton rb2, rb3, rb4, rb5, rb6;
     
+    private Thread gameThread;
+
     private JTextArea history; // Text area
     private JScrollPane scrollPane; // Scroll pane for text area
     
     private Color tablegreen = new Color(80, 200, 120); //paris green
     //private Color tablegreen = new Color(8, 138, 75)); //internet poker table
     private boolean coloredGUI = true; //set to false if don't want color
-    
+
 	public LiarsDicePlayView(Facade f){
 		facade = f;
 		humanController = new HumanController();
@@ -333,7 +341,21 @@ public class LiarsDicePlayView extends JPanel implements LiarsDiceView {
     }
     
     private void runGame() {
-    	facade.runGame("LiarsDice", players, Long.MAX_VALUE);
+    	if (gameThread != null)
+    		gameThread.interrupt();
+    	Game game = facade.getGame("LiarsDice", players, Long.MAX_VALUE);
+    	gameThread = new GameThread(game);
+    	gameThread.start();
+    }
+    
+    private class GameThread extends Thread {
+    	Game game;
+    	public GameThread(Game game) {
+    		this.game = game;
+    	}
+    	public void run() {
+    		game.runGame();
+    	}
     }
 
 	@Override

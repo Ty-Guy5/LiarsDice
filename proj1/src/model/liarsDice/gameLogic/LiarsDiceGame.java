@@ -48,7 +48,11 @@ public class LiarsDiceGame implements Game {
 		//turnIndex = 0;
 		while(numPlayers > 1){
 //			System.out.println("new round " + counter++);
-			playRound();
+			try {
+				playRound();
+			} catch (InterruptedException e) {
+				return null;
+			}
 		}
 		
 		//determine the winner and report the results to everyone
@@ -66,8 +70,9 @@ public class LiarsDiceGame implements Game {
 	
 	/**
 	 * Plays a single round of the game. (Until a player challenges, throws an exception, or returns an invalid decision.)
+	 * @throws InterruptedException 
 	 */
-	private void playRound() {
+	private void playRound() throws InterruptedException {
 		Result roundResult = Result.UNFINISHED;
 		currentBid = null;
 		history.addRound(new Round());
@@ -95,8 +100,9 @@ public class LiarsDiceGame implements Game {
 	 * @param gi Current state of the game.
 	 * @param roundResult Result of the current round. (Result.UNFINISHED if round isn't over yet)
 	 * @return Result of the current round. (Result.UNFINISHED if round isn't over yet)
+	 * @throws InterruptedException 
 	 */
-	private Result collectAndProcessDecision(GameInfo gi, Result roundResult) {
+	private Result collectAndProcessDecision(GameInfo gi, Result roundResult) throws InterruptedException {
 		
 		//collect decision
 		Decision decision = null;
@@ -161,9 +167,10 @@ public class LiarsDiceGame implements Game {
 	 * @throws DecisionTimeout If the player exceeds the time limit.
 	 * @throws ExecutionException If the player throws an exception. This will include all
 	 * 		the information of the exception that was thrown.
+	 * @throws InterruptedException 
 	 */
 	private Decision getDecisionTimed(LiarsDicePlayer player,
-			GameInfo gi) throws DecisionTimeout, ExecutionException {
+			GameInfo gi) throws DecisionTimeout, ExecutionException, InterruptedException {
 		
 		Decision decision = null;
 		
@@ -180,6 +187,7 @@ public class LiarsDiceGame implements Game {
 		catch (InterruptedException e) {
 			if (debug)
 				e.printStackTrace();
+			throw e;
 		}
 		
 		return decision;
