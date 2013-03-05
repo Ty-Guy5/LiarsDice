@@ -67,6 +67,7 @@ public class LiarsDicePlayView extends JPanel implements LiarsDiceView {
 		player3InfoLabel = new JLabel("Last Decision:  ");
 		player3Decision = new JLabel();
 		JPanel p3Container = new JPanel();
+		if(coloredGUI) p3Container.setBackground(tablegreen);
 		p3Container.setLayout(new FlowLayout(FlowLayout.RIGHT));
 		p3Container.add(player3InfoLabel);
 		p3Container.add(player3Decision);
@@ -106,20 +107,27 @@ public class LiarsDicePlayView extends JPanel implements LiarsDiceView {
 		GridLayout g = new GridLayout(2,1);
 		humanInputPanel.setLayout(g);
 		JPanel wrapperPanel = new JPanel();
+		if(coloredGUI) wrapperPanel.setBackground(tablegreen);
 		wrapperPanel.setLayout(new BorderLayout());
 		JPanel bidPanel = new JPanel();
+		if(coloredGUI) bidPanel.setBackground(tablegreen);
 		bidQuantity = new JTextField("", 4);
 		bidPanel.add(bidQuantity);
 		//add radio buttons, etc
 		rb2 = new JRadioButton("");
+		if(coloredGUI) rb2.setBackground(tablegreen);
 		JLabel rbp2 = new JLabel(new ImageIcon("images/small/die2.png"));
 		rb3 = new JRadioButton("");
+		if(coloredGUI) rb3.setBackground(tablegreen);
 		JLabel rbp3 = new JLabel(new ImageIcon("images/small/die3.png"));
 		rb4 = new JRadioButton("");
+		if(coloredGUI) rb4.setBackground(tablegreen);
 		JLabel rbp4 = new JLabel(new ImageIcon("images/small/die4.png"));
 		rb5 = new JRadioButton("");
+		if(coloredGUI) rb5.setBackground(tablegreen);
 		JLabel rbp5 = new JLabel(new ImageIcon("images/small/die5.png"));
 		rb6 = new JRadioButton("");
+		if(coloredGUI) rb6.setBackground(tablegreen);
 		JLabel rbp6 = new JLabel(new ImageIcon("images/small/die6.png"));
 	    //Group the radio buttons.
 	    ButtonGroup group = new ButtonGroup();
@@ -129,6 +137,7 @@ public class LiarsDicePlayView extends JPanel implements LiarsDiceView {
 	    group.add(rb5);
 	    group.add(rb6);
 	    JPanel radioPanel = new JPanel();
+	    if(coloredGUI) radioPanel.setBackground(tablegreen);
 	    radioPanel.setLayout(new GridLayout(1, 10));
 	    radioPanel.add(rb2);
 	    radioPanel.add(rbp2);
@@ -144,6 +153,7 @@ public class LiarsDicePlayView extends JPanel implements LiarsDiceView {
 	    wrapperPanel.add(bidPanel, BorderLayout.SOUTH);
 		humanInputPanel.add(wrapperPanel, 0);
 		JPanel buttonPanel1 = new JPanel();
+		if(coloredGUI) buttonPanel1.setBackground(tablegreen);
 		buttonPanel1.setLayout(new FlowLayout(FlowLayout.CENTER));
 		humanBid = new JButton(" Submit Bid ");
 		humanBid.addActionListener(new ButtonListener());
@@ -159,10 +169,12 @@ public class LiarsDicePlayView extends JPanel implements LiarsDiceView {
 		buttonPanel1.add(humanChallenge);
 		
 		JPanel buttonPanel2 = new JPanel();
+		if(coloredGUI) buttonPanel2.setBackground(tablegreen);
 		buttonPanel2.add(startGame);
 		buttonPanel2.add(nextRound);
 		
 		JPanel buttonPanel = new JPanel();
+		if(coloredGUI) buttonPanel.setBackground(tablegreen);
 		buttonPanel.setLayout(new BorderLayout());
 		
 		buttonPanel.add(buttonPanel1, BorderLayout.NORTH);
@@ -236,6 +248,7 @@ public class LiarsDicePlayView extends JPanel implements LiarsDiceView {
     	
     	public PlayerPanel() {
     		blank = new ImageIcon("images/blank.png");
+    		if(coloredGUI) blank = new ImageIcon("images/blank-green.png");
     		die1 = new ImageIcon("images/die1.png");
     		die2 = new ImageIcon("images/die2.png");
     		die3 = new ImageIcon("images/die3.png");
