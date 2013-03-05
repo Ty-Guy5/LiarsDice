@@ -74,13 +74,13 @@ public class HumanController extends LiarsDiceBot {
 		private Decision currentDecision;
 		
 		public ViewCommunication() {
-			s = new Semaphore(1);
+			s = new Semaphore(0);
 		}
 		
 		/*********** HumanController-end methods ***********/
 		
 		public void sendDecisionRequest(GameInfo gameInfo) {
-			view.decisionRequest();
+			view.decisionRequest(gameInfo);
 		}
 		
 		public void reportGameResults(GameHistory gameHistory) {

@@ -20,6 +20,9 @@ import model.Player;
 import model.liarsDice.HumanController;
 import model.liarsDice.LiarsDiceGameFactory;
 import model.liarsDice.LiarsDiceView;
+import model.liarsDice.gameInfo.GameInfo;
+import model.liarsDice.gameLogic.Bid;
+import model.liarsDice.gameLogic.Challenge;
 import model.liarsDice.gameLogic.Decision;
 import model.liarsDice.gameLogic.Die;
 import model.liarsDice.gameLogic.LiarsDicePlayer;
@@ -31,6 +34,8 @@ public class LiarsDicePlayView extends JPanel implements LiarsDiceView {
     private Vector<Player> players;
     private int numPlayers;
     
+    private Thread gameThread;
+    
     private GridLayout layout;
     private PlayerPanel playerPanel1, playerPanel2, playerPanel3, humanPanel;
     private JPanel player1InfoPanel, player2InfoPanel, player3InfoPanel, humanInputPanel;
@@ -38,8 +43,6 @@ public class LiarsDicePlayView extends JPanel implements LiarsDiceView {
     private JButton startGame, nextRound, humanBid, humanChallenge;
     private JTextField bidQuantity;
     private JRadioButton rb2, rb3, rb4, rb5, rb6;
-    
-    private Thread gameThread;
 
     private JTextArea history; // Text area
     private JScrollPane scrollPane; // Scroll pane for text area
@@ -50,8 +53,6 @@ public class LiarsDicePlayView extends JPanel implements LiarsDiceView {
 
 	public LiarsDicePlayView(Facade f){
 		facade = f;
-		humanController = new HumanController();
-		humanController.getViewCommunication().registerView(this);
 
 		layout = new GridLayout(3,3);
 		setLayout(layout);
@@ -216,6 +217,8 @@ public class LiarsDicePlayView extends JPanel implements LiarsDiceView {
 		players.set(0, allPlayers.get(0));
 		players.set(1, allPlayers.get(1));
 		players.set(2, allPlayers.get(2));
+		humanController = new HumanController();
+		humanController.getViewCommunication().registerView(this);
 		players.set(3, new LiarsDicePlayer(humanController, allPlayers.size()));
 		
 		playerPanel1.setPlayer((LiarsDicePlayer)players.get(0));
@@ -330,6 +333,7 @@ public class LiarsDicePlayView extends JPanel implements LiarsDiceView {
     private void runGame() {
     	if (gameThread != null)
     		gameThread.interrupt();
+    	setupPlayers();
     	Game game = facade.getGame("LiarsDice", players, Long.MAX_VALUE);
     	gameThread = new GameThread(game);
     	gameThread.start();
@@ -346,14 +350,14 @@ public class LiarsDicePlayView extends JPanel implements LiarsDiceView {
     }
 
 	@Override
-	public void decisionRequest() {
-		// TODO Auto-generated method stub
-		
+	public void decisionRequest(GameInfo gameInfo) {
+		history.setText(history.getText() + "Decision requested.\n");
+		//TODO update gui
 	}
 
 	@Override
 	public void reportGameResults() {
-		// TODO Auto-generated method stub
+		history.setText(history.getText() + "Game over.\n");
 		
 	}
 
@@ -374,9 +378,13 @@ public class LiarsDicePlayView extends JPanel implements LiarsDiceView {
         	}
         	else if(e.getSource() == humanBid){
         		history.setText(history.getText() + "You bid some amount.\n");
+        		Decision decision = new Bid(1,1); //TODO
+        		humanController.getViewCommunication().setDecision(decision);
         	}
         	else if(e.getSource() == humanChallenge){
         		history.setText(history.getText() + "You challenged!!!\n");
+        		Decision decision = new Challenge();
+        		humanController.getViewCommunication().setDecision(decision);
         	}
         }
     }
