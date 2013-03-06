@@ -8,6 +8,4 @@ public interface LiarsDiceView {
 
 	void reportGameResults();
 
-	void reportInterruption();
-
 }

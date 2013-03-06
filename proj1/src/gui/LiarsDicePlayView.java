@@ -337,6 +337,7 @@ public class LiarsDicePlayView extends JPanel implements LiarsDiceView {
     	Game game = facade.getGame("LiarsDice", players, Long.MAX_VALUE);
     	gameThread = new GameThread(game);
     	gameThread.start();
+    	writeMessage("New game started.");
     }
     
     private class GameThread extends Thread {
@@ -351,20 +352,18 @@ public class LiarsDicePlayView extends JPanel implements LiarsDiceView {
 
 	@Override
 	public void decisionRequest(GameInfo gameInfo) {
-		history.setText(history.getText() + "Decision requested.\n");
-		//TODO update gui
+		writeMessage("Decision requested.");
+		//TODO update gui according to gameInfo object
 	}
 
 	@Override
 	public void reportGameResults() {
-		history.setText(history.getText() + "Game over.\n");
+		writeMessage("Game over.");
 		
 	}
-
-	@Override
-	public void reportInterruption() {
-		// TODO Auto-generated method stub
-		
+	
+	private void writeMessage(String msg) {
+		history.setText(history.getText() + msg + "\n");
 	}
 	
 	private class ButtonListener implements ActionListener
@@ -374,15 +373,15 @@ public class LiarsDicePlayView extends JPanel implements LiarsDiceView {
         		runGame();
         	}
         	else if(e.getSource() == nextRound){
-        		history.setText(history.getText() + "Proceed to next round.\n");
+        		writeMessage("Proceed to next round.");
         	}
         	else if(e.getSource() == humanBid){
-        		history.setText(history.getText() + "You bid some amount.\n");
+        		writeMessage("You bid some amount.");
         		Decision decision = new Bid(1,1); //TODO
         		humanController.getViewCommunication().setDecision(decision);
         	}
         	else if(e.getSource() == humanChallenge){
-        		history.setText(history.getText() + "You challenged!!!\n");
+        		writeMessage("You challenged!!!");
         		Decision decision = new Challenge();
         		humanController.getViewCommunication().setDecision(decision);
         	}
