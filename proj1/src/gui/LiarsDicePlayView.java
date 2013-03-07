@@ -4,6 +4,7 @@ import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.ArrayList;
+import java.util.Random;
 import java.util.Vector;
 import java.util.List;
 import java.util.concurrent.ExecutorService;
@@ -450,8 +451,8 @@ public class LiarsDicePlayView extends JPanel implements LiarsDiceView {
 		}
 		//player2InfoLabel = new JLabel("Last Decision:  ");
 		
-		updateToRoundEnd(gameInfo);
-		if (roundChanged(gameInfo))
+		updateToRoundEnd();
+		if (roundChanged())
 		{
 			nextRound.setEnabled(true);
 		}
@@ -536,24 +537,9 @@ public class LiarsDicePlayView extends JPanel implements LiarsDiceView {
         		writeMessage("Proceed to next round.");
         	}
         	else if(e.getSource() == humanBid){
-        		String bid = bidQuantity.getText();
-        		try{
-        			int quantity = Integer.parseInt(bid);
-        			int face = checkRadioButtons();
-        			if(quantity > 0 && face != -1){
-                		humanBid.setEnabled(false);
-                		humanChallenge.setEnabled(false);
-		        		Decision decision = new Bid(quantity,face);
-		        		humanController.getViewCommunication().setDecision(decision);
-        			}
-        			else{
-        				writeMessage("Please ensure you make a valid bid.");
-        			}
-        		}catch(Exception e2){
-        			writeMessage("Please ensure you make a valid bid.");
-        		}
         		humanBid.setEnabled(false);
         		humanChallenge.setEnabled(false);
+        		Decision decision = getHumanBid();
         		humanController.getViewCommunication().setDecision(decision);
         	}
         	else if(e.getSource() == humanChallenge){
@@ -561,6 +547,27 @@ public class LiarsDicePlayView extends JPanel implements LiarsDiceView {
         		humanController.getViewCommunication().setDecision(decision);
         	}
         }
+
+		private Decision getHumanBid() {
+			//TODO: fix her up
+    		String bid = bidQuantity.getText();
+			int quantity = Integer.parseInt(bid);
+			int face = checkRadioButtons();
+    		try{
+    			if(quantity > 0 && face != -1){
+            		humanBid.setEnabled(false);
+            		humanChallenge.setEnabled(false);
+	        		Decision decision = new Bid(quantity,face);
+	        		humanController.getViewCommunication().setDecision(decision);
+    			}
+    			else{
+    				writeMessage("Please ensure you make a valid bid.");
+    			}
+    		}catch(Exception e2){
+    			writeMessage("Please ensure you make a valid bid.");
+    		}
+			return new Bid(quantity, face);
+		}
 
 		private int checkRadioButtons() {
 			if(rb2.isSelected()){
