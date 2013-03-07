@@ -4,6 +4,7 @@ import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.ArrayList;
+import java.util.Random;
 import java.util.Vector;
 import java.util.List;
 import java.util.concurrent.ExecutorService;
@@ -236,12 +237,18 @@ public class LiarsDicePlayView extends JPanel implements LiarsDiceView {
 		numPlayers = 4; //TODO this should go elsewhere, I think
 		players.setSize(numPlayers);
 		
-		//TODO this is just the (unstable) default. Change so the user chooses the opponents.
-		players.set(0, allPlayers.get(0));
+		Random rand = new Random();
+		int index = rand.nextInt(allPlayers.size());
+		players.set(0, allPlayers.get(index));
+		botPickers[0].setSelectedIndex(index);
 		allPlayers = factory.getPlayers();
-		players.set(1, allPlayers.get(0));
+		index = rand.nextInt(allPlayers.size());
+		players.set(1, allPlayers.get(index));
+		botPickers[1].setSelectedIndex(index);
 		allPlayers = factory.getPlayers();
-		players.set(2, allPlayers.get(0));
+		index = rand.nextInt(allPlayers.size());
+		players.set(2, allPlayers.get(index));
+		botPickers[2].setSelectedIndex(index);
 		humanController = new HumanController();
 		humanController.getViewCommunication().registerView(this);
 		players.set(3, new LiarsDicePlayer(humanController, allPlayers.size()));
