@@ -23,6 +23,8 @@ import model.liarsDice.LiarsDiceGameFactory;
 import model.liarsDice.LiarsDiceView;
 import model.liarsDice.gameInfo.GameHistory;
 import model.liarsDice.gameInfo.GameInfo;
+import model.liarsDice.gameInfo.Round;
+import model.liarsDice.gameInfo.Turn;
 import model.liarsDice.gameLogic.Bid;
 import model.liarsDice.gameLogic.Challenge;
 import model.liarsDice.gameLogic.Decision;
@@ -235,10 +237,18 @@ public class LiarsDicePlayView extends JPanel implements LiarsDiceView {
 		numPlayers = 4; //TODO this should go elsewhere, I think
 		players.setSize(numPlayers);
 		
-		//TODO this is just the (unstable) default. Change so the user chooses the opponents.
-		players.set(0, allPlayers.get(0));
-		players.set(1, allPlayers.get(1));
-		players.set(2, allPlayers.get(2));
+		Random rand = new Random();
+		int index = rand.nextInt(allPlayers.size());
+		players.set(0, allPlayers.get(index));
+		botPickers[0].setSelectedIndex(index);
+		allPlayers = factory.getPlayers();
+		index = rand.nextInt(allPlayers.size());
+		players.set(1, allPlayers.get(index));
+		botPickers[1].setSelectedIndex(index);
+		allPlayers = factory.getPlayers();
+		index = rand.nextInt(allPlayers.size());
+		players.set(2, allPlayers.get(index));
+		botPickers[2].setSelectedIndex(index);
 		humanController = new HumanController();
 		humanController.getViewCommunication().registerView(this);
 		players.set(3, new LiarsDicePlayer(humanController, allPlayers.size()));
@@ -421,6 +431,41 @@ public class LiarsDicePlayView extends JPanel implements LiarsDiceView {
 			humanChallenge.setEnabled(true);
 		}
 	}
+	private void updateLastDecisions(GameInfo gameInfo) {
+		List<Round> rounds = gameInfo.getGameHistory().getRounds();
+		Round current = rounds.get(rounds.size() - 1);
+		List<Turn> turns = current.getTurns();
+		int i = turns.size() - 1;
+		if(i >= 0){
+			player3InfoLabel.setText("Last Decision:  " + turns.get(i).getDecision());
+			i--;
+		}
+		if(i >= 0){
+			player2InfoLabel.setText("Last Decision:  " + turns.get(i).getDecision());
+			i--;
+		}
+		if(i >= 0){
+			player1InfoLabel.setText("Last Decision:  " + turns.get(i).getDecision());
+			i--;
+		}
+		//player2InfoLabel = new JLabel("Last Decision:  ");
+		
+		updateToRoundEnd(gameInfo);
+		if (roundChanged(gameInfo))
+		{
+			nextRound.setEnabled(true);
+		}
+		else //same round
+		{
+			playerPanel1.updateDicePanel(false);
+			playerPanel2.updateDicePanel(false);
+			playerPanel3.updateDicePanel(false);
+			humanPanel.updateDicePanel(true);
+			humanBid.setEnabled(true);
+			humanChallenge.setEnabled(true);
+		}
+	}
+	
 
 	private void updateToRoundEnd() {
 		//TODO update currentGameInfo, last decisions, and messages to 
@@ -491,7 +536,22 @@ public class LiarsDicePlayView extends JPanel implements LiarsDiceView {
         		writeMessage("Proceed to next round.");
         	}
         	else if(e.getSource() == humanBid){
-        		Decision decision = new Bid(1,1); //TODO
+        		String bid = bidQuantity.getText();
+        		try{
+        			int quantity = Integer.parseInt(bid);
+        			int face = checkRadioButtons();
+        			if(quantity > 0 && face != -1){
+                		humanBid.setEnabled(false);
+                		humanChallenge.setEnabled(false);
+		        		Decision decision = new Bid(quantity,face);
+		        		humanController.getViewCommunication().setDecision(decision);
+        			}
+        			else{
+        				writeMessage("Please ensure you make a valid bid.");
+        			}
+        		}catch(Exception e2){
+        			writeMessage("Please ensure you make a valid bid.");
+        		}
         		humanBid.setEnabled(false);
         		humanChallenge.setEnabled(false);
         		humanController.getViewCommunication().setDecision(decision);
@@ -501,6 +561,25 @@ public class LiarsDicePlayView extends JPanel implements LiarsDiceView {
         		humanController.getViewCommunication().setDecision(decision);
         	}
         }
+
+		private int checkRadioButtons() {
+			if(rb2.isSelected()){
+				return 2;
+			}
+			else if(rb3.isSelected()){
+				return 3;
+			}
+			else if(rb4.isSelected()){
+				return 4;
+			}
+			else if(rb5.isSelected()){
+				return 5;
+			}
+			else if(rb6.isSelected()){
+				return 6;
+			}
+				return -1;
+		}
     }
 	
 	private class ComboBoxListener implements ActionListener{
