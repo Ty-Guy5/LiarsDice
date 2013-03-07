@@ -54,7 +54,9 @@ public class HumanController extends LiarsDiceBot {
 		try {
 			userDecision = viewCommunication.getDecision();
 		} catch (InterruptedException e) {
-			viewCommunication.reportInterruption();
+			//Do nothing. Game is over and this thread will die. 
+			//Also, this block may never be reached.
+			//TODO log if it is reached?
 		} 
 		
 		return userDecision;
@@ -91,10 +93,6 @@ public class HumanController extends LiarsDiceBot {
 			s.acquire();
 			Decision rVal = currentDecision;
 			return rVal;
-		}
-		
-		public void reportInterruption() {
-			view.reportInterruption();
 		}
 		
 		/*********** View-end methods ***********/

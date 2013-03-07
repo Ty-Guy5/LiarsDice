@@ -4,6 +4,7 @@ import java.awt.*;
 import java.awt.event.*;
 
 import javax.swing.*;
+import javax.swing.UIManager.LookAndFeelInfo;
 
 import model.Facade;
 import model.liarsDice.LiarsDiceGameFactory;
@@ -127,6 +128,17 @@ public class GUI extends JFrame {
 	
     public static void main(String[] args)
     {
+//    	try{
+//			for (LookAndFeelInfo info : UIManager.getInstalledLookAndFeels()) {
+//		        if ("Nimbus".equals(info.getName())) {
+//		            UIManager.setLookAndFeel(info.getClassName());
+//		            break;
+//		        }
+//		    }
+//		}catch(Exception e){
+//			//use standard
+//		}
+    	
     	GUI gui = new GUI();
     }
 }
