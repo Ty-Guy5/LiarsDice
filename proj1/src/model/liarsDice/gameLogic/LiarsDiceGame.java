@@ -112,7 +112,11 @@ public class LiarsDiceGame implements Game {
 			decision = getDecisionTimed(players.get(turnIndex), gi);
 			if(decision instanceof Bid){
 				Bid b = (Bid)decision;
+				System.out.println(turnIndex + " Bid: " + b);
 //				System.out.println("bid: " + b.getFrequency() + " " + b.getDieNumber() + "'s");
+			}
+			else{
+				System.out.println(turnIndex + " challenge!");
 			}
 		}
 		catch(DecisionTimeout dt) {

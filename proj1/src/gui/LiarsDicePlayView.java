@@ -3,6 +3,7 @@ package gui;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.util.ArrayList;
 import java.util.Vector;
 import java.util.List;
 import java.util.concurrent.ExecutorService;
@@ -47,12 +48,16 @@ public class LiarsDicePlayView extends JPanel implements LiarsDiceView {
     private JTextArea history; // Text area
     private JScrollPane scrollPane; // Scroll pane for text area
     
+    private JComboBox[] botPickers;
+    
     private Color tablegreen = new Color(80, 200, 120); //paris green
     //private Color tablegreen = new Color(8, 138, 75)); //internet poker table
-    private boolean coloredGUI = false, nimbus = true; //set to false if don't want color
+    private boolean coloredGUI = true, nimbus = false; //set to false if don't want color
 
 	public LiarsDicePlayView(Facade f){
 		facade = f;
+		
+		botPickers = new JComboBox[3];
 
 		layout = new GridLayout(3,3);
 		setLayout(layout);
@@ -66,7 +71,7 @@ public class LiarsDicePlayView extends JPanel implements LiarsDiceView {
 		player2InfoPanel.add(player2Decision);
 		add(player2InfoPanel, 0);
 
-		playerPanel2 = new PlayerPanel();
+		playerPanel2 = new PlayerPanel(1);
 		if(coloredGUI) playerPanel2.setBackground(tablegreen);
 		add(playerPanel2, 1);
 
@@ -83,7 +88,7 @@ public class LiarsDicePlayView extends JPanel implements LiarsDiceView {
 		player3InfoPanel.add(p3Container, BorderLayout.SOUTH);
 		add(player3InfoPanel, 2);
 		
-		playerPanel1 = new PlayerPanel();
+		playerPanel1 = new PlayerPanel(0);
 		if(coloredGUI) playerPanel1.setBackground(tablegreen);
 		add(playerPanel1, 3);
 		
@@ -94,7 +99,7 @@ public class LiarsDicePlayView extends JPanel implements LiarsDiceView {
 		scrollPane = new JScrollPane(history);
 		add(scrollPane, 4);
 
-		playerPanel3 = new PlayerPanel();
+		playerPanel3 = new PlayerPanel(2);
 		if(coloredGUI) playerPanel3.setBackground(tablegreen);
 		add(playerPanel3, 5);
 		
@@ -107,7 +112,7 @@ public class LiarsDicePlayView extends JPanel implements LiarsDiceView {
 		player1InfoPanel.add(player1Decision);
 		add(player1InfoPanel, 6);
 
-		humanPanel = new PlayerPanel();
+		humanPanel = new PlayerPanel(-1);
 		if(coloredGUI) humanPanel.setBackground(tablegreen);
 		add(humanPanel, 7);
 
@@ -234,13 +239,13 @@ public class LiarsDicePlayView extends JPanel implements LiarsDiceView {
 		players.set(3, new LiarsDicePlayer(humanController, allPlayers.size()));
 		
 		playerPanel1.setPlayer((LiarsDicePlayer)players.get(0));
-		playerPanel1.setBorder(new TitledBorder(players.get(0).getName()));
+		//playerPanel1.setBorder(new TitledBorder(players.get(0).getName()));
 		playerPanel2.setPlayer((LiarsDicePlayer)players.get(1));
-		playerPanel2.setBorder(new TitledBorder(players.get(1).getName()));
+		//playerPanel2.setBorder(new TitledBorder(players.get(1).getName()));
 		playerPanel3.setPlayer((LiarsDicePlayer)players.get(2));
-		playerPanel3.setBorder(new TitledBorder(players.get(2).getName()));
+		//playerPanel3.setBorder(new TitledBorder(players.get(2).getName()));
 		humanPanel.setPlayer((LiarsDicePlayer)players.get(3));
-		humanPanel.setBorder(new TitledBorder(players.get(3).getName()));
+		//humanPanel.setBorder(new TitledBorder(players.get(3).getName()));
 		
 		playerPanel1.updateDicePanel(false);
 		playerPanel2.updateDicePanel(false);
@@ -257,7 +262,7 @@ public class LiarsDicePlayView extends JPanel implements LiarsDiceView {
     	public JPanel dicePanel;
     	public ImageIcon die1, die2, die3, die4, die5, die6, dieq, blank;
     	
-    	public PlayerPanel() {
+    	public PlayerPanel(int index) {
     		blank = new ImageIcon("images/blank.png");
     		if(coloredGUI) blank = new ImageIcon("images/blank-green.png");
     		if(nimbus){
@@ -272,6 +277,19 @@ public class LiarsDicePlayView extends JPanel implements LiarsDiceView {
     		dieq = new ImageIcon("images/diequestion.png");
     		
     		this.setLayout(new BoxLayout(this, BoxLayout.Y_AXIS));
+    		if(index > -1){
+	    		List<Player> players = facade.getPlayers();
+	    		List<String> playerNames = new ArrayList<String>();
+	    		for(Player p : players){
+	    			playerNames.add(p.getName());
+	    		}
+	    		Object[] botStrings = playerNames.toArray();
+	    		//Create the combo box, select item at index 4.
+	    		//Indices start at 0, so 4 specifies the pig.
+	    		botPickers[index] = new JComboBox(botStrings);
+	    		botPickers[index].addActionListener(new ComboBoxListener());
+	    		this.add(botPickers[index]);
+    		}
     		dicePanel = new JPanel();
     		if(coloredGUI) dicePanel.setBackground(tablegreen);
     		layout = new GridLayout(5,5);
@@ -293,7 +311,7 @@ public class LiarsDicePlayView extends JPanel implements LiarsDiceView {
 //    			//diceLabels[d.width][d.height].setText("  1  ");
 //    			diceLabels[d.width][d.height].setIcon(dieq);
 //    		}
-    		add(dicePanel);
+    		this.add(dicePanel);
     	}
 
 		public void updateDicePanel(boolean show) {
@@ -369,7 +387,12 @@ public class LiarsDicePlayView extends JPanel implements LiarsDiceView {
 	@Override
 	public void decisionRequest(GameInfo gameInfo) {
 		writeMessage("Decision requested.");
-		//TODO update gui according to gameInfo object
+		playerPanel1.updateDicePanel(false);
+		playerPanel2.updateDicePanel(false);
+		playerPanel3.updateDicePanel(false);
+		humanPanel.updateDicePanel(true);
+		//player2InfoLabel = new JLabel("Last Decision:  ");
+		writeMessage("Current bid: " + gameInfo.getCurrentBid());
 	}
 
 	@Override
@@ -392,15 +415,35 @@ public class LiarsDicePlayView extends JPanel implements LiarsDiceView {
         		writeMessage("Proceed to next round.");
         	}
         	else if(e.getSource() == humanBid){
-        		writeMessage("You bid some amount.");
         		Decision decision = new Bid(1,1); //TODO
         		humanController.getViewCommunication().setDecision(decision);
         	}
         	else if(e.getSource() == humanChallenge){
-        		writeMessage("You challenged!!!");
         		Decision decision = new Challenge();
         		humanController.getViewCommunication().setDecision(decision);
         	}
         }
     }
+	
+	private class ComboBoxListener implements ActionListener{
+		
+		public ComboBoxListener(){
+			
+		}
+		
+		public void actionPerformed(ActionEvent e) {
+			LiarsDiceGameFactory factory = new LiarsDiceGameFactory();
+	    	List<Player> allPlayers = factory.getPlayers();
+			if(e.getSource() == botPickers[0]) {
+				players.set(0, allPlayers.get(botPickers[0].getSelectedIndex()));
+			}
+			else if(e.getSource() == botPickers[1]) {
+				players.set(1, allPlayers.get(botPickers[1].getSelectedIndex()));
+			}
+			else if(e.getSource() == botPickers[2]) {
+				players.set(2, allPlayers.get(botPickers[2].getSelectedIndex()));
+			}
+		}
+		
+	}
 }
