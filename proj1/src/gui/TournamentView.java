@@ -65,7 +65,7 @@ public class TournamentView extends JPanel {
         repeatTimes.addActionListener(new TextBoxListener());
         tournamentOptionsPanel.add(repeatTimes);
         numberTimesLabel = new JTextArea("Number of games that will be played: 0");
-        numberTimesLabel.setPreferredSize(new Dimension(160, 35));
+        numberTimesLabel.setPreferredSize(new Dimension(160, 45));
         numberTimesLabel.setLineWrap(true);
         numberTimesLabel.setWrapStyleWord(true);
         numberTimesLabel.setText("Number of games that will be played: " + facade.numGamesForSettings(4, 1));
