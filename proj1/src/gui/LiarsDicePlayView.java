@@ -21,6 +21,7 @@ import model.Player;
 import model.liarsDice.HumanController;
 import model.liarsDice.LiarsDiceGameFactory;
 import model.liarsDice.LiarsDiceView;
+import model.liarsDice.gameInfo.GameHistory;
 import model.liarsDice.gameInfo.GameInfo;
 import model.liarsDice.gameLogic.Bid;
 import model.liarsDice.gameLogic.Challenge;
@@ -37,7 +38,7 @@ public class LiarsDicePlayView extends JPanel implements LiarsDiceView {
     
     private Thread gameThread;
     
-    private GameInfo lastGameInfo; 
+    private GameInfo lastGameInfo, latestGameInfo; 
     
     private GridLayout layout;
     private PlayerPanel playerPanel1, playerPanel2, playerPanel3, humanPanel;
@@ -404,8 +405,9 @@ public class LiarsDicePlayView extends JPanel implements LiarsDiceView {
 		//player2InfoLabel = new JLabel("Last Decision:  ");
 		writeMessage("Current bid: " + gameInfo.getCurrentBid());
 		
-		updateToRoundEnd(gameInfo);
-		if (roundChanged(gameInfo))
+		latestGameInfo = gameInfo;
+		updateToRoundEnd();
+		if (roundChanged())
 		{
 			nextRound.setEnabled(true);
 		}
@@ -420,20 +422,29 @@ public class LiarsDicePlayView extends JPanel implements LiarsDiceView {
 		}
 	}
 
-	private void updateToRoundEnd(GameInfo gameInfo) {
+	private void updateToRoundEnd() {
 		//TODO update currentGameInfo, last decisions, and messages to 
 		//	reflect game state at end of current round
 	}
 
-	private boolean roundChanged(GameInfo gameInfo) {
+	private boolean roundChanged() {
 		// TODO Auto-generated method stub
 		return false;
 	}
 
 	@Override
-	public void reportGameResults() {
+	public void reportGameResults(GameHistory gameHistory) {
 		writeMessage("Game over.");
-		
+		//TODO update dice and last decisions to game end, reveal all dice,
+		//	and declare who won
+		startGame.setText("New Game");
+		for (int i=0; i<botPickers.length; i++) {
+			botPickers[i].setEnabled(true);
+		}
+		startGame.setEnabled(true);
+		humanBid.setEnabled(false);
+		humanChallenge.setEnabled(false);
+		nextRound.setEnabled(false);
 	}
 	
 	private void writeMessage(String msg) {
@@ -444,13 +455,39 @@ public class LiarsDicePlayView extends JPanel implements LiarsDiceView {
     {
         public void actionPerformed(ActionEvent e){
         	if(e.getSource() == startGame) {
-        		startGame.setText("End Game");
-        		for (int i=0; i<botPickers.length; i++) {
-        			botPickers[i].setEnabled(false);
+        		if (startGame.getText().equals("New Game"))
+        		{
+        			startGame.setText("End Game");
+            		for (int i=0; i<botPickers.length; i++) {
+            			botPickers[i].setEnabled(false);
+            		}
+            		runGame();
         		}
-        		runGame();
+        		else
+        		{
+        			startGame.setText("New Game");
+            		for (int i=0; i<botPickers.length; i++) {
+            			botPickers[i].setEnabled(true);
+            		}
+        			startGame.setEnabled(true);
+        			humanBid.setEnabled(false);
+        			humanChallenge.setEnabled(false);
+        			nextRound.setEnabled(false);
+        			//TODO interrupt game?
+        		}
         	}
         	else if(e.getSource() == nextRound){
+        		updateToRoundEnd();
+        		if(roundChanged())
+        		{
+        			//do nothing
+        		}
+        		else
+        		{
+            		nextRound.setEnabled(false);
+            		humanBid.setEnabled(true);
+            		humanChallenge.setEnabled(true);
+        		}
         		writeMessage("Proceed to next round.");
         	}
         	else if(e.getSource() == humanBid){
