@@ -295,6 +295,9 @@ public class LiarsDiceGame implements Game {
 		else{
 			this.turnIndex = loseIndex;
 		}
+		for(LiarsDicePlayer p : players){
+			p.rerollDice(); //every time a die is lost, round ends and everyone rerolls
+		}
 	}
 
 	/**

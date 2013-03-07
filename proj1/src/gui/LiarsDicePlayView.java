@@ -22,6 +22,8 @@ import model.liarsDice.HumanController;
 import model.liarsDice.LiarsDiceGameFactory;
 import model.liarsDice.LiarsDiceView;
 import model.liarsDice.gameInfo.GameInfo;
+import model.liarsDice.gameInfo.Round;
+import model.liarsDice.gameInfo.Turn;
 import model.liarsDice.gameLogic.Bid;
 import model.liarsDice.gameLogic.Challenge;
 import model.liarsDice.gameLogic.Decision;
@@ -232,8 +234,10 @@ public class LiarsDicePlayView extends JPanel implements LiarsDiceView {
 		
 		//TODO this is just the (unstable) default. Change so the user chooses the opponents.
 		players.set(0, allPlayers.get(0));
-		players.set(1, allPlayers.get(1));
-		players.set(2, allPlayers.get(2));
+		allPlayers = factory.getPlayers();
+		players.set(1, allPlayers.get(0));
+		allPlayers = factory.getPlayers();
+		players.set(2, allPlayers.get(0));
 		humanController = new HumanController();
 		humanController.getViewCommunication().registerView(this);
 		players.set(3, new LiarsDicePlayer(humanController, allPlayers.size()));
@@ -386,17 +390,41 @@ public class LiarsDicePlayView extends JPanel implements LiarsDiceView {
 
 	@Override
 	public void decisionRequest(GameInfo gameInfo) {
-		writeMessage("Decision requested.");
+		//writeMessage("Decision requested.");
 		playerPanel1.updateDicePanel(false);
 		playerPanel2.updateDicePanel(false);
 		playerPanel3.updateDicePanel(false);
 		humanPanel.updateDicePanel(true);
-		//player2InfoLabel = new JLabel("Last Decision:  ");
+		updateLastDecisions(gameInfo);
 		writeMessage("Current bid: " + gameInfo.getCurrentBid());
+	}
+
+	private void updateLastDecisions(GameInfo gameInfo) {
+		List<Round> rounds = gameInfo.getGameHistory().getRounds();
+		Round current = rounds.get(rounds.size() - 1);
+		List<Turn> turns = current.getTurns();
+		int i = turns.size() - 1;
+		if(i >= 0){
+			player3InfoLabel.setText("Last Decision:  " + turns.get(i).getDecision());
+			i--;
+		}
+		if(i >= 0){
+			player2InfoLabel.setText("Last Decision:  " + turns.get(i).getDecision());
+			i--;
+		}
+		if(i >= 0){
+			player1InfoLabel.setText("Last Decision:  " + turns.get(i).getDecision());
+			i--;
+		}
+		//player2InfoLabel = new JLabel("Last Decision:  ");
 	}
 
 	@Override
 	public void reportGameResults() {
+		playerPanel1.updateDicePanel(true);
+		playerPanel2.updateDicePanel(true);
+		playerPanel3.updateDicePanel(true);
+		humanPanel.updateDicePanel(true);
 		writeMessage("Game over.");
 		
 	}
@@ -415,14 +443,45 @@ public class LiarsDicePlayView extends JPanel implements LiarsDiceView {
         		writeMessage("Proceed to next round.");
         	}
         	else if(e.getSource() == humanBid){
-        		Decision decision = new Bid(1,1); //TODO
-        		humanController.getViewCommunication().setDecision(decision);
+        		String bid = bidQuantity.getText();
+        		try{
+        			int quantity = Integer.parseInt(bid);
+        			int face = checkRadioButtons();
+        			if(quantity > 0 && face != -1){
+		        		Decision decision = new Bid(quantity,face);
+		        		humanController.getViewCommunication().setDecision(decision);
+        			}
+        			else{
+        				writeMessage("Please ensure you make a valid bid.");
+        			}
+        		}catch(Exception e2){
+        			writeMessage("Please ensure you make a valid bid.");
+        		}
         	}
         	else if(e.getSource() == humanChallenge){
         		Decision decision = new Challenge();
         		humanController.getViewCommunication().setDecision(decision);
         	}
         }
+
+		private int checkRadioButtons() {
+			if(rb2.isSelected()){
+				return 2;
+			}
+			else if(rb3.isSelected()){
+				return 3;
+			}
+			else if(rb4.isSelected()){
+				return 4;
+			}
+			else if(rb5.isSelected()){
+				return 5;
+			}
+			else if(rb6.isSelected()){
+				return 6;
+			}
+				return -1;
+		}
     }
 	
 	private class ComboBoxListener implements ActionListener{
