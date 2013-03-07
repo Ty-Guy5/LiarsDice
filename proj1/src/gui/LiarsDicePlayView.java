@@ -49,7 +49,7 @@ public class LiarsDicePlayView extends JPanel implements LiarsDiceView {
     
     private Color tablegreen = new Color(80, 200, 120); //paris green
     //private Color tablegreen = new Color(8, 138, 75)); //internet poker table
-    private boolean coloredGUI = true; //set to false if don't want color
+    private boolean coloredGUI = false; //set to false if don't want color
 
 	public LiarsDicePlayView(Facade f){
 		facade = f;
