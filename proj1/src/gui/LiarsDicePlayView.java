@@ -49,7 +49,7 @@ public class LiarsDicePlayView extends JPanel implements LiarsDiceView {
     
     private Color tablegreen = new Color(80, 200, 120); //paris green
     //private Color tablegreen = new Color(8, 138, 75)); //internet poker table
-    private boolean coloredGUI = true; //set to false if don't want color
+    private boolean coloredGUI = false, nimbus = true; //set to false if don't want color
 
 	public LiarsDicePlayView(Facade f){
 		facade = f;
@@ -247,6 +247,9 @@ public class LiarsDicePlayView extends JPanel implements LiarsDiceView {
     	
     	public PlayerPanel() {
     		blank = new ImageIcon("images/blank.png");
+    		if(nimbus){
+    			blank = new ImageIcon("images/blank-nimbus.png");
+    		}
     		die1 = new ImageIcon("images/die1.png");
     		die2 = new ImageIcon("images/die2.png");
     		die3 = new ImageIcon("images/die3.png");
