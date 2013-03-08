@@ -104,7 +104,6 @@ public class LiarsDiceGame implements Game {
 	 */
 	private Result collectAndProcessDecision(GameInfo gi, Result roundResult) throws InterruptedException {
 		
-		//collect decision
 		Decision decision = null;
 		try{
 //			int dice = players.get(turnIndex).getDice().size();
@@ -133,8 +132,6 @@ public class LiarsDiceGame implements Game {
 			takeAwayDieAndSetNextTurn(turnIndex);
 			return roundResult;
 		}
-		
-		//process decision
 		if(!isValidDecision(decision, gi)){
 			roundResult = Result.INVALIDDECISION;
 			players.get(turnIndex).getStatistics().increaseInvalidDecisions();
