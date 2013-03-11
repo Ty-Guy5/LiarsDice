@@ -15,6 +15,8 @@ import java.util.concurrent.TimeUnit;
 import javax.swing.*;
 import javax.swing.border.Border;
 import javax.swing.border.TitledBorder;
+import javax.swing.event.DocumentEvent;
+import javax.swing.event.DocumentListener;
 
 import model.Facade;
 import model.Game;
@@ -30,6 +32,7 @@ import model.liarsDice.gameLogic.Bid;
 import model.liarsDice.gameLogic.Challenge;
 import model.liarsDice.gameLogic.Decision;
 import model.liarsDice.gameLogic.Die;
+import model.liarsDice.gameLogic.LiarsDiceGame;
 import model.liarsDice.gameLogic.LiarsDicePlayer;
 
 public class LiarsDicePlayView extends JPanel implements LiarsDiceView {
@@ -55,6 +58,8 @@ public class LiarsDicePlayView extends JPanel implements LiarsDiceView {
     private JScrollPane scrollPane; // Scroll pane for text area
     
     private JComboBox[] botPickers;
+    
+    private BidListener bidListener;
     
     private Color tablegreen = new Color(80, 200, 120); //paris green
     //private Color tablegreen = new Color(8, 138, 75)); //internet poker table
@@ -122,6 +127,7 @@ public class LiarsDicePlayView extends JPanel implements LiarsDiceView {
 		if(coloredGUI) humanPanel.setBackground(tablegreen);
 		add(humanPanel, 7);
 
+		bidListener = new BidListener();
 		humanInputPanel = new JPanel();
 		if(coloredGUI) humanInputPanel.setBackground(tablegreen);
 		GridLayout g = new GridLayout(2,1);
@@ -132,6 +138,7 @@ public class LiarsDicePlayView extends JPanel implements LiarsDiceView {
 		JPanel bidPanel = new JPanel();
 		if(coloredGUI) bidPanel.setBackground(tablegreen);
 		bidQuantity = new JTextField("", 4);
+		bidQuantity.getDocument().addDocumentListener(bidListener);
 		bidPanel.add(bidQuantity);
 		//add radio buttons, etc
 		rb2 = new JRadioButton("");
@@ -149,6 +156,11 @@ public class LiarsDicePlayView extends JPanel implements LiarsDiceView {
 		rb6 = new JRadioButton("");
 		if(coloredGUI) rb6.setBackground(tablegreen);
 		JLabel rbp6 = new JLabel(new ImageIcon("images/small/die6.png"));
+		rb2.addActionListener(bidListener);
+		rb3.addActionListener(bidListener);
+		rb4.addActionListener(bidListener);
+		rb5.addActionListener(bidListener);
+		rb6.addActionListener(bidListener);
 	    //Group the radio buttons.
 	    ButtonGroup group = new ButtonGroup();
 	    group.add(rb2);
@@ -272,7 +284,7 @@ public class LiarsDicePlayView extends JPanel implements LiarsDiceView {
 	private void initializeEnables() {
 		startGame.setEnabled(true);
 		nextRound.setEnabled(false);
-		humanBid.setEnabled(false);
+		bidListener.setEnabled(false);
 		humanChallenge.setEnabled(false);
 		for (int i=0; i<botPickers.length; i++) {
 			botPickers[i].setEnabled(true);
@@ -393,7 +405,7 @@ public class LiarsDicePlayView extends JPanel implements LiarsDiceView {
     private void runGame() {
     	if (gameThread != null)
     		gameThread.interrupt();
-    	setupPlayers();
+    	setupPlayers(); //TODO why is this here? It cannot be here because players should not be reset.
     	Game game = facade.getGame("LiarsDice", players, Long.MAX_VALUE);
     	gameThread = new GameThread(game);
     	gameThread.start();
@@ -428,7 +440,7 @@ public class LiarsDicePlayView extends JPanel implements LiarsDiceView {
 			playerPanel2.updateDicePanel(false);
 			playerPanel3.updateDicePanel(false);
 			humanPanel.updateDicePanel(true);
-			humanBid.setEnabled(true);
+			bidListener.setEnabled(true);
 			humanChallenge.setEnabled(true);
 		}
 	}
@@ -462,7 +474,7 @@ public class LiarsDicePlayView extends JPanel implements LiarsDiceView {
 			playerPanel2.updateDicePanel(false);
 			playerPanel3.updateDicePanel(false);
 			humanPanel.updateDicePanel(true);
-			humanBid.setEnabled(true);
+			bidListener.setEnabled(true);
 			humanChallenge.setEnabled(true);
 		}
 	}
@@ -488,13 +500,76 @@ public class LiarsDicePlayView extends JPanel implements LiarsDiceView {
 			botPickers[i].setEnabled(true);
 		}
 		startGame.setEnabled(true);
-		humanBid.setEnabled(false);
+		bidListener.setEnabled(false);
 		humanChallenge.setEnabled(false);
 		nextRound.setEnabled(false);
 	}
 	
 	private void writeMessage(String msg) {
 		history.setText(history.getText() + msg + "\n");
+	}
+
+	private Decision getHumanBid() {
+		int quantity;
+		int face = checkRadioButtons();
+		try{
+			quantity = Integer.parseInt(bidQuantity.getText());
+		}catch(NumberFormatException e){
+			quantity = 0;
+		}
+		return new Bid(quantity, face);
+	}
+
+	private int checkRadioButtons() {
+		if(rb2.isSelected()){
+			return 2;
+		}
+		else if(rb3.isSelected()){
+			return 3;
+		}
+		else if(rb4.isSelected()){
+			return 4;
+		}
+		else if(rb5.isSelected()){
+			return 5;
+		}
+		else if(rb6.isSelected()){
+			return 6;
+		}
+			return -1;
+	}
+	
+	private class BidListener implements ActionListener, DocumentListener
+	{
+		private boolean enabled = false;
+
+		public void setEnabled(boolean b) {
+			enabled = b;
+			updateBidButtonEnabled();
+		}
+		
+		public void actionPerformed(ActionEvent e) {
+			updateBidButtonEnabled();
+		}
+
+		public void insertUpdate(DocumentEvent e) {
+			updateBidButtonEnabled();
+		}
+
+		public void removeUpdate(DocumentEvent e) {
+			updateBidButtonEnabled();
+		}
+
+		public void changedUpdate(DocumentEvent e) {
+			updateBidButtonEnabled();
+		}
+		
+		private void updateBidButtonEnabled() {
+			if (enabled && LiarsDiceGame.isValidDecision(getHumanBid(), latestGameInfo))
+				humanBid.setEnabled(true);
+			else
+				humanBid.setEnabled(false);
+		}
 	}
 	
 	private class ButtonListener implements ActionListener
@@ -516,28 +591,28 @@ public class LiarsDicePlayView extends JPanel implements LiarsDiceView {
             			botPickers[i].setEnabled(true);
             		}
         			startGame.setEnabled(true);
-        			humanBid.setEnabled(false);
+        			bidListener.setEnabled(false);
         			humanChallenge.setEnabled(false);
         			nextRound.setEnabled(false);
-        			//TODO interrupt game?
+        			gameThread.interrupt();
         		}
         	}
         	else if(e.getSource() == nextRound){
         		updateToRoundEnd();
         		if(roundChanged())
         		{
-        			//do nothing
+        			//change nothing
         		}
         		else
         		{
             		nextRound.setEnabled(false);
-            		humanBid.setEnabled(true);
+            		bidListener.setEnabled(true);
             		humanChallenge.setEnabled(true);
         		}
         		writeMessage("Proceed to next round.");
         	}
         	else if(e.getSource() == humanBid){
-        		humanBid.setEnabled(false);
+        		bidListener.setEnabled(false);
         		humanChallenge.setEnabled(false);
         		Decision decision = getHumanBid();
         		humanController.getViewCommunication().setDecision(decision);
@@ -547,46 +622,6 @@ public class LiarsDicePlayView extends JPanel implements LiarsDiceView {
         		humanController.getViewCommunication().setDecision(decision);
         	}
         }
-
-		private Decision getHumanBid() {
-			//TODO: fix her up
-    		String bid = bidQuantity.getText();
-			int quantity = Integer.parseInt(bid);
-			int face = checkRadioButtons();
-    		try{
-    			if(quantity > 0 && face != -1){
-            		humanBid.setEnabled(false);
-            		humanChallenge.setEnabled(false);
-	        		Decision decision = new Bid(quantity,face);
-	        		humanController.getViewCommunication().setDecision(decision);
-    			}
-    			else{
-    				writeMessage("Please ensure you make a valid bid.");
-    			}
-    		}catch(Exception e2){
-    			writeMessage("Please ensure you make a valid bid.");
-    		}
-			return new Bid(quantity, face);
-		}
-
-		private int checkRadioButtons() {
-			if(rb2.isSelected()){
-				return 2;
-			}
-			else if(rb3.isSelected()){
-				return 3;
-			}
-			else if(rb4.isSelected()){
-				return 4;
-			}
-			else if(rb5.isSelected()){
-				return 5;
-			}
-			else if(rb6.isSelected()){
-				return 6;
-			}
-				return -1;
-		}
     }
 	
 	private class ComboBoxListener implements ActionListener{
