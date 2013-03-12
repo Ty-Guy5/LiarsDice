@@ -108,7 +108,6 @@ public class LiarsDicePlayView extends JPanel implements LiarsDiceView {
 		history.setLineWrap(true);
 		history.setEditable(false);
 		scrollPane = new JScrollPane(history);
-		scrollPane.getVerticalScrollBar().setValue(JScrollBar.HEIGHT);
 		add(scrollPane, 4);
 
 		playerPanel3 = new PlayerPanel(2);
@@ -221,6 +220,28 @@ public class LiarsDicePlayView extends JPanel implements LiarsDiceView {
 		humanInputPanel.add(buttonPanel, 1);
 		add(humanInputPanel, 8);
 
+		LiarsDiceGameFactory factory = new LiarsDiceGameFactory();
+    	List<Player> allPlayers = factory.getPlayers();
+		players = new Vector<Player>();
+		numPlayers = 4; //TODO this should go elsewhere, I think
+		players.setSize(numPlayers);
+		
+		Random rand = new Random();
+		int index = rand.nextInt(allPlayers.size());
+		players.set(0, allPlayers.get(index));
+		botPickers[0].setSelectedIndex(index);
+		allPlayers = factory.getPlayers();
+		index = rand.nextInt(allPlayers.size());
+		players.set(1, allPlayers.get(index));
+		botPickers[1].setSelectedIndex(index);
+		allPlayers = factory.getPlayers();
+		index = rand.nextInt(allPlayers.size());
+		players.set(2, allPlayers.get(index));
+		botPickers[2].setSelectedIndex(index);
+		humanController = new HumanController();
+		humanController.getViewCommunication().registerView(this);
+		players.set(3, new LiarsDicePlayer(humanController, allPlayers.size()));
+		
 		setupPlayers();
 		initializeEnables();
 		writeMessage("Select opponent bots, then click \"New Game\" to get started.");
@@ -250,28 +271,7 @@ public class LiarsDicePlayView extends JPanel implements LiarsDiceView {
 	}
 
 	private void setupPlayers() {
-    	LiarsDiceGameFactory factory = new LiarsDiceGameFactory();
-    	List<Player> allPlayers = factory.getPlayers();
-		players = new Vector<Player>();
-		numPlayers = 4; //TODO this should go elsewhere, I think
-		players.setSize(numPlayers);
-		
-		Random rand = new Random();
-		int index = rand.nextInt(allPlayers.size());
-		players.set(0, allPlayers.get(index));
-		botPickers[0].setSelectedIndex(index);
-		allPlayers = factory.getPlayers();
-		index = rand.nextInt(allPlayers.size());
-		players.set(1, allPlayers.get(index));
-		botPickers[1].setSelectedIndex(index);
-		allPlayers = factory.getPlayers();
-		index = rand.nextInt(allPlayers.size());
-		players.set(2, allPlayers.get(index));
-		botPickers[2].setSelectedIndex(index);
-		humanController = new HumanController();
-		humanController.getViewCommunication().registerView(this);
-		players.set(3, new LiarsDicePlayer(humanController, allPlayers.size()));
-		
+    			
 		playerPanel1.setPlayer((LiarsDicePlayer)players.get(0));
 		//playerPanel1.setBorder(new TitledBorder(players.get(0).getName()));
 		playerPanel2.setPlayer((LiarsDicePlayer)players.get(1));
@@ -522,7 +522,7 @@ public class LiarsDicePlayView extends JPanel implements LiarsDiceView {
 	
 	private void writeMessage(String msg) {
 		history.setText(history.getText() + msg + "\n");
-		scrollPane.getVerticalScrollBar().setValue(JScrollBar.HEIGHT);
+		scrollPane.getVerticalScrollBar().setValue(scrollPane.getVerticalScrollBar().getMaximum());
 	}
 
 	private Decision getHumanBid() {
@@ -634,6 +634,7 @@ public class LiarsDicePlayView extends JPanel implements LiarsDiceView {
         		humanController.getViewCommunication().setDecision(decision);
         	}
         	else if(e.getSource() == humanChallenge){
+        		//writeMessage(""+scrollPane.getVerticalScrollBar().getValue());
         		Decision decision = new Challenge();
         		humanController.getViewCommunication().setDecision(decision);
         	}
