@@ -430,10 +430,6 @@ public class LiarsDicePlayView extends JPanel implements LiarsDiceView {
 
 	@Override
 	public void decisionRequest(GameInfo gameInfo) {
-		writeMessage("Decision requested.");
-		//player2InfoLabel = new JLabel("Last Decision:  ");
-		writeMessage("Current bid: " + gameInfo.getCurrentBid());
-		
 		latestGameInfo = gameInfo;
 		updateToRoundEnd();
 		if (roundChanged())
@@ -449,6 +445,8 @@ public class LiarsDicePlayView extends JPanel implements LiarsDiceView {
 			bidListener.setEnabled(true);
 			humanChallenge.setEnabled(true);
 		}
+		
+		writeMessage("Please enter your bid.");
 	}
 	private void updateLastDecisions(GameInfo gameInfo) {
 		List<Round> rounds = gameInfo.getGameHistory().getRounds();
@@ -489,6 +487,8 @@ public class LiarsDicePlayView extends JPanel implements LiarsDiceView {
 	
 
 	private void updateToRoundEnd() {
+		writeMessage("Messages as to what just happened go here.");
+		
 		//TODO update currentGameInfo, last decisions, and messages to 
 		//	reflect game state at end of current round
 	}
@@ -500,13 +500,15 @@ public class LiarsDicePlayView extends JPanel implements LiarsDiceView {
 
 	@Override
 	public void reportGameResults(GameHistory gameHistory) {
-		writeMessage("Game over.");
+		updateToRoundEnd();
+		writeMessage("Game over. ____ won.");
 		//TODO update last decisions to game end?
 		//TODO declare who won
 		playerPanel1.updateDicePanel(true);
 		playerPanel2.updateDicePanel(true);
 		playerPanel3.updateDicePanel(true);
 		humanPanel.updateDicePanel(true);
+		
 		startGame.setText("New Game");
 		for (int i=0; i<botPickers.length; i++) {
 			botPickers[i].setEnabled(true);
@@ -606,6 +608,9 @@ public class LiarsDicePlayView extends JPanel implements LiarsDiceView {
         			bidListener.setEnabled(false);
         			humanChallenge.setEnabled(false);
         			nextRound.setEnabled(false);
+        			
+        			writeMessage("Game ended.");
+        			
         			gameThread.interrupt();
         		}
         	}
