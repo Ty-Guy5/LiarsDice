@@ -17,6 +17,8 @@ import javax.swing.JScrollPane;
 import javax.swing.JTable;
 import javax.swing.JTextArea;
 import javax.swing.JTextField;
+import javax.swing.event.DocumentEvent;
+import javax.swing.event.DocumentListener;
 import javax.swing.table.AbstractTableModel;
 
 import model.Facade;
@@ -57,12 +59,12 @@ public class TournamentView extends JPanel {
         botsPerGameLabel = new JLabel("Bots per game:");
         tournamentOptionsPanel.add(botsPerGameLabel);
         botsPerGame = new JTextField("4", 2);
-        botsPerGame.addActionListener(new TextBoxListener());
+        botsPerGame.getDocument().addDocumentListener(new TextBoxListener());
         tournamentOptionsPanel.add(botsPerGame);
         repeatTimesLabel = new JLabel("Repeat each game:");
         tournamentOptionsPanel.add(repeatTimesLabel);
         repeatTimes = new JTextField("1", 2);
-        repeatTimes.addActionListener(new TextBoxListener());
+        repeatTimes.getDocument().addDocumentListener(new TextBoxListener());
         tournamentOptionsPanel.add(repeatTimes);
         numberTimesLabel = new JTextArea("Number of games that will be played: 0");
         numberTimesLabel.setPreferredSize(new Dimension(160, 45));
@@ -199,9 +201,20 @@ public class TournamentView extends JPanel {
     }
     
     
-    private class TextBoxListener implements ActionListener
+    private class TextBoxListener implements DocumentListener
     {
-		public void actionPerformed(ActionEvent arg0) {
+		@Override
+		public void insertUpdate(DocumentEvent e) {
+			updateNumberOfGamesText();
+		}
+
+		@Override
+		public void removeUpdate(DocumentEvent e) {
+			updateNumberOfGamesText();
+		}
+
+		@Override
+		public void changedUpdate(DocumentEvent e) {
 			updateNumberOfGamesText();
 		}
     }

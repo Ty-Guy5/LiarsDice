@@ -86,7 +86,7 @@ public class HumanController extends LiarsDiceBot {
 		}
 		
 		public void reportGameResults(GameHistory gameHistory) {
-			view.reportGameResults();
+			view.reportGameResults(gameHistory);
 		}
 		
 		public Decision getDecision() throws InterruptedException {
