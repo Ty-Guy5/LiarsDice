@@ -102,6 +102,7 @@ public class LiarsDicePlayView extends JPanel implements LiarsDiceView {
 		history.setLineWrap(true);
 		history.setEditable(false);
 		scrollPane = new JScrollPane(history);
+		scrollPane.getVerticalScrollBar().setValue(JScrollBar.HEIGHT);
 		add(scrollPane, 4);
 
 		playerPanel3 = new PlayerPanel(2);
@@ -477,6 +478,7 @@ public class LiarsDicePlayView extends JPanel implements LiarsDiceView {
 	
 	private void writeMessage(String msg) {
 		history.setText(history.getText() + msg + "\n");
+		scrollPane.getVerticalScrollBar().setValue(JScrollBar.HEIGHT);
 	}
 	
 	private class ButtonListener implements ActionListener
