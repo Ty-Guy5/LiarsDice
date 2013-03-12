@@ -32,10 +32,10 @@ public class TylerBot extends LiarsDiceBot
 	}
 
 	int numGames = 0;
-	public void reportGameResults(GameHistory hist)
+	public void reportGameResults(GameInfo info)
 	{
 		say("Game " + ++numGames + ": ");
-		for (Round r : hist.getRounds())
+		for (Round r : info.getGameHistory().getRounds())
 		{
 			displayRound(r);
 		}

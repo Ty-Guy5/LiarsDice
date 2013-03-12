@@ -84,8 +84,8 @@ public class LiarsDicePlayer extends Player{
 	 * Used to tell the bots what happened in the game after it is over - in case they want to learn from it.
 	 * @param gameHistory History of the game.
 	 */
-	public void reportGameResults(GameHistory gameHistory){
-		bot.reportGameResults(gameHistory);
+	public void reportGameResults(GameInfo gameInfo){
+		bot.reportGameResults(gameInfo);
 	}
 
 	/**

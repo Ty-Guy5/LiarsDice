@@ -65,8 +65,8 @@ public class HumanController extends LiarsDiceBot {
 	/**
 	 * @param gameInfo The current state of the game.
 	 */
-	public void reportGameResults(GameHistory gameHistory) {
-		viewCommunication.reportGameResults(gameHistory);
+	public void reportGameResults(GameInfo gameInfo) {
+		viewCommunication.reportGameResults(gameInfo);
 	}
 	
 	public class ViewCommunication
@@ -85,8 +85,8 @@ public class HumanController extends LiarsDiceBot {
 			view.decisionRequest(gameInfo);
 		}
 		
-		public void reportGameResults(GameHistory gameHistory) {
-			view.reportGameResults(gameHistory);
+		public void reportGameResults(GameInfo gameInfo) {
+			view.reportGameResults(gameInfo);
 		}
 		
 		public Decision getDecision() throws InterruptedException {

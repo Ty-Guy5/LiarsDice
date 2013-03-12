@@ -26,6 +26,8 @@ import model.liarsDice.LiarsDiceGameFactory;
 import model.liarsDice.LiarsDiceView;
 import model.liarsDice.gameInfo.GameHistory;
 import model.liarsDice.gameInfo.GameInfo;
+import model.liarsDice.gameInfo.PlayerInfo;
+import model.liarsDice.gameInfo.Result;
 import model.liarsDice.gameInfo.Round;
 import model.liarsDice.gameInfo.Turn;
 import model.liarsDice.gameLogic.Bid;
@@ -35,6 +37,7 @@ import model.liarsDice.gameLogic.Die;
 import model.liarsDice.gameLogic.LiarsDiceGame;
 import model.liarsDice.gameLogic.LiarsDicePlayer;
 
+@SuppressWarnings("serial")
 public class LiarsDicePlayView extends JPanel implements LiarsDiceView {
 
     private Facade facade;
@@ -67,6 +70,10 @@ public class LiarsDicePlayView extends JPanel implements LiarsDiceView {
 
 	public LiarsDicePlayView(Facade f){
 		facade = f;
+
+		lastGameInfo = new GameInfo();
+		lastGameInfo.getGameHistory().addNewRound();
+		latestGameInfo = new GameInfo();
 		
 		botPickers = new JComboBox[3];
 
@@ -489,24 +496,92 @@ public class LiarsDicePlayView extends JPanel implements LiarsDiceView {
 	}
 	
 
+	/**
+	 * Updates the message box with all messages for the turns completed, and updates 
+	 * the last-decision displays for all bots, up to the nearest round end.
+	 */
 	private void updateToRoundEnd() {
-		writeMessage("Messages as to what just happened go here.");
+		List<Round> lastRounds = lastGameInfo.getGameHistory().getRounds();
+		List<Round> allRounds = latestGameInfo.getGameHistory().getRounds();
 		
-		//TODO update currentGameInfo, last decisions, and messages to 
-		//	reflect game state at end of current round
+		int currentRoundIndex = lastRounds.size() - 1;
+		Round currentRoundLast = lastRounds.get(currentRoundIndex);
+		int currentTurnIndex = currentRoundLast.getTurns().size() - 1;
+		
+		List<Turn> allTurnsInCurrentRound = allRounds.get(currentRoundIndex).getTurns();
+		ArrayList<Turn> turnsToUpdate = new ArrayList<Turn>();
+		for (int i=currentRoundLast.getTurns().size(); i<allTurnsInCurrentRound.size(); i++) {
+			turnsToUpdate.add(allTurnsInCurrentRound.get(i));
+		}
+		
+		for (Turn turn : turnsToUpdate) {
+			String msg = "";
+			Player currentPlayer = getPlayerFromID(turn.getPlayerID());
+			msg += currentPlayer.getName() + " ";
+			if (turn.getDecision() instanceof Challenge)
+				msg += "challenged.";
+			else {
+				msg += "bid ";
+				msg += ((Bid) turn.getDecision()).getFrequency() + " ";
+				msg += ((Bid) turn.getDecision()).getFaceValue() + "s.";
+			}
+			writeMessage(msg);
+			currentRoundLast.addTurn(turn);
+		}
+		
+		if (allRounds.get(currentRoundIndex).isOver()) {
+			Result roundResult = allRounds.get(currentRoundIndex).getResult();
+			Turn lastTurnInRound = turnsToUpdate.get(turnsToUpdate.size()-1);
+			Player lastPlayer = getPlayerFromID(lastTurnInRound.getPlayerID());
+			String msg = "Round ended: " + lastPlayer.getName() + " ";
+			if (roundResult == Result.EXCEPTION)
+				msg += "threw an exception and lost a die.";
+			else if (roundResult == Result.INVALIDDECISION)
+				msg += "made an invalid decision and lost a die.";
+			else if (roundResult == Result.LOSING_CHALLENGE)
+				msg += "lost the challenge.";
+			else if (roundResult == Result.TIMEOUT)
+				msg += "timed out and lost a die.";
+			else if (roundResult == Result.WINNING_CHALLENGE) {
+				msg += "won the challenge. ";
+				Turn nextToLastTurnInRound = turnsToUpdate.get(turnsToUpdate.size()-2);
+				Player nextToLastPlayer = getPlayerFromID(nextToLastTurnInRound.getPlayerID());
+				msg += nextToLastPlayer.getName() + " lost a die.";
+			}
+			writeMessage(msg);
+			currentRoundLast.end(roundResult);
+		}
+		if (roundChanged()) {
+			lastGameInfo.getGameHistory().addNewRound();
+		}
+		
+		//TODO update last decisions to reflect game state at end of current round
+	}
+
+	private Player getPlayerFromID(int playerID) {
+		for (Player p : players) {
+			if (p.getID() == playerID)
+				return p;
+		}
+		System.err.println("Player not found for ID " + playerID);
+		return null;
 	}
 
 	private boolean roundChanged() {
-		// TODO Auto-generated method stub
-		return false;
+		return latestGameInfo.getGameHistory().getRounds().size() 
+				> lastGameInfo.getGameHistory().getRounds().size();
 	}
 
 	@Override
-	public void reportGameResults(GameHistory gameHistory) {
+	public void reportGameResults(GameInfo gameInfo) {
+		latestGameInfo = gameInfo;
+		if (!roundChanged())
+			displayGameOver();
 		updateToRoundEnd();
-		writeMessage("Game over. ____ won.");
-		//TODO update last decisions to game end?
-		//TODO declare who won
+	}
+	
+	private void displayGameOver() {
+		writeMessage("Game over. ____ won."); //TODO declare who won
 		playerPanel1.updateDicePanel(true);
 		playerPanel2.updateDicePanel(true);
 		playerPanel3.updateDicePanel(true);
@@ -521,7 +596,7 @@ public class LiarsDicePlayView extends JPanel implements LiarsDiceView {
 		humanChallenge.setEnabled(false);
 		nextRound.setEnabled(false);
 	}
-	
+
 	private void writeMessage(String msg) {
 		history.setText(history.getText() + msg + "\n");
 		scrollPane.getVerticalScrollBar().setValue(scrollPane.getVerticalScrollBar().getMaximum());
@@ -619,18 +694,25 @@ public class LiarsDicePlayView extends JPanel implements LiarsDiceView {
         		}
         	}
         	else if(e.getSource() == nextRound){
-        		updateToRoundEnd();
         		if(roundChanged())
         		{
-        			//change nothing
+        			//don't enable or disable anything
+            		writeMessage("Proceed to next round.");
         		}
         		else
         		{
-            		nextRound.setEnabled(false);
-            		bidListener.setEnabled(true);
-            		humanChallenge.setEnabled(true);
+        			List<Round> allRounds = latestGameInfo.getGameHistory().getRounds();
+        			if (allRounds.get(allRounds.size()).isOver()) {
+        				displayGameOver();
+        			}
+        			else {
+                		nextRound.setEnabled(false);
+                		bidListener.setEnabled(true);
+                		humanChallenge.setEnabled(true);
+        			}
         		}
-        		writeMessage("Proceed to next round.");
+        		
+        		updateToRoundEnd();
         	}
         	else if(e.getSource() == humanBid){
         		bidListener.setEnabled(false);

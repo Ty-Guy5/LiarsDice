@@ -39,10 +39,9 @@ public class GameHistory {
 
 	/**
 	 * Adds a Round to the history.
-	 * @param round Round to be added.
 	 */
-	public void addRound(Round round){
-		rounds.add(round);
+	public void addNewRound(){
+		rounds.add(new Round());
 	}
 	
 	/**
