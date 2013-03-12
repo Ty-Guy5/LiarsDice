@@ -282,6 +282,8 @@ public class LiarsDicePlayView extends JPanel implements LiarsDiceView {
 			botPickers[i].setEnabled(true);
 		}
 	}
+//	Reminders?
+//	Notifications?
 	
     private class PlayerPanel extends JPanel 
     {
