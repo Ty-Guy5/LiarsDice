@@ -85,7 +85,7 @@ public class LiarsDiceGame implements Game {
 				allPlayersInfo.add(new PlayerInfo((LiarsDicePlayer)p));
 			}
 			GameInfo gi = new GameInfo(currentBid, new GameHistory(history), 
-					players.get(turnIndex).getDice(), allPlayersInfo);
+					players.get(turnIndex).getDice(), turnIndex, allPlayersInfo);
 			
 			//get the player's decision and dish out the consequences
 			roundResult = collectAndProcessDecision(gi, roundResult);
