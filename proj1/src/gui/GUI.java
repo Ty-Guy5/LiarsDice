@@ -4,6 +4,7 @@ import java.awt.*;
 import java.awt.event.*;
 
 import javax.swing.*;
+import javax.swing.UIManager.LookAndFeelInfo;
 
 import model.Facade;
 import model.liarsDice.LiarsDiceGameFactory;
@@ -104,8 +105,9 @@ public class GUI extends JFrame {
         
         //wrapup
         setTitle("Programmer AI Tournament");
-        setLocation(100, 100); 
-        this.setMinimumSize(new Dimension(850, 700));
+        setLocation(100, 0); 
+        this.setMinimumSize(new Dimension(735, 700));
+        this.setPreferredSize(new Dimension(750, 750));
         setVisible(true);
         setDefaultCloseOperation(EXIT_ON_CLOSE);
         pack();
@@ -127,6 +129,17 @@ public class GUI extends JFrame {
 	
     public static void main(String[] args)
     {
+//    	try{
+//			for (LookAndFeelInfo info : UIManager.getInstalledLookAndFeels()) {
+//		        if ("Nimbus".equals(info.getName())) {
+//		            UIManager.setLookAndFeel(info.getClassName());
+//		            break;
+//		        }
+//		    }
+//		}catch(Exception e){
+//			//use standard
+//		}
+    	
     	GUI gui = new GUI();
     }
 }

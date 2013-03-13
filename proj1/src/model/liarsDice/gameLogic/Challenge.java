@@ -7,4 +7,8 @@ public class Challenge implements Decision {
 	public Challenge(){
 		
 	}
+	
+	public String toString(){
+		return "Challenge";
+	}
 }

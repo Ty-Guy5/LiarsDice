@@ -3,6 +3,8 @@ package gui;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.util.ArrayList;
+import java.util.Random;
 import java.util.Vector;
 import java.util.List;
 import java.util.concurrent.ExecutorService;
@@ -13,6 +15,8 @@ import java.util.concurrent.TimeUnit;
 import javax.swing.*;
 import javax.swing.border.Border;
 import javax.swing.border.TitledBorder;
+import javax.swing.event.DocumentEvent;
+import javax.swing.event.DocumentListener;
 
 import model.Facade;
 import model.Game;
@@ -20,13 +24,20 @@ import model.Player;
 import model.liarsDice.HumanController;
 import model.liarsDice.LiarsDiceGameFactory;
 import model.liarsDice.LiarsDiceView;
+import model.liarsDice.gameInfo.GameHistory;
 import model.liarsDice.gameInfo.GameInfo;
+import model.liarsDice.gameInfo.PlayerInfo;
+import model.liarsDice.gameInfo.Result;
+import model.liarsDice.gameInfo.Round;
+import model.liarsDice.gameInfo.Turn;
 import model.liarsDice.gameLogic.Bid;
 import model.liarsDice.gameLogic.Challenge;
 import model.liarsDice.gameLogic.Decision;
 import model.liarsDice.gameLogic.Die;
+import model.liarsDice.gameLogic.LiarsDiceGame;
 import model.liarsDice.gameLogic.LiarsDicePlayer;
 
+@SuppressWarnings("serial")
 public class LiarsDicePlayView extends JPanel implements LiarsDiceView {
 
     private Facade facade;
@@ -35,6 +46,8 @@ public class LiarsDicePlayView extends JPanel implements LiarsDiceView {
     private int numPlayers;
     
     private Thread gameThread;
+    
+    private GameInfo lastGameInfo, latestGameInfo; 
     
     private GridLayout layout;
     private PlayerPanel playerPanel1, playerPanel2, playerPanel3, humanPanel;
@@ -47,12 +60,22 @@ public class LiarsDicePlayView extends JPanel implements LiarsDiceView {
     private JTextArea history; // Text area
     private JScrollPane scrollPane; // Scroll pane for text area
     
+    private JComboBox[] botPickers;
+    
+    private BidListener bidListener;
+    
     private Color tablegreen = new Color(80, 200, 120); //paris green
     //private Color tablegreen = new Color(8, 138, 75)); //internet poker table
-    private boolean coloredGUI = true; //set to false if don't want color
+    private boolean coloredGUI = true, nimbus = false; //set to false if don't want color
 
 	public LiarsDicePlayView(Facade f){
 		facade = f;
+
+		lastGameInfo = new GameInfo();
+		lastGameInfo.getGameHistory().addNewRound();
+		latestGameInfo = new GameInfo();
+		
+		botPickers = new JComboBox[3];
 
 		layout = new GridLayout(3,3);
 		setLayout(layout);
@@ -66,7 +89,7 @@ public class LiarsDicePlayView extends JPanel implements LiarsDiceView {
 		player2InfoPanel.add(player2Decision);
 		add(player2InfoPanel, 0);
 
-		playerPanel2 = new PlayerPanel();
+		playerPanel2 = new PlayerPanel(1);
 		if(coloredGUI) playerPanel2.setBackground(tablegreen);
 		add(playerPanel2, 1);
 
@@ -76,13 +99,14 @@ public class LiarsDicePlayView extends JPanel implements LiarsDiceView {
 		player3InfoLabel = new JLabel("Last Decision:  ");
 		player3Decision = new JLabel();
 		JPanel p3Container = new JPanel();
+		if(coloredGUI) p3Container.setBackground(tablegreen);
 		p3Container.setLayout(new FlowLayout(FlowLayout.RIGHT));
 		p3Container.add(player3InfoLabel);
 		p3Container.add(player3Decision);
 		player3InfoPanel.add(p3Container, BorderLayout.SOUTH);
 		add(player3InfoPanel, 2);
 		
-		playerPanel1 = new PlayerPanel();
+		playerPanel1 = new PlayerPanel(0);
 		if(coloredGUI) playerPanel1.setBackground(tablegreen);
 		add(playerPanel1, 3);
 		
@@ -93,7 +117,7 @@ public class LiarsDicePlayView extends JPanel implements LiarsDiceView {
 		scrollPane = new JScrollPane(history);
 		add(scrollPane, 4);
 
-		playerPanel3 = new PlayerPanel();
+		playerPanel3 = new PlayerPanel(2);
 		if(coloredGUI) playerPanel3.setBackground(tablegreen);
 		add(playerPanel3, 5);
 		
@@ -106,30 +130,49 @@ public class LiarsDicePlayView extends JPanel implements LiarsDiceView {
 		player1InfoPanel.add(player1Decision);
 		add(player1InfoPanel, 6);
 
-		humanPanel = new PlayerPanel();
+		humanPanel = new PlayerPanel(-1);
 		if(coloredGUI) humanPanel.setBackground(tablegreen);
 		add(humanPanel, 7);
 
+		bidListener = new BidListener();
 		humanInputPanel = new JPanel();
 		if(coloredGUI) humanInputPanel.setBackground(tablegreen);
 		GridLayout g = new GridLayout(2,1);
 		humanInputPanel.setLayout(g);
 		JPanel wrapperPanel = new JPanel();
+		if(coloredGUI) wrapperPanel.setBackground(tablegreen);
 		wrapperPanel.setLayout(new BorderLayout());
 		JPanel bidPanel = new JPanel();
+		if(coloredGUI) bidPanel.setBackground(tablegreen);
 		bidQuantity = new JTextField("", 4);
+		bidQuantity.getDocument().addDocumentListener(bidListener);
 		bidPanel.add(bidQuantity);
 		//add radio buttons, etc
-		rb2 = new JRadioButton("");
-		JLabel rbp2 = new JLabel(new ImageIcon("images/small/die2.png"));
-		rb3 = new JRadioButton("");
-		JLabel rbp3 = new JLabel(new ImageIcon("images/small/die3.png"));
-		rb4 = new JRadioButton("");
-		JLabel rbp4 = new JLabel(new ImageIcon("images/small/die4.png"));
-		rb5 = new JRadioButton("");
-		JLabel rbp5 = new JLabel(new ImageIcon("images/small/die5.png"));
-		rb6 = new JRadioButton("");
-		JLabel rbp6 = new JLabel(new ImageIcon("images/small/die6.png"));
+		rb2 = new JRadioButton(new ImageIcon("images/small/die2.png"));
+		rb2.addActionListener(new RadioButtonListener());
+		if(coloredGUI) rb2.setBackground(tablegreen);
+//		JLabel rbp2 = new JLabel(new ImageIcon("images/small/die2.png"));
+		rb3 = new JRadioButton(new ImageIcon("images/small/die3.png"));
+		rb3.addActionListener(new RadioButtonListener());
+		if(coloredGUI) rb3.setBackground(tablegreen);
+//		JLabel rbp3 = new JLabel(new ImageIcon("images/small/die3.png"));
+		rb4 = new JRadioButton(new ImageIcon("images/small/die4.png"));
+		rb4.addActionListener(new RadioButtonListener());
+		if(coloredGUI) rb4.setBackground(tablegreen);
+//		JLabel rbp4 = new JLabel(new ImageIcon("images/small/die4.png"));
+		rb5 = new JRadioButton(new ImageIcon("images/small/die5.png"));
+		rb5.addActionListener(new RadioButtonListener());
+		if(coloredGUI) rb5.setBackground(tablegreen);
+//		JLabel rbp5 = new JLabel(new ImageIcon("images/small/die5.png"));
+		rb6 = new JRadioButton(new ImageIcon("images/small/die6.png"));
+		rb6.addActionListener(new RadioButtonListener());
+		if(coloredGUI) rb6.setBackground(tablegreen);
+		//JLabel rbp6 = new JLabel(new ImageIcon("images/small/die6.png"));
+		rb2.addActionListener(bidListener);
+		rb3.addActionListener(bidListener);
+		rb4.addActionListener(bidListener);
+		rb5.addActionListener(bidListener);
+		rb6.addActionListener(bidListener);
 	    //Group the radio buttons.
 	    ButtonGroup group = new ButtonGroup();
 	    group.add(rb2);
@@ -138,21 +181,23 @@ public class LiarsDicePlayView extends JPanel implements LiarsDiceView {
 	    group.add(rb5);
 	    group.add(rb6);
 	    JPanel radioPanel = new JPanel();
+	    if(coloredGUI) radioPanel.setBackground(tablegreen);
 	    radioPanel.setLayout(new GridLayout(1, 10));
 	    radioPanel.add(rb2);
-	    radioPanel.add(rbp2);
+//	    radioPanel.add(rbp2);
 	    radioPanel.add(rb3);
-	    radioPanel.add(rbp3);
+//	    radioPanel.add(rbp3);
 	    radioPanel.add(rb4);
-	    radioPanel.add(rbp4);
+//	    radioPanel.add(rbp4);
 	    radioPanel.add(rb5);
-	    radioPanel.add(rbp5);
+//	    radioPanel.add(rbp5);
 	    radioPanel.add(rb6);
-	    radioPanel.add(rbp6);
+//	    radioPanel.add(rbp6);
 	    bidPanel.add(radioPanel);
 	    wrapperPanel.add(bidPanel, BorderLayout.SOUTH);
 		humanInputPanel.add(wrapperPanel, 0);
 		JPanel buttonPanel1 = new JPanel();
+		if(coloredGUI) buttonPanel1.setBackground(tablegreen);
 		buttonPanel1.setLayout(new FlowLayout(FlowLayout.CENTER));
 		humanBid = new JButton(" Submit Bid ");
 		humanBid.addActionListener(new ButtonListener());
@@ -168,10 +213,12 @@ public class LiarsDicePlayView extends JPanel implements LiarsDiceView {
 		buttonPanel1.add(humanChallenge);
 		
 		JPanel buttonPanel2 = new JPanel();
+		if(coloredGUI) buttonPanel2.setBackground(tablegreen);
 		buttonPanel2.add(startGame);
 		buttonPanel2.add(nextRound);
 		
 		JPanel buttonPanel = new JPanel();
+		if(coloredGUI) buttonPanel.setBackground(tablegreen);
 		buttonPanel.setLayout(new BorderLayout());
 		
 		buttonPanel.add(buttonPanel1, BorderLayout.NORTH);
@@ -180,11 +227,35 @@ public class LiarsDicePlayView extends JPanel implements LiarsDiceView {
 		humanInputPanel.add(buttonPanel, 1);
 		add(humanInputPanel, 8);
 
+		LiarsDiceGameFactory factory = new LiarsDiceGameFactory();
+    	List<Player> allPlayers = factory.getPlayers();
+		players = new Vector<Player>();
+		numPlayers = 4; //TODO this should go elsewhere, I think
+		players.setSize(numPlayers);
+		
+		Random rand = new Random();
+		int index = rand.nextInt(allPlayers.size());
+		players.set(0, allPlayers.get(index));
+		botPickers[0].setSelectedIndex(index);
+		allPlayers = factory.getPlayers();
+		index = rand.nextInt(allPlayers.size());
+		players.set(1, allPlayers.get(index));
+		botPickers[1].setSelectedIndex(index);
+		allPlayers = factory.getPlayers();
+		index = rand.nextInt(allPlayers.size());
+		players.set(2, allPlayers.get(index));
+		botPickers[2].setSelectedIndex(index);
+		humanController = new HumanController();
+		humanController.getViewCommunication().registerView(this);
+		players.set(3, new LiarsDicePlayer(humanController, allPlayers.size()));
+		
 		setupPlayers();
+		initializeEnables();
+		writeMessage("Select opponent bots, then click \"New Game\" to get started.");
 
         this.setMinimumSize(new Dimension(600,400));
 	}
-	
+
 	public void setDice(Player p){
 		if(p == null){
 			return;
@@ -207,35 +278,34 @@ public class LiarsDicePlayView extends JPanel implements LiarsDiceView {
 	}
 
 	private void setupPlayers() {
-    	LiarsDiceGameFactory factory = new LiarsDiceGameFactory();
-    	List<Player> allPlayers = factory.getPlayers();
-		players = new Vector<Player>();
-		numPlayers = 4; //TODO this should go elsewhere, I think
-		players.setSize(numPlayers);
-		
-		//TODO this is just the (unstable) default. Change so the user chooses the opponents.
-		players.set(0, allPlayers.get(0));
-		players.set(1, allPlayers.get(1));
-		players.set(2, allPlayers.get(2));
-		humanController = new HumanController();
-		humanController.getViewCommunication().registerView(this);
-		players.set(3, new LiarsDicePlayer(humanController, allPlayers.size()));
-		
+    			
 		playerPanel1.setPlayer((LiarsDicePlayer)players.get(0));
-		playerPanel1.setBorder(new TitledBorder(players.get(0).getName()));
+		//playerPanel1.setBorder(new TitledBorder(players.get(0).getName()));
 		playerPanel2.setPlayer((LiarsDicePlayer)players.get(1));
-		playerPanel2.setBorder(new TitledBorder(players.get(1).getName()));
+		//playerPanel2.setBorder(new TitledBorder(players.get(1).getName()));
 		playerPanel3.setPlayer((LiarsDicePlayer)players.get(2));
-		playerPanel3.setBorder(new TitledBorder(players.get(2).getName()));
+		//playerPanel3.setBorder(new TitledBorder(players.get(2).getName()));
 		humanPanel.setPlayer((LiarsDicePlayer)players.get(3));
-		humanPanel.setBorder(new TitledBorder(players.get(3).getName()));
+		//humanPanel.setBorder(new TitledBorder(players.get(3).getName()));
 		
 		playerPanel1.updateDicePanel(false);
 		playerPanel2.updateDicePanel(false);
 		playerPanel3.updateDicePanel(false);
 		humanPanel.updateDicePanel(true);
 	}
-    
+
+	private void initializeEnables() {
+		startGame.setEnabled(true);
+		nextRound.setEnabled(false);
+		bidListener.setEnabled(false);
+		humanChallenge.setEnabled(false);
+		for (int i=0; i<botPickers.length; i++) {
+			botPickers[i].setEnabled(true);
+		}
+	}
+//	Reminders?
+//	Notifications?
+	
     private class PlayerPanel extends JPanel 
     {
     	public LiarsDicePlayer player;
@@ -245,8 +315,12 @@ public class LiarsDicePlayView extends JPanel implements LiarsDiceView {
     	public JPanel dicePanel;
     	public ImageIcon die1, die2, die3, die4, die5, die6, dieq, blank;
     	
-    	public PlayerPanel() {
+    	public PlayerPanel(int index) {
     		blank = new ImageIcon("images/blank.png");
+    		if(coloredGUI) blank = new ImageIcon("images/blank-green.png");
+    		if(nimbus){
+    			blank = new ImageIcon("images/blank-nimbus.png");
+    		}
     		die1 = new ImageIcon("images/die1.png");
     		die2 = new ImageIcon("images/die2.png");
     		die3 = new ImageIcon("images/die3.png");
@@ -255,7 +329,20 @@ public class LiarsDicePlayView extends JPanel implements LiarsDiceView {
     		die6 = new ImageIcon("images/die6.png");
     		dieq = new ImageIcon("images/diequestion.png");
     		
-    		this.setLayout(new BoxLayout(this, BoxLayout.Y_AXIS));
+    		this.setLayout(new BorderLayout());
+    		if(index > -1){
+	    		List<Player> players = facade.getPlayers();
+	    		List<String> playerNames = new ArrayList<String>();
+	    		for(Player p : players){
+	    			playerNames.add(p.getName());
+	    		}
+	    		Object[] botStrings = playerNames.toArray();
+	    		//Create the combo box, select item at index 4.
+	    		//Indices start at 0, so 4 specifies the pig.
+	    		botPickers[index] = new JComboBox(botStrings);
+	    		botPickers[index].addActionListener(new ComboBoxListener());
+	    		this.add(botPickers[index], BorderLayout.NORTH);
+    		}
     		dicePanel = new JPanel();
     		if(coloredGUI) dicePanel.setBackground(tablegreen);
     		layout = new GridLayout(5,5);
@@ -277,7 +364,7 @@ public class LiarsDicePlayView extends JPanel implements LiarsDiceView {
 //    			//diceLabels[d.width][d.height].setText("  1  ");
 //    			diceLabels[d.width][d.height].setIcon(dieq);
 //    		}
-    		add(dicePanel);
+    		this.add(dicePanel, BorderLayout.CENTER);
     	}
 
 		public void updateDicePanel(boolean show) {
@@ -315,6 +402,7 @@ public class LiarsDicePlayView extends JPanel implements LiarsDiceView {
 				case 6:
 					return die6;
 				default: //shouldn't happen
+					writeMessage("default");
 					return dieq;
 			}
 		}
@@ -333,7 +421,7 @@ public class LiarsDicePlayView extends JPanel implements LiarsDiceView {
     private void runGame() {
     	if (gameThread != null)
     		gameThread.interrupt();
-    	setupPlayers();
+    	setupPlayers(); //TODO why is this here? It cannot be here because players should not be reset.
     	Game game = facade.getGame("LiarsDice", players, Long.MAX_VALUE);
     	gameThread = new GameThread(game);
     	gameThread.start();
@@ -352,39 +440,359 @@ public class LiarsDicePlayView extends JPanel implements LiarsDiceView {
 
 	@Override
 	public void decisionRequest(GameInfo gameInfo) {
-		writeMessage("Decision requested.");
-		//TODO update gui according to gameInfo object
+		latestGameInfo = gameInfo;
+		updateToRoundEnd();
+		if (roundChanged())
+		{
+			nextRound.setEnabled(true);
+		}
+		else //same round
+		{
+			playerPanel1.updateDicePanel(false);
+			playerPanel2.updateDicePanel(false);
+			playerPanel3.updateDicePanel(false);
+			humanPanel.updateDicePanel(true);
+			bidListener.setEnabled(true);
+			humanChallenge.setEnabled(true);
+		}
+		
+		writeMessage("Please enter your bid.");
+	}
+	private void updateLastDecisions(GameInfo gameInfo) {
+		List<Round> rounds = gameInfo.getGameHistory().getRounds();
+		Round current = rounds.get(rounds.size() - 1);
+		List<Turn> turns = current.getTurns();
+		player3InfoLabel.setText("Last Decision:  ");
+		player2InfoLabel.setText("Last Decision:  ");
+		player1InfoLabel.setText("Last Decision:  ");
+		int i = turns.size() - 1;
+		if(i >= 0 && !((LiarsDicePlayer)players.get(2)).getDice().isEmpty()){
+			player3InfoLabel.setText("Last Decision:  " + turns.get(i).getDecision());
+			i--;
+		}
+		if(i >= 0 && !((LiarsDicePlayer)players.get(1)).getDice().isEmpty()){
+			player2InfoLabel.setText("Last Decision:  " + turns.get(i).getDecision());
+			i--;
+		}
+		if(i >= 0 && !((LiarsDicePlayer)players.get(0)).getDice().isEmpty()){
+			player1InfoLabel.setText("Last Decision:  " + turns.get(i).getDecision());
+			i--;
+		}
+		
+		updateToRoundEnd();
+		if (roundChanged())
+		{
+			nextRound.setEnabled(true);
+		}
+		else //same round
+		{
+			playerPanel1.updateDicePanel(false);
+			playerPanel2.updateDicePanel(false);
+			playerPanel3.updateDicePanel(false);
+			humanPanel.updateDicePanel(true);
+			bidListener.setEnabled(true);
+			humanChallenge.setEnabled(true);
+		}
+	}
+	
+
+	/**
+	 * Updates the message box with all messages for the turns completed, and updates 
+	 * the last-decision displays for all bots, up to the nearest round end.
+	 */
+	private void updateToRoundEnd() {
+		List<Round> lastRounds = lastGameInfo.getGameHistory().getRounds();
+		List<Round> allRounds = latestGameInfo.getGameHistory().getRounds();
+		
+		int currentRoundIndex = lastRounds.size() - 1;
+		Round currentRoundLast = lastRounds.get(currentRoundIndex);
+		int currentTurnIndex = currentRoundLast.getTurns().size() - 1;
+		
+		List<Turn> allTurnsInCurrentRound = allRounds.get(currentRoundIndex).getTurns();
+		ArrayList<Turn> turnsToUpdate = new ArrayList<Turn>();
+		for (int i=currentRoundLast.getTurns().size(); i<allTurnsInCurrentRound.size(); i++) {
+			turnsToUpdate.add(allTurnsInCurrentRound.get(i));
+		}
+		
+		for (Turn turn : turnsToUpdate) {
+			String msg = "";
+			Player currentPlayer = getPlayerFromID(turn.getPlayerID());
+			msg += currentPlayer.getName() + " ";
+			if (turn.getDecision() instanceof Challenge)
+				msg += "challenged.";
+			else {
+				msg += "bid ";
+				msg += ((Bid) turn.getDecision()).getFrequency() + " ";
+				msg += ((Bid) turn.getDecision()).getFaceValue() + "s.";
+			}
+			writeMessage(msg);
+			currentRoundLast.addTurn(turn);
+		}
+		
+		if (allRounds.get(currentRoundIndex).isOver()) {
+			Result roundResult = allRounds.get(currentRoundIndex).getResult();
+			Turn lastTurnInRound = turnsToUpdate.get(turnsToUpdate.size()-1);
+			Player lastPlayer = getPlayerFromID(lastTurnInRound.getPlayerID());
+			String msg = "Round ended: " + lastPlayer.getName() + " ";
+			if (roundResult == Result.EXCEPTION)
+				msg += "threw an exception and lost a die.";
+			else if (roundResult == Result.INVALIDDECISION)
+				msg += "made an invalid decision and lost a die.";
+			else if (roundResult == Result.LOSING_CHALLENGE)
+				msg += "lost the challenge.";
+			else if (roundResult == Result.TIMEOUT)
+				msg += "timed out and lost a die.";
+			else if (roundResult == Result.WINNING_CHALLENGE) {
+				msg += "won the challenge. ";
+				Turn nextToLastTurnInRound = turnsToUpdate.get(turnsToUpdate.size()-2);
+				Player nextToLastPlayer = getPlayerFromID(nextToLastTurnInRound.getPlayerID());
+				msg += nextToLastPlayer.getName() + " lost a die.";
+			}
+			writeMessage(msg);
+			currentRoundLast.end(roundResult);
+		}
+		if (roundChanged()) {
+			lastGameInfo.getGameHistory().addNewRound();
+		}
+		
+		//TODO update last decisions to reflect game state at end of current round
+	}
+
+	private Player getPlayerFromID(int playerID) {
+		for (Player p : players) {
+			if (p.getID() == playerID)
+				return p;
+		}
+		System.err.println("Player not found for ID " + playerID);
+		return null;
+	}
+
+	private boolean roundChanged() {
+		return latestGameInfo.getGameHistory().getRounds().size() 
+				> lastGameInfo.getGameHistory().getRounds().size();
 	}
 
 	@Override
-	public void reportGameResults() {
-		writeMessage("Game over.");
-		
+	public void reportGameResults(GameInfo gameInfo) {
+		latestGameInfo = gameInfo;
+		if (!roundChanged())
+			displayGameOver();
+		updateToRoundEnd();
 	}
 	
+	private void displayGameOver() {
+		writeMessage("Game over. ____ won."); //TODO declare who won
+		playerPanel1.updateDicePanel(true);
+		playerPanel2.updateDicePanel(true);
+		playerPanel3.updateDicePanel(true);
+		humanPanel.updateDicePanel(true);
+		
+		startGame.setText("New Game");
+		for (int i=0; i<botPickers.length; i++) {
+			botPickers[i].setEnabled(true);
+		}
+		startGame.setEnabled(true);
+		bidListener.setEnabled(false);
+		humanChallenge.setEnabled(false);
+		nextRound.setEnabled(false);
+	}
+
 	private void writeMessage(String msg) {
 		history.setText(history.getText() + msg + "\n");
+		scrollPane.getVerticalScrollBar().setValue(scrollPane.getVerticalScrollBar().getMaximum());
+	}
+
+	private Decision getHumanBid() {
+		int quantity;
+		int face = checkRadioButtons();
+		try{
+			quantity = Integer.parseInt(bidQuantity.getText());
+		}catch(NumberFormatException e){
+			quantity = 0;
+		}
+		return new Bid(quantity, face);
+	}
+
+	private int checkRadioButtons() {
+		if(rb2.isSelected()){
+			return 2;
+		}
+		else if(rb3.isSelected()){
+			return 3;
+		}
+		else if(rb4.isSelected()){
+			return 4;
+		}
+		else if(rb5.isSelected()){
+			return 5;
+		}
+		else if(rb6.isSelected()){
+			return 6;
+		}
+			return -1;
+	}
+	
+	private class BidListener implements ActionListener, DocumentListener
+	{
+		private boolean enabled = false;
+
+		public void setEnabled(boolean b) {
+			enabled = b;
+			updateBidButtonEnabled();
+		}
+		
+		public void actionPerformed(ActionEvent e) {
+			updateBidButtonEnabled();
+		}
+
+		public void insertUpdate(DocumentEvent e) {
+			updateBidButtonEnabled();
+		}
+
+		public void removeUpdate(DocumentEvent e) {
+			updateBidButtonEnabled();
+		}
+
+		public void changedUpdate(DocumentEvent e) {
+			updateBidButtonEnabled();
+		}
+		
+		private void updateBidButtonEnabled() {
+			if (enabled && LiarsDiceGame.isValidDecision(getHumanBid(), latestGameInfo))
+				humanBid.setEnabled(true);
+			else
+				humanBid.setEnabled(false);
+		}
 	}
 	
 	private class ButtonListener implements ActionListener
     {
         public void actionPerformed(ActionEvent e){
         	if(e.getSource() == startGame) {
-        		runGame();
+        		if (startGame.getText().equals("New Game"))
+        		{
+        			startGame.setText("End Game");
+            		for (int i=0; i<botPickers.length; i++) {
+            			botPickers[i].setEnabled(false);
+            		}
+            		runGame();
+        		}
+        		else
+        		{
+        			startGame.setText("New Game");
+            		for (int i=0; i<botPickers.length; i++) {
+            			botPickers[i].setEnabled(true);
+            		}
+        			startGame.setEnabled(true);
+        			bidListener.setEnabled(false);
+        			humanChallenge.setEnabled(false);
+        			nextRound.setEnabled(false);
+        			
+        			writeMessage("Game ended.");
+        			
+        			gameThread.interrupt();
+        		}
         	}
         	else if(e.getSource() == nextRound){
-        		writeMessage("Proceed to next round.");
+        		if(roundChanged())
+        		{
+        			//don't enable or disable anything
+            		writeMessage("Proceed to next round.");
+        		}
+        		else
+        		{
+        			List<Round> allRounds = latestGameInfo.getGameHistory().getRounds();
+        			if (allRounds.get(allRounds.size()).isOver()) {
+        				displayGameOver();
+        			}
+        			else {
+                		nextRound.setEnabled(false);
+                		bidListener.setEnabled(true);
+                		humanChallenge.setEnabled(true);
+        			}
+        		}
+        		
+        		updateToRoundEnd();
         	}
         	else if(e.getSource() == humanBid){
-        		writeMessage("You bid some amount.");
-        		Decision decision = new Bid(1,1); //TODO
+        		bidListener.setEnabled(false);
+        		humanChallenge.setEnabled(false);
+        		Decision decision = getHumanBid();
         		humanController.getViewCommunication().setDecision(decision);
         	}
         	else if(e.getSource() == humanChallenge){
-        		writeMessage("You challenged!!!");
+        		//writeMessage(""+scrollPane.getVerticalScrollBar().getValue());
         		Decision decision = new Challenge();
         		humanController.getViewCommunication().setDecision(decision);
         	}
         }
     }
+	
+	private class ComboBoxListener implements ActionListener{
+		
+		public ComboBoxListener(){
+			
+		}
+		
+		public void actionPerformed(ActionEvent e) {
+			LiarsDiceGameFactory factory = new LiarsDiceGameFactory();
+	    	List<Player> allPlayers = factory.getPlayers();
+			if(e.getSource() == botPickers[0]) {
+				players.set(0, allPlayers.get(botPickers[0].getSelectedIndex()));
+			}
+			else if(e.getSource() == botPickers[1]) {
+				players.set(1, allPlayers.get(botPickers[1].getSelectedIndex()));
+			}
+			else if(e.getSource() == botPickers[2]) {
+				players.set(2, allPlayers.get(botPickers[2].getSelectedIndex()));
+			}
+		}
+		
+	}
+	
+	private class RadioButtonListener implements ActionListener{
+		
+		public RadioButtonListener(){
+			
+		}
+		
+		public void actionPerformed(ActionEvent e) {
+			if(e.getSource() == rb2){
+				rb2.setIcon(new ImageIcon("images/small/die2-black.png"));
+			}
+			else{
+				rb2.setIcon(new ImageIcon("images/small/die2.png"));
+			}
+			
+			if(e.getSource() == rb3){
+				rb3.setIcon(new ImageIcon("images/small/die3-black.png"));
+			}
+			else{
+				rb3.setIcon(new ImageIcon("images/small/die3.png"));
+			}
+			
+			if(e.getSource() == rb4){
+				rb4.setIcon(new ImageIcon("images/small/die4-black.png"));
+			}
+			else{
+				rb4.setIcon(new ImageIcon("images/small/die4.png"));
+			}
+			
+			if(e.getSource() == rb5){
+				rb5.setIcon(new ImageIcon("images/small/die5-black.png"));
+			}
+			else{
+				rb5.setIcon(new ImageIcon("images/small/die5.png"));
+			}
+			
+			if(e.getSource() == rb6){
+				rb6.setIcon(new ImageIcon("images/small/die6-black.png"));
+			}
+			else{
+				rb6.setIcon(new ImageIcon("images/small/die6.png"));
+			}
+			
+		}
+		
+	}
 }
