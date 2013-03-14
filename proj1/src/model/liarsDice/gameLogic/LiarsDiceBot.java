@@ -16,8 +16,9 @@ public abstract class LiarsDiceBot implements Bot {
 	 * It is strongly recommended that you check the validity of each decision before returning it.
 	 * @param currentGameInfo All relevant information for the current state of the game.
 	 * @return A decision: either a Bid or a Challenge.
+	 * @throws InterruptedException 
 	 */
-	public abstract Decision getDecision(GameInfo currentGameInfo);
+	public abstract Decision getDecision(GameInfo currentGameInfo) throws InterruptedException;
 	
 	/**
 	 * At the end of each game, the game history is given to each bot.  Feel free to ignore this method if you're not into machine learning.  :)

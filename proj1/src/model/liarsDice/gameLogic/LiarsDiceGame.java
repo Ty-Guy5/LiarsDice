@@ -119,6 +119,7 @@ public class LiarsDiceGame implements Game {
 //			int dice = players.get(turnIndex).getDice().size();
 //			System.out.println(players.get(turnIndex).getID() + ": " + dice);
 			decision = getDecisionTimed(players.get(turnIndex), gi);
+			history.addTurn(new Turn(players.get(turnIndex).getID(), decision));
 			if(decision instanceof Bid){
 				Bid b = (Bid)decision;
 				System.out.println(turnIndex + " Bid: " + b);
@@ -160,7 +161,6 @@ public class LiarsDiceGame implements Game {
 		}
 		else //normal bid
 		{
-			history.addTurn(new Turn(players.get(turnIndex).getID(), decision));
 			Bid bid = (Bid)decision;
 			currentBid = bid;
 //			System.out.println("currentBid during process: " + currentBid);
@@ -217,7 +217,7 @@ public class LiarsDiceGame implements Game {
 		}
 		public LiarsDicePlayer player;
 		public GameInfo gi;
-		public Decision call() {
+		public Decision call() throws InterruptedException {
 			return player.getDecision(gi);
 		  }
 	}

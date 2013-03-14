@@ -426,7 +426,7 @@ public class LiarsDicePlayView extends JPanel implements LiarsDiceView {
     	Game game = facade.getGame("LiarsDice", players, Long.MAX_VALUE);
     	gameThread = new GameThread(game);
     	gameThread.start();
-    	writeMessage("New game started.");
+    	writeMessage("Round 1:");
     }
     
     private class GameThread extends Thread {
@@ -442,23 +442,24 @@ public class LiarsDicePlayView extends JPanel implements LiarsDiceView {
 	@Override
 	public void decisionRequest(GameInfo gameInfo) {
 		latestGameInfo = gameInfo;
-		updateToRoundEnd();
 		if (roundChanged())
 		{
+			updateToRoundEnd();
 			nextRound.setEnabled(true);
 		}
 		else //same round
 		{
+			updateToRoundEnd();
 			playerPanel1.updateDicePanel(false);
 			playerPanel2.updateDicePanel(false);
 			playerPanel3.updateDicePanel(false);
 			humanPanel.updateDicePanel(true);
 			bidListener.setEnabled(true);
 			humanChallenge.setEnabled(true);
+			writeMessage("Please enter your bid.");
 		}
-		
-		writeMessage("Please enter your bid.");
 	}
+	
 	private void updateLastDecisions(GameInfo gameInfo) {
 		List<Round> rounds = gameInfo.getGameHistory().getRounds();
 		Round current = rounds.get(rounds.size() - 1);
@@ -505,6 +506,7 @@ public class LiarsDicePlayView extends JPanel implements LiarsDiceView {
 		List<Round> oldRounds = oldGameInfo.getGameHistory().getRounds();
 		List<Round> allRounds = latestGameInfo.getGameHistory().getRounds();
 
+		//get a list of the turns that need to be used in updating
 		ArrayList<Turn> turnsToUpdate = new ArrayList<Turn>();
 		int currentRoundIndex = oldRounds.size() - 1;
 		Round currentOldRound = null;
@@ -512,13 +514,13 @@ public class LiarsDicePlayView extends JPanel implements LiarsDiceView {
 		{
 			currentOldRound = oldRounds.get(currentRoundIndex);
 			int currentTurnIndex = currentOldRound.getTurns().size() - 1;
-		
 			List<Turn> allTurnsInCurrentRound = allRounds.get(currentRoundIndex).getTurns();
-			for (int i=currentOldRound.getTurns().size(); i<allTurnsInCurrentRound.size(); i++) {
+			for (int i=currentTurnIndex + 1; i<allTurnsInCurrentRound.size(); i++) {
 				turnsToUpdate.add(allTurnsInCurrentRound.get(i));
 			}
 		}
 		
+		//for each turn, update the message box and the oldGameInfo
 		for (Turn turn : turnsToUpdate) {
 			String msg = "";
 			Player currentPlayer = getPlayerFromID(turn.getPlayerID());
@@ -534,6 +536,7 @@ public class LiarsDicePlayView extends JPanel implements LiarsDiceView {
 			currentOldRound.addTurn(turn);
 		}
 		
+		//if the current round ended, update accordingly
 		if (allRounds.get(currentRoundIndex).isOver()) {
 			Round currentAllRound = allRounds.get(currentRoundIndex); 
 			Result roundResult = currentAllRound.getResult();
@@ -557,7 +560,9 @@ public class LiarsDicePlayView extends JPanel implements LiarsDiceView {
 			writeMessage(msg);
 			currentOldRound.end(roundResult);
 		}
+		//if a new round began, add it to the oldGameInfo
 		if (roundChanged()) {
+			writeMessage("Round " + (oldGameInfo.getGameHistory().getRounds().size() + 1) + ":");
 			oldGameInfo.getGameHistory().addNewRound();
 		}
 		
@@ -694,31 +699,33 @@ public class LiarsDicePlayView extends JPanel implements LiarsDiceView {
         			humanChallenge.setEnabled(false);
         			nextRound.setEnabled(false);
         			
-        			writeMessage("Game ended.");
+        			writeMessage("Game over.");
         			
         			gameThread.interrupt();
         		}
         	}
-        	else if(e.getSource() == nextRound){
+        	else if(e.getSource() == nextRound) {
+        		writeMessage("Proceeding to next round.");
+        		
         		if(roundChanged())
         		{
+            		updateToRoundEnd();
         			//don't enable or disable anything
-            		writeMessage("Proceed to next round.");
         		}
         		else
         		{
+            		updateToRoundEnd();
         			List<Round> allRounds = latestGameInfo.getGameHistory().getRounds();
-        			if (allRounds.get(allRounds.size()).isOver()) {
+        			if (allRounds.get(allRounds.size() - 1).isOver()) {
         				displayGameOver();
         			}
         			else {
                 		nextRound.setEnabled(false);
                 		bidListener.setEnabled(true);
                 		humanChallenge.setEnabled(true);
+            			writeMessage("Please enter your bid.");
         			}
         		}
-        		
-        		updateToRoundEnd();
         	}
         	else if(e.getSource() == humanBid){
         		bidListener.setEnabled(false);

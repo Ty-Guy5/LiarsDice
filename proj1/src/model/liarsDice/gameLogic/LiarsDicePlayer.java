@@ -68,8 +68,9 @@ public class LiarsDicePlayer extends Player{
 	 * Method which will ask a bot to return a decision based on the current state of the game.
 	 * @param gameInfo Current state of the game.
 	 * @return The decision made by the bot.
+	 * @throws InterruptedException 
 	 */
-	public Decision getDecision(GameInfo gameInfo) {
+	public Decision getDecision(GameInfo gameInfo) throws InterruptedException {
 		return bot.getDecision(gameInfo);
 	}
 
