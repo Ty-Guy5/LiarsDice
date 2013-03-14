@@ -47,7 +47,7 @@ public class LiarsDicePlayView extends JPanel implements LiarsDiceView {
     
     private Thread gameThread;
     
-    private GameInfo lastGameInfo, latestGameInfo; 
+    private GameInfo oldGameInfo, latestGameInfo; 
     
     private GridLayout layout;
     private PlayerPanel playerPanel1, playerPanel2, playerPanel3, humanPanel;
@@ -71,9 +71,10 @@ public class LiarsDicePlayView extends JPanel implements LiarsDiceView {
 	public LiarsDicePlayView(Facade f){
 		facade = f;
 
-		lastGameInfo = new GameInfo();
-		lastGameInfo.getGameHistory().addNewRound();
+		oldGameInfo = new GameInfo();
+		oldGameInfo.getGameHistory().addNewRound();
 		latestGameInfo = new GameInfo();
+		latestGameInfo.getGameHistory().addNewRound();
 		
 		botPickers = new JComboBox[3];
 
@@ -501,17 +502,21 @@ public class LiarsDicePlayView extends JPanel implements LiarsDiceView {
 	 * the last-decision displays for all bots, up to the nearest round end.
 	 */
 	private void updateToRoundEnd() {
-		List<Round> lastRounds = lastGameInfo.getGameHistory().getRounds();
+		List<Round> oldRounds = oldGameInfo.getGameHistory().getRounds();
 		List<Round> allRounds = latestGameInfo.getGameHistory().getRounds();
-		
-		int currentRoundIndex = lastRounds.size() - 1;
-		Round currentRoundLast = lastRounds.get(currentRoundIndex);
-		int currentTurnIndex = currentRoundLast.getTurns().size() - 1;
-		
-		List<Turn> allTurnsInCurrentRound = allRounds.get(currentRoundIndex).getTurns();
+
 		ArrayList<Turn> turnsToUpdate = new ArrayList<Turn>();
-		for (int i=currentRoundLast.getTurns().size(); i<allTurnsInCurrentRound.size(); i++) {
-			turnsToUpdate.add(allTurnsInCurrentRound.get(i));
+		int currentRoundIndex = oldRounds.size() - 1;
+		Round currentOldRound = null;
+		if (currentRoundIndex >= 0)
+		{
+			currentOldRound = oldRounds.get(currentRoundIndex);
+			int currentTurnIndex = currentOldRound.getTurns().size() - 1;
+		
+			List<Turn> allTurnsInCurrentRound = allRounds.get(currentRoundIndex).getTurns();
+			for (int i=currentOldRound.getTurns().size(); i<allTurnsInCurrentRound.size(); i++) {
+				turnsToUpdate.add(allTurnsInCurrentRound.get(i));
+			}
 		}
 		
 		for (Turn turn : turnsToUpdate) {
@@ -526,12 +531,13 @@ public class LiarsDicePlayView extends JPanel implements LiarsDiceView {
 				msg += ((Bid) turn.getDecision()).getFaceValue() + "s.";
 			}
 			writeMessage(msg);
-			currentRoundLast.addTurn(turn);
+			currentOldRound.addTurn(turn);
 		}
 		
 		if (allRounds.get(currentRoundIndex).isOver()) {
-			Result roundResult = allRounds.get(currentRoundIndex).getResult();
-			Turn lastTurnInRound = turnsToUpdate.get(turnsToUpdate.size()-1);
+			Round currentAllRound = allRounds.get(currentRoundIndex); 
+			Result roundResult = currentAllRound.getResult();
+			Turn lastTurnInRound = currentAllRound.getTurns().get(currentAllRound.getTurns().size() - 1);
 			Player lastPlayer = getPlayerFromID(lastTurnInRound.getPlayerID());
 			String msg = "Round ended: " + lastPlayer.getName() + " ";
 			if (roundResult == Result.EXCEPTION)
@@ -544,15 +550,15 @@ public class LiarsDicePlayView extends JPanel implements LiarsDiceView {
 				msg += "timed out and lost a die.";
 			else if (roundResult == Result.WINNING_CHALLENGE) {
 				msg += "won the challenge. ";
-				Turn nextToLastTurnInRound = turnsToUpdate.get(turnsToUpdate.size()-2);
+				Turn nextToLastTurnInRound = currentAllRound.getTurns().get(currentAllRound.getTurns().size() - 2);
 				Player nextToLastPlayer = getPlayerFromID(nextToLastTurnInRound.getPlayerID());
 				msg += nextToLastPlayer.getName() + " lost a die.";
 			}
 			writeMessage(msg);
-			currentRoundLast.end(roundResult);
+			currentOldRound.end(roundResult);
 		}
 		if (roundChanged()) {
-			lastGameInfo.getGameHistory().addNewRound();
+			oldGameInfo.getGameHistory().addNewRound();
 		}
 		
 		//TODO update last decisions to reflect game state at end of current round
@@ -569,7 +575,7 @@ public class LiarsDicePlayView extends JPanel implements LiarsDiceView {
 
 	private boolean roundChanged() {
 		return latestGameInfo.getGameHistory().getRounds().size() 
-				> lastGameInfo.getGameHistory().getRounds().size();
+				> oldGameInfo.getGameHistory().getRounds().size();
 	}
 
 	@Override
