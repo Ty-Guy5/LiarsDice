@@ -111,11 +111,11 @@ public class LiarsDiceGame implements Game {
 			decision = getDecisionTimed(players.get(turnIndex), gi);
 			if(decision instanceof Bid){
 				Bid b = (Bid)decision;
-				System.out.println(turnIndex + " Bid: " + b);
+//				System.out.println(turnIndex + " Bid: " + b);
 //				System.out.println("bid: " + b.getFrequency() + " " + b.getDieNumber() + "'s");
 			}
 			else{
-				System.out.println(turnIndex + " challenge!");
+//				System.out.println(turnIndex + " challenge!");
 			}
 		}
 		catch(DecisionTimeout dt) {
@@ -132,6 +132,7 @@ public class LiarsDiceGame implements Game {
 			takeAwayDieAndSetNextTurn(turnIndex);
 			return roundResult;
 		}
+		
 		if(!isValidDecision(decision, gi)){
 			roundResult = Result.INVALIDDECISION;
 			players.get(turnIndex).getStatistics().increaseInvalidDecisions();
@@ -292,8 +293,18 @@ public class LiarsDiceGame implements Game {
 		else{
 			this.turnIndex = loseIndex;
 		}
+		//check if game is over
+		int playersLeft = 0;
 		for(LiarsDicePlayer p : players){
-			p.rerollDice(); //every time a die is lost, round ends and everyone rerolls
+			if(p.getDice().size() > 0){
+				playersLeft++;
+			}
+		}
+		//only reroll if game isn't over
+		if(playersLeft > 1){
+			for(LiarsDicePlayer p : players){
+				p.rerollDice(); //every time a die is lost, round ends and everyone rerolls
+			}
 		}
 	}
 

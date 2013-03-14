@@ -108,6 +108,7 @@ public class LiarsDicePlayView extends JPanel implements LiarsDiceView {
 		history.setLineWrap(true);
 		history.setEditable(false);
 		scrollPane = new JScrollPane(history);
+//		scrollPane.setVerticalScrollBarPolicy(ScrollPaneConstants.VERTICAL_SCROLLBAR_ALWAYS);
 		add(scrollPane, 4);
 
 		playerPanel3 = new PlayerPanel(2);
@@ -434,7 +435,8 @@ public class LiarsDicePlayView extends JPanel implements LiarsDiceView {
 	@Override
 	public void decisionRequest(GameInfo gameInfo) {
 		latestGameInfo = gameInfo;
-		updateToRoundEnd();
+		//updateToRoundEnd();
+		updateLastDecisions(gameInfo);
 		if (roundChanged())
 		{
 			nextRound.setEnabled(true);
@@ -523,8 +525,10 @@ public class LiarsDicePlayView extends JPanel implements LiarsDiceView {
 	}
 	
 	private void writeMessage(String msg) {
-		history.setText(history.getText() + msg + "\n");
-		scrollPane.getVerticalScrollBar().setValue(scrollPane.getVerticalScrollBar().getMaximum());
+		history.setText(msg + "\n\n" + history.getText().replace("\n\n", "\n"));
+//		history.setText(history.getText() + "max: " + scrollPane.getVerticalScrollBar().getMaximum() + "\n");
+//		scrollPane.getVerticalScrollBar().setValue(50);
+//		history.setText(history.getText() + "current: " + scrollPane.getVerticalScrollBar().getValue() + "\n");
 	}
 
 	private Decision getHumanBid() {
