@@ -73,4 +73,8 @@ public class Round {
 		}
 		this.result = result;
 	}
+
+	public boolean isOver() {
+		return (result != Result.UNFINISHED);
+	}
 }

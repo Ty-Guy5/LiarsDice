@@ -46,18 +46,13 @@ public class HumanController extends LiarsDiceBot {
 	/**
 	 * @param currentGameInfo The current state of the game.
 	 * @return The human's decision.
+	 * @throws InterruptedException 
 	 */
-	public Decision getDecision(GameInfo currentGameInfo) {
+	public Decision getDecision(GameInfo currentGameInfo) throws InterruptedException {
 		Decision userDecision = null;
 		
 		viewCommunication.sendDecisionRequest(currentGameInfo);
-		try {
-			userDecision = viewCommunication.getDecision();
-		} catch (InterruptedException e) {
-			//Do nothing. Game is over and this thread will die. 
-			//Also, this block may never be reached.
-			//TODO log if it is reached?
-		} 
+		userDecision = viewCommunication.getDecision();
 		
 		return userDecision;
 	}
@@ -65,8 +60,8 @@ public class HumanController extends LiarsDiceBot {
 	/**
 	 * @param gameInfo The current state of the game.
 	 */
-	public void reportGameResults(GameHistory gameHistory) {
-		viewCommunication.reportGameResults(gameHistory);
+	public void reportGameResults(GameInfo gameInfo) {
+		viewCommunication.reportGameResults(gameInfo);
 	}
 	
 	public class ViewCommunication
@@ -85,8 +80,8 @@ public class HumanController extends LiarsDiceBot {
 			view.decisionRequest(gameInfo);
 		}
 		
-		public void reportGameResults(GameHistory gameHistory) {
-			view.reportGameResults(gameHistory);
+		public void reportGameResults(GameInfo gameInfo) {
+			view.reportGameResults(gameInfo);
 		}
 		
 		public Decision getDecision() throws InterruptedException {

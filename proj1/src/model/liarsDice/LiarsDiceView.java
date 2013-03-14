@@ -7,6 +7,6 @@ public interface LiarsDiceView {
 
 	void decisionRequest(GameInfo gameInfo);
 
-	void reportGameResults(GameHistory gameHistory);
+	void reportGameResults(GameInfo gameInfo);
 
 }

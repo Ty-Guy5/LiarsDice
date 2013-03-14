@@ -58,7 +58,7 @@ public class LiarsDiceGame implements Game {
 		//determine the winner and report the results to everyone
 		LiarsDicePlayer winner = null;
 		for(LiarsDicePlayer p : players){
-			p.reportGameResults(new GameHistory(history)); //TODO assumes bot will be fast and exception-free
+			p.reportGameResults(createGameInfo()); //TODO assumes bot will be fast and exception-free
 			if(p.getDice().size() > 0){
 				assert (winner == null) : "error: multiple winners???";
 				winner = p;
@@ -69,30 +69,40 @@ public class LiarsDiceGame implements Game {
 	}
 	
 	/**
-	 * Plays a single round of the game. (Until a player challenges, throws an exception, or returns an invalid decision.)
+	 * Plays a single round of the game. (Until a player challenges, throws an exception, 
+	 * or returns an invalid decision.)
+	 * 
 	 * @throws InterruptedException 
 	 */
 	private void playRound() throws InterruptedException {
 		Result roundResult = Result.UNFINISHED;
 		currentBid = null;
-		history.addRound(new Round());
+		history.addNewRound();
 //		int roundcounter = 0;
 		while(roundResult == Result.UNFINISHED){
 //			System.out.println("roundresult = unfinished " + roundcounter++);
-			//create the gameInfo object
-			ArrayList<PlayerInfo> allPlayersInfo = new ArrayList<PlayerInfo>();
-			for(Player p : players){
-				allPlayersInfo.add(new PlayerInfo((LiarsDicePlayer)p));
-			}
-			GameInfo gi = new GameInfo(currentBid, new GameHistory(history), 
-					players.get(turnIndex).getDice(), allPlayersInfo);
 			
 			//get the player's decision and dish out the consequences
-			roundResult = collectAndProcessDecision(gi, roundResult);
+			roundResult = collectAndProcessDecision(createGameInfo(), roundResult);
 //			System.out.println("currentBid after process: " + currentBid);
 		}
 		history.endRound(roundResult);
 		
+	}
+	
+	/**
+	 * @return A newly created GameInfo object, complete with GameHistory and PlayerInfo objects.
+	 */
+	private GameInfo createGameInfo()
+	{
+		ArrayList<PlayerInfo> allPlayersInfo = new ArrayList<PlayerInfo>();
+		for(Player p : players){
+			allPlayersInfo.add(new PlayerInfo((LiarsDicePlayer)p));
+		}
+		GameInfo gi = new GameInfo(currentBid, new GameHistory(history),
+				players.get(turnIndex).getDice(), turnIndex, allPlayersInfo);
+		
+		return gi;
 	}
 
 	/**
@@ -109,6 +119,7 @@ public class LiarsDiceGame implements Game {
 //			int dice = players.get(turnIndex).getDice().size();
 //			System.out.println(players.get(turnIndex).getID() + ": " + dice);
 			decision = getDecisionTimed(players.get(turnIndex), gi);
+			history.addTurn(new Turn(players.get(turnIndex).getID(), decision));
 			if(decision instanceof Bid){
 				Bid b = (Bid)decision;
 //				System.out.println(turnIndex + " Bid: " + b);
@@ -151,7 +162,6 @@ public class LiarsDiceGame implements Game {
 		}
 		else //normal bid
 		{
-			history.addTurn(new Turn(players.get(turnIndex).getID(), decision));
 			Bid bid = (Bid)decision;
 			currentBid = bid;
 //			System.out.println("currentBid during process: " + currentBid);
@@ -208,7 +218,7 @@ public class LiarsDiceGame implements Game {
 		}
 		public LiarsDicePlayer player;
 		public GameInfo gi;
-		public Decision call() {
+		public Decision call() throws InterruptedException {
 			return player.getDecision(gi);
 		  }
 	}

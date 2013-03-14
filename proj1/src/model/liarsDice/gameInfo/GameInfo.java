@@ -17,13 +17,14 @@ public class GameInfo {
 	private Bid currentBid;
 	private GameHistory gameHistory;
 	private List<Die> myDice;
+	private int myPlayerID;
 	private List<PlayerInfo> playersInfo;
 	
 	/**
 	 * Default constructor.
 	 */
 	public GameInfo(){
-		init(null, new GameHistory(), new ArrayList<Die>(), new ArrayList<PlayerInfo>());
+		init(null, new GameHistory(), new ArrayList<Die>(), 0, new ArrayList<PlayerInfo>());
 	}
 	
 	/**
@@ -33,8 +34,8 @@ public class GameInfo {
 	 * @param myDice The dice of the player whose turn it is.
 	 * @param players List of PlayerInfo objects (one for each player).
 	 */
-	public GameInfo(Bid currentBid, GameHistory gameHistory, List<Die> myDice, List<PlayerInfo> players) {
-		init(currentBid, gameHistory, myDice, players);
+	public GameInfo(Bid currentBid, GameHistory gameHistory, List<Die> myDice, int myPlayerID, List<PlayerInfo> players) {
+		init(currentBid, gameHistory, myDice, myPlayerID, players);
 	}
 	
 	/**
@@ -42,7 +43,7 @@ public class GameInfo {
 	 * @param gi The GameInfo object to be copied.
 	 */
 	public GameInfo(GameInfo gi){
-		init(gi.getCurrentBid(), gi.getGameHistory(), gi.getMyDice(), gi.getPlayersInfo());
+		init(gi.getCurrentBid(), gi.getGameHistory(), gi.getMyDice(), gi.getMyPlayerID(), gi.getPlayersInfo());
 	}
 
 	/**
@@ -50,12 +51,14 @@ public class GameInfo {
 	 * @param currentBid The current bid.
 	 * @param gameHistory The history of the game so far.
 	 * @param myDice The dice of the player whose turn it is.
+	 * @param myPlayerID The id of the player whose turn it is.
 	 * @param playersInfo List of PlayerInfo objects (one for each player).
 	 */
-	public void init(Bid currentBid, GameHistory gameHistory, List<Die> myDice, List<PlayerInfo> playersInfo) {
+	public void init(Bid currentBid, GameHistory gameHistory, List<Die> myDice, int myPlayerID, List<PlayerInfo> playersInfo) {
 		this.currentBid = currentBid;
 		this.gameHistory = new GameHistory(gameHistory);
 		this.myDice = Collections.unmodifiableList(myDice);
+		this.myPlayerID = myPlayerID;
 		this.playersInfo = Collections.unmodifiableList(playersInfo);
 	}
 	
@@ -78,6 +81,13 @@ public class GameInfo {
 	 */
 	public List<Die> getMyDice() {
 		return myDice;
+	}
+	
+	/**
+	 * @return The ID of the player whose turn it is.
+	 */
+	public int getMyPlayerID() {
+		return myPlayerID;
 	}
 	
 	/**
