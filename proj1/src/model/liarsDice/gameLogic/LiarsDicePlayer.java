@@ -34,6 +34,16 @@ public class LiarsDicePlayer extends Player{
 		}
 	}
 
+	public LiarsDicePlayer(LiarsDicePlayer other, int id) {
+		super(id);
+		this.bot = other.bot;
+		dice = new ArrayList<Die>();
+		int numDice = INITIAL_NUM_DICE;
+		for (int i=0; i<numDice; i++) {
+			dice.add(new Die());	
+		}
+	}
+
 	/**
 	 * Removes one of the dice this player has.  (Used when they lose a round.)
 	 */
