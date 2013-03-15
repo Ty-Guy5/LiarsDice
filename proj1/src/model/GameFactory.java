@@ -13,18 +13,18 @@ public interface GameFactory {
 	 * @param players List of players to be included in the current game.
 	 * @return An instance of the game initialized with the given players.
 	 */
-	public Game getGameInstance(List<Player> players);
+	Game getGameInstance(List<Player> players);
 	
 	/**
 	 * @return The name of the game this factory produces.
 	 */
-	public String getGameName();
+	String getGameName();
 	
 	/**
 	 * This method can either be hardcoded (if all bot implementation names are known), 
 	 * or can use reflection to find the class names in a certain folder.
 	 * @return List of all bot implementations which can be used in the tournament.
 	 */
-	public List<Player> getPlayers();
+	List<Player> getPlayers();
 	
 }

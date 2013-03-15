@@ -7,5 +7,5 @@ public interface Bot {
 	/**
 	 * @return A name for your bot. Have fun, but keep it G-rated. (Hopefully that's not an issue here at BYU.)
 	 */
-	public String getName();
+	String getName();
 }

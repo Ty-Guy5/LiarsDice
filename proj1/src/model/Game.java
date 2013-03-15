@@ -13,11 +13,11 @@ public interface Game {
 	 * The method called by the tournament when it wants to run the game.
 	 * @return The Player who won that game.
 	 */
-	public Player runGame();
+	Player runGame();
 	
 	/**
 	 * Sets the limit on turn times for each bot.  (If a player goes over that time, they lose the round/game.)
 	 * @param microsecBeforeTimeout Number of microseconds allowed for each player to take a turn.
 	 */
-	public void setTimeout(long microsecBeforeTimeout);
+	void setTimeout(long microsecBeforeTimeout);
 }
