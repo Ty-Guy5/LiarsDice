@@ -9,7 +9,7 @@ import model.liarsDice.gameLogic.LiarsDiceBot;
 /**
  * Very simple test bot which randomly throws exceptions or Challenges.
  */
-public class TestBot0 extends LiarsDiceBot {
+public class Problematic extends LiarsDiceBot {
 
 	public String getName() {
 		return "Problematic";

@@ -249,7 +249,7 @@ public class LiarsDicePlayView extends JPanel implements LiarsDiceView {
 		botPickers[2].setSelectedIndex(index);
 		humanController = new HumanController();
 		humanController.getViewCommunication().registerView(this);
-		players.set(3, new LiarsDicePlayer(humanController, allPlayers.size() + 1));
+		players.set(3, new LiarsDicePlayer(humanController, allPlayers.size()));
 		
 		setupPlayers();
 		initializeEnables();
@@ -610,7 +610,7 @@ public class LiarsDicePlayView extends JPanel implements LiarsDiceView {
 	}
 
 	private void writeMessage(String msg) {
-		history.setText(history.getText() + "\n" + msg);
+		history.setText(msg + "\n\n" + history.getText().replace("\n\n", "\n"));
 //		history.setText(history.getText() + "max: " + scrollPane.getVerticalScrollBar().getMaximum() + "\n");
 //		scrollPane.getVerticalScrollBar().setValue(50);
 //		history.setText(history.getText() + "current: " + scrollPane.getVerticalScrollBar().getValue() + "\n");

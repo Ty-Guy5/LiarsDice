@@ -16,6 +16,7 @@ import model.Player;
 import model.liarsDice.gameLogic.LiarsDiceBot;
 import model.liarsDice.gameLogic.LiarsDiceGame;
 import model.liarsDice.gameLogic.LiarsDicePlayer;
+import model.liarsDice.testBots.Problematic;
 
 
 /**
@@ -55,10 +56,10 @@ public class LiarsDiceGameFactory implements GameFactory {
 		ArrayList<Bot> bots = new ArrayList<Bot>();
 		
 		//hardcoded bots
-//		bots.add(new TestBot0());
-//		bots.add(new TestBot1());
-//		bots.add(new TestBot2());
-//		bots.add(new TestBot5());
+		bots.add(new Problematic());
+//		bots.add(new Challenger());
+//		bots.add(new Consistent());
+//		bots.add(new InfiniteLooper());
 		
 		//gather bots in file via reflection
 		ArrayList<String> botNames = findBotsInFolder("/src/model/liarsDice/bots");

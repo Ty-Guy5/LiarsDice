@@ -9,7 +9,7 @@ import model.liarsDice.gameLogic.LiarsDiceBot;
 /**
  * Very simple test bot which always Challenges.
  */
-public class TestBot1 extends LiarsDiceBot {
+public class Challenger extends LiarsDiceBot {
 
 	@Override
 	public String getName() {

@@ -9,7 +9,7 @@ import model.liarsDice.gameLogic.LiarsDiceBot;
 /**
  * Very simple test bot which always returns the same bid. (Will probably be invalid decision a lot.)
  */
-public class TestBot2 extends LiarsDiceBot {
+public class Consistent extends LiarsDiceBot {
 
 	@Override
 	public String getName() {

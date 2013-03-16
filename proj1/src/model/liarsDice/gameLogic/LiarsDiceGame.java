@@ -1,5 +1,8 @@
 package model.liarsDice.gameLogic;
 
+import java.io.PrintStream;
+import java.io.PrintWriter;
+import java.io.StringWriter;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.*;
@@ -10,7 +13,6 @@ import model.liarsDice.gameInfo.GameHistory;
 import model.liarsDice.gameInfo.GameInfo;
 import model.liarsDice.gameInfo.PlayerInfo;
 import model.liarsDice.gameInfo.Result;
-import model.liarsDice.gameInfo.Round;
 import model.liarsDice.gameInfo.Turn;
 
 
@@ -25,6 +27,7 @@ public class LiarsDiceGame implements Game {
 	private Bid currentBid;
 	private boolean debug = false;
 	private long microsecBeforeTimeout;
+	private List<String> exceptionLog;
 	
 	/**
 	 * Constructor.
@@ -37,6 +40,7 @@ public class LiarsDiceGame implements Game {
 		turnIndex = 0;
 		currentBid = null;
 		microsecBeforeTimeout = Long.MAX_VALUE;
+		exceptionLog = new ArrayList<String>();
 	}
 	
 	/**
@@ -44,23 +48,22 @@ public class LiarsDiceGame implements Game {
 	 * @return The victorious player.
 	 */
 	public Player runGame() {
-		//TODO make sure that tournament decides play order before passing the list here (pass in bots in play order)
-		//turnIndex = 0;
 		while(numPlayers > 1){
-//			System.out.println("new round " + counter++);
 			try {
 				playRound();
+				for(LiarsDicePlayer p : players){
+					p.reportRoundResults(createGameInfo(true)); //TODO assumes bot will be fast and exception-free
+				}
 			} catch (InterruptedException e) {
 				return null;
 			}
 		}
 		
-		//determine the winner and report the results to everyone
+		//determine the winner
 		LiarsDicePlayer winner = null;
 		for(LiarsDicePlayer p : players){
-			p.reportGameResults(createGameInfo()); //TODO assumes bot will be fast and exception-free
 			if(p.getDice().size() > 0){
-				assert (winner == null) : "error: multiple winners???";
+				//XXX: assert (winner == null) : "error: multiple winners???";
 				winner = p;
 			}
 		}
@@ -83,7 +86,7 @@ public class LiarsDiceGame implements Game {
 //			System.out.println("roundresult = unfinished " + roundcounter++);
 			
 			//get the player's decision and dish out the consequences
-			roundResult = collectAndProcessDecision(createGameInfo(), roundResult);
+			roundResult = collectAndProcessDecision(createGameInfo(false), roundResult);
 //			System.out.println("currentBid after process: " + currentBid);
 		}
 		history.endRound(roundResult);
@@ -91,13 +94,16 @@ public class LiarsDiceGame implements Game {
 	}
 	
 	/**
+	 * Creates a GameInfo object for the player of the current turnIndex.
 	 * @return A newly created GameInfo object, complete with GameHistory and PlayerInfo objects.
 	 */
-	private GameInfo createGameInfo()
+	private GameInfo createGameInfo(boolean revealAllDice)
 	{
 		ArrayList<PlayerInfo> allPlayersInfo = new ArrayList<PlayerInfo>();
 		for(Player p : players){
-			allPlayersInfo.add(new PlayerInfo((LiarsDicePlayer)p));
+			boolean hidePlayerDice = p.getID() != players.get(turnIndex).getID()
+					&& !revealAllDice; 
+			allPlayersInfo.add(new PlayerInfo((LiarsDicePlayer)p, false));
 		}
 		GameInfo gi = new GameInfo(currentBid, new GameHistory(history),
 				players.get(turnIndex).getDice(), turnIndex, allPlayersInfo);
@@ -116,18 +122,8 @@ public class LiarsDiceGame implements Game {
 		
 		Decision decision = null;
 		try{
-//			int dice = players.get(turnIndex).getDice().size();
-//			System.out.println(players.get(turnIndex).getID() + ": " + dice);
 			decision = getDecisionTimed(players.get(turnIndex), gi);
 			history.addTurn(new Turn(players.get(turnIndex).getID(), decision));
-			if(decision instanceof Bid){
-				Bid b = (Bid)decision;
-//				System.out.println(turnIndex + " Bid: " + b);
-//				System.out.println("bid: " + b.getFrequency() + " " + b.getDieNumber() + "'s");
-			}
-			else{
-//				System.out.println(turnIndex + " challenge!");
-			}
 		}
 		catch(DecisionTimeout dt) {
 			roundResult = Result.TIMEOUT;
@@ -136,8 +132,7 @@ public class LiarsDiceGame implements Game {
 			return roundResult;
 		}
 		catch(ExecutionException e){ //checking against exceptions thrown by bot
-			if(debug)
-				e.printStackTrace(); //TODO log instead of printing error
+			logException((Exception)e.getCause());
 			roundResult = Result.EXCEPTION;
 			players.get(turnIndex).getStatistics().increaseExceptions();
 			takeAwayDieAndSetNextTurn(turnIndex);
@@ -164,7 +159,6 @@ public class LiarsDiceGame implements Game {
 		{
 			Bid bid = (Bid)decision;
 			currentBid = bid;
-//			System.out.println("currentBid during process: " + currentBid);
 			turnIndex = nextTurnIndex(turnIndex);
 		}
 		return roundResult;
@@ -234,21 +228,17 @@ public class LiarsDiceGame implements Game {
 	 * @return The next turn index.
 	 */
 	private int nextTurnIndex(int turnIndex) {
-		int temp = turnIndex;
-		//System.out.println("turnIndex: " + turnIndex);
+		int tempIndex = turnIndex;
 		do{
-			temp++;
-			//System.out.println("temp: " + temp);
-			if(temp >= players.size()){
-				temp = 0;
+			tempIndex++;			if(tempIndex >= players.size()){
+				tempIndex = 0;
 			}
-			if(temp == turnIndex){
-				//System.out.println("nextTurnIndex error: turn == turnIndex");
+			if(tempIndex == turnIndex){
 				//not error - only one player left with dice
 				break;
 			}
-		}while(players.get(temp).getDice().size() <= 0);
-		return temp;
+		}while(players.get(tempIndex).getDice().size() <= 0);
+		return tempIndex;
 	}
 
 	/**
@@ -264,7 +254,6 @@ public class LiarsDiceGame implements Game {
 				temp = players.size() - 1;
 			}
 			if(temp == turnIndex){
-				//System.out.println("previousTurnIndex error: turn == turnIndex");
 				//not error - only one player left with dice
 				break;
 			}
@@ -303,19 +292,25 @@ public class LiarsDiceGame implements Game {
 		else{
 			this.turnIndex = loseIndex;
 		}
-		//check if game is over
+		if (isGameOver()) {
+			for(LiarsDicePlayer p : players){
+				p.rerollDice(); //every time a die is lost, round ends and everyone rerolls
+			}
+		}
+	}
+
+	/**
+	 * Checks to see if there is only one player with dice left.
+	 * @return true if game is over, false otherwise.
+	 */
+	public boolean isGameOver() {
 		int playersLeft = 0;
 		for(LiarsDicePlayer p : players){
 			if(p.getDice().size() > 0){
 				playersLeft++;
 			}
 		}
-		//only reroll if game isn't over
-		if(playersLeft > 1){
-			for(LiarsDicePlayer p : players){
-				p.rerollDice(); //every time a die is lost, round ends and everyone rerolls
-			}
-		}
+		return playersLeft > 1;
 	}
 
 	/**
@@ -343,8 +338,6 @@ public class LiarsDiceGame implements Game {
 		}
 		else{
 			Bid bid = (Bid)decision;
-//			System.out.println("bid: " + bid);
-//			System.out.println("currentbid: " + currentBid);
 			if(bid.getFaceValue() < 2 || bid.getFaceValue() > 6){
 				return false; //invalid dieNumber
 			}
@@ -394,5 +387,17 @@ public class LiarsDiceGame implements Game {
 	 */
 	public void setTimeout(long microsecBeforeTimeout) {
 		this.microsecBeforeTimeout = microsecBeforeTimeout;
+	}
+
+	/**
+	 * Adds the stack trace of an exception to the exceptionLog.
+	 * @param e The exception to log
+	 */
+	private void logException(Exception e) {
+		String exceptionString;
+		StringWriter stringWriter = new StringWriter();
+		e.printStackTrace(new PrintWriter(stringWriter));
+		exceptionString = stringWriter.toString();
+		exceptionLog.add(exceptionString);
 	}
 }

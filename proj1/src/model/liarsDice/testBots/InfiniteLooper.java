@@ -6,7 +6,7 @@ import model.liarsDice.gameLogic.Decision;
 import model.liarsDice.gameLogic.LiarsDiceBot;
 
 
-public class TestBot5 extends LiarsDiceBot {
+public class InfiniteLooper extends LiarsDiceBot {
 
 	public String getName() {
 		return "Infinite Looper";

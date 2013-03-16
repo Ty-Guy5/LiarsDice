@@ -114,6 +114,7 @@ public class GameInfo {
 		
 		return winner;
 	}
+	
 	/**
 	 * @return The total number of dice (between all players) remaining in the game.
 	 */
@@ -123,5 +124,13 @@ public class GameInfo {
 			totalDice += p.getNumDice();
 		}
 		return totalDice;
+	}
+	
+	/**
+	 * Checks to see if there is only one player with dice left.
+	 * @return true if game is over, false otherwise.
+	 */
+	public boolean isGameOver() {
+		return getWinnerID() != 0;
 	}
 }
