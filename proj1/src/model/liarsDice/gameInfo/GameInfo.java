@@ -54,7 +54,7 @@ public class GameInfo {
 	 * @param myPlayerID The id of the player whose turn it is.
 	 * @param playersInfo List of PlayerInfo objects (one for each player).
 	 */
-	public void init(Bid currentBid, GameHistory gameHistory, List<Die> myDice, int myPlayerID, List<PlayerInfo> playersInfo) {
+	private void init(Bid currentBid, GameHistory gameHistory, List<Die> myDice, int myPlayerID, List<PlayerInfo> playersInfo) {
 		this.currentBid = currentBid;
 		this.gameHistory = new GameHistory(gameHistory);
 		this.myDice = Collections.unmodifiableList(myDice);
