@@ -11,31 +11,30 @@ import model.liarsDice.gameLogic.Die;
 
 /**
  * Holds the relevant information for the current state of the game, including the current bid, the game history so far, 
- * the dice of the player whose turn it is, and a PlayerInfo object for each other player in the game.
+ * the index of the player whose turn it is, and a PlayerInfo object for each player in the game.
  */
 public class GameInfo {
 	private Bid currentBid;
 	private GameHistory gameHistory;
-	private List<Die> myDice;
-	private int myPlayerID;
+	private int myIndex;
 	private List<PlayerInfo> playersInfo;
 	
 	/**
 	 * Default constructor.
 	 */
 	public GameInfo(){
-		init(null, new GameHistory(), new ArrayList<Die>(), 0, new ArrayList<PlayerInfo>());
+		init(null, new GameHistory(), -1, new ArrayList<PlayerInfo>());
 	}
 	
 	/**
 	 * Constructor.
 	 * @param currentBid The current bid.
 	 * @param gameHistory The history of the game so far.
-	 * @param myDice The dice of the player whose turn it is.
+	 * @param myIndex The index into the players list of the player for which this object was created.
 	 * @param players List of PlayerInfo objects (one for each player).
 	 */
-	public GameInfo(Bid currentBid, GameHistory gameHistory, List<Die> myDice, int myPlayerID, List<PlayerInfo> players) {
-		init(currentBid, gameHistory, myDice, myPlayerID, players);
+	public GameInfo(Bid currentBid, GameHistory gameHistory, int myIndex, List<PlayerInfo> players) {
+		init(currentBid, gameHistory, myIndex, players);
 	}
 	
 	/**
@@ -43,22 +42,20 @@ public class GameInfo {
 	 * @param gi The GameInfo object to be copied.
 	 */
 	public GameInfo(GameInfo gi){
-		init(gi.getCurrentBid(), gi.getGameHistory(), gi.getMyDice(), gi.getMyPlayerID(), gi.getPlayersInfo());
+		init(gi.getCurrentBid(), gi.getGameHistory(), gi.myIndex, gi.getAllPlayersInfo());
 	}
 
 	/**
 	 * Creates a deep (unmodifiable) copy of all parameters.
 	 * @param currentBid The current bid.
 	 * @param gameHistory The history of the game so far.
-	 * @param myDice The dice of the player whose turn it is.
-	 * @param myPlayerID The id of the player whose turn it is.
+	 * @param myIndex The index into playersInfo of the player whose turn it is.
 	 * @param playersInfo List of PlayerInfo objects (one for each player).
 	 */
-	public void init(Bid currentBid, GameHistory gameHistory, List<Die> myDice, int myPlayerID, List<PlayerInfo> playersInfo) {
+	public void init(Bid currentBid, GameHistory gameHistory, int myIndex, List<PlayerInfo> playersInfo) {
 		this.currentBid = currentBid;
 		this.gameHistory = new GameHistory(gameHistory);
-		this.myDice = Collections.unmodifiableList(myDice);
-		this.myPlayerID = myPlayerID;
+		this.myIndex = myIndex;
 		this.playersInfo = Collections.unmodifiableList(playersInfo);
 	}
 	
@@ -77,28 +74,40 @@ public class GameInfo {
 	}
 
 	/**
-	 * @return The dice of the player whose turn it is.
+	 * @return List of PlayerInfo objects (one for each player excluding mine).
 	 */
 	public List<Die> getMyDice() {
-		return myDice;
+		return playersInfo.get(myIndex).getDice();
 	}
 	
 	/**
 	 * @return The ID of the player whose turn it is.
 	 */
 	public int getMyPlayerID() {
-		return myPlayerID;
+		return playersInfo.get(myIndex).getID();
 	}
 	
 	/**
-	 * @return List of PlayerInfo objects (one for each player).
+	 * @return List of PlayerInfo objects (one for each player including mine).
 	 */
-	public List<PlayerInfo> getPlayersInfo() {
+	public List<PlayerInfo> getAllPlayersInfo() {
 		return playersInfo;
 	}
+
+	/**
+	 * @return The dice of the player whose turn it is.
+	 */
+	public List<PlayerInfo> getOtherPlayersInfo() {
+		List<PlayerInfo> otherPlayersInfo = new ArrayList<PlayerInfo>();
+		for (int i=0; i<playersInfo.size(); i++) {
+			if (i != myIndex)
+				otherPlayersInfo.add(playersInfo.get(i));
+		}
+		return otherPlayersInfo;
+	}
 	
 	/**
-	 * @return The ID of the winner of the game, or 0 if there is no winner (the game isn't over yet).
+	 * @return The ID of the winner of the game, or -1 if there is no winner (the game isn't over yet).
 	 */
 	public int getWinnerID()
 	{
@@ -107,7 +116,7 @@ public class GameInfo {
 		for(PlayerInfo p : playersInfo){
 			if(p.getNumDice() > 0){
 				if (winner != 0)
-					return 0;
+					return -1;
 				winner = p.getID();
 			}
 		}
@@ -119,7 +128,7 @@ public class GameInfo {
 	 * @return The total number of dice (between all players) remaining in the game.
 	 */
 	public int getTotalDice() {
-		int totalDice = myDice.size();
+		int totalDice = 0;
 		for(PlayerInfo p : playersInfo){
 			totalDice += p.getNumDice();
 		}
@@ -131,6 +140,6 @@ public class GameInfo {
 	 * @return true if game is over, false otherwise.
 	 */
 	public boolean isGameOver() {
-		return getWinnerID() != 0;
+		return getWinnerID() >= 0;
 	}
 }

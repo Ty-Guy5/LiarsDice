@@ -12,11 +12,8 @@ public class InfiniteLooper extends LiarsDiceBot {
 		return "Infinite Looper";
 	}
 
-	public Decision getDecision(GameInfo currentGameInfo) {
-		try {
-			Thread.sleep(10000);
-		} catch (InterruptedException e) {
-		}
+	public Decision getDecision(GameInfo currentGameInfo) throws InterruptedException {
+		Thread.sleep(10000);
 		return new Challenge();
 	}
 }

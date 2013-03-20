@@ -34,6 +34,6 @@ public class Bid implements Decision {
 	 * @return A string representation of the bid.
 	 */
 	public String toString(){
-		return "Bid " + frequency + " " + faceValue + "'s";
+		return "Bid " + frequency + " " + faceValue + "s";
 	}
 }

@@ -5,7 +5,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 import model.Player;
-import model.liarsDice.gameInfo.GameHistory;
 import model.liarsDice.gameInfo.GameInfo;
 
 
@@ -94,9 +93,10 @@ public class LiarsDicePlayer extends Player{
 	/**
 	 * Used to tell the bots what happened in the game after it is over - in case they want to learn from it.
 	 * @param gameHistory History of the game.
+	 * @throws InterruptedException if the bot's decision is interrupted.
 	 */
-	public void reportRoundResults(GameInfo gameInfo){
-		bot.reportGameResults(gameInfo);
+	public void reportRoundResults(GameInfo gameInfo) throws InterruptedException{
+		bot.reportRoundResults(gameInfo);
 	}
 
 	/**

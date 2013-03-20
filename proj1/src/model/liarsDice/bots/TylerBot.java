@@ -9,11 +9,10 @@ import model.liarsDice.gameLogic.*;
 public class TylerBot extends LiarsDiceBot 
 {
 	boolean verbose = false;
-	public String getName() 
-	{
-		return "Tyler's Bot";
-	}
+	int numGames = 0;
+	int numRounds = 0;
 
+	@Override
 	public Decision getDecision(GameInfo gi) 
 	{
 		Bid myBid = new Bid(gi.getTotalDice() / 3, 6);
@@ -30,9 +29,15 @@ public class TylerBot extends LiarsDiceBot
 			return new Challenge();
 		}
 	}
+	
+	@Override
+	public String getName() 
+	{
+		return "Tyler's Bot";
+	}
 
-	int numGames = 0;
-	public void reportGameResults(GameInfo info)
+	@Override
+	public void reportRoundResults(GameInfo info)
 	{
 		say("Game " + ++numGames + ": ");
 		for (Round r : info.getGameHistory().getRounds())
@@ -40,8 +45,18 @@ public class TylerBot extends LiarsDiceBot
 			displayRound(r);
 		}
 	}
+	
+	private String decisionToString(Decision decision) 
+	{
+		if (decision instanceof Challenge)
+			return "Challenge";
+		else
+		{
+			Bid bid = (Bid)decision;
+			return "Bid " + bid.getFrequency() + " " + bid.getFaceValue() + "s";
+		}
+	}
 
-	int numRounds = 0;
 	private void displayRound(Round r) 
 	{
 		say("Round " + ++numRounds + ": ");
@@ -56,16 +71,5 @@ public class TylerBot extends LiarsDiceBot
 	{
 		if (verbose)
 			System.out.println(string);
-	}
-
-	private String decisionToString(Decision decision) 
-	{
-		if (decision instanceof Challenge)
-			return "Challenge";
-		else
-		{
-			Bid bid = (Bid)decision;
-			return "Bid " + bid.getFrequency() + " " + bid.getFaceValue() + "s";
-		}
 	}
 }

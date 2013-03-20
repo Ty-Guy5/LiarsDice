@@ -1,6 +1,5 @@
 package model.liarsDice.gameLogic;
 
-import java.io.PrintStream;
 import java.io.PrintWriter;
 import java.io.StringWriter;
 import java.util.ArrayList;
@@ -51,8 +50,9 @@ public class LiarsDiceGame implements Game {
 		while(numPlayers > 1){
 			try {
 				playRound();
+				int playerIndex = 0;
 				for(LiarsDicePlayer p : players){
-					p.reportRoundResults(createGameInfo(true)); //TODO assumes bot will be fast and exception-free
+					p.reportRoundResults(createGameInfo(true, playerIndex++)); //TODO assumes bot will be fast and exception-free
 				}
 			} catch (InterruptedException e) {
 				return null;
@@ -81,46 +81,42 @@ public class LiarsDiceGame implements Game {
 		Result roundResult = Result.UNFINISHED;
 		currentBid = null;
 		history.addNewRound();
-//		int roundcounter = 0;
 		while(roundResult == Result.UNFINISHED){
-//			System.out.println("roundresult = unfinished " + roundcounter++);
-			
-			//get the player's decision and dish out the consequences
-			roundResult = collectAndProcessDecision(createGameInfo(false), roundResult);
-//			System.out.println("currentBid after process: " + currentBid);
+			roundResult = collectAndProcessDecision(roundResult);
 		}
 		history.endRound(roundResult);
-		
 	}
 	
 	/**
-	 * Creates a GameInfo object for the player of the current turnIndex.
+	 * Creates a GameInfo object for the player of the given index.
+	 * @param revealAllDice Tells whether the dice should be revealed for all players.
+	 * @param playerIndex The index for the player the GameInfo is for.
 	 * @return A newly created GameInfo object, complete with GameHistory and PlayerInfo objects.
 	 */
-	private GameInfo createGameInfo(boolean revealAllDice)
+	private GameInfo createGameInfo(boolean revealAllDice, int playerIndex)
 	{
 		ArrayList<PlayerInfo> allPlayersInfo = new ArrayList<PlayerInfo>();
 		for(Player p : players){
 			boolean hidePlayerDice = p.getID() != players.get(turnIndex).getID()
 					&& !revealAllDice; 
-			allPlayersInfo.add(new PlayerInfo((LiarsDicePlayer)p, false));
+			allPlayersInfo.add(new PlayerInfo((LiarsDicePlayer)p, !hidePlayerDice));
 		}
 		GameInfo gi = new GameInfo(currentBid, new GameHistory(history),
-				players.get(turnIndex).getDice(), turnIndex, allPlayersInfo);
+				playerIndex, allPlayersInfo);
 		
 		return gi;
 	}
 
 	/**
 	 * Given a player's decision, processes that decision and updates whose turn it is (and, if applicable, removes a die from a player).
-	 * @param gi Current state of the game.
 	 * @param roundResult Result of the current round. (Result.UNFINISHED if round isn't over yet)
 	 * @return Result of the current round. (Result.UNFINISHED if round isn't over yet)
 	 * @throws InterruptedException 
 	 */
-	private Result collectAndProcessDecision(GameInfo gi, Result roundResult) throws InterruptedException {
+	private Result collectAndProcessDecision(Result roundResult) throws InterruptedException {
 		
 		Decision decision = null;
+		GameInfo gi = createGameInfo(false, turnIndex);
 		try{
 			decision = getDecisionTimed(players.get(turnIndex), gi);
 			history.addTurn(new Turn(players.get(turnIndex).getID(), decision));
@@ -220,6 +216,7 @@ public class LiarsDiceGame implements Game {
 	/**
 	 * The exception thrown when a player exceeds the time limit in getDecision().
 	 */
+	@SuppressWarnings("serial")
 	private class DecisionTimeout extends Exception {}
 
 	/**
@@ -375,7 +372,7 @@ public class LiarsDiceGame implements Game {
 	 */
 	private static boolean bidFrequencyTooHigh(Bid bid, GameInfo gi) {
 		int totalDice = 0;
-		for(PlayerInfo p : gi.getPlayersInfo()){
+		for(PlayerInfo p : gi.getAllPlayersInfo()){
 			totalDice += p.getNumDice();
 		}
 		return (bid.getFrequency() > totalDice);

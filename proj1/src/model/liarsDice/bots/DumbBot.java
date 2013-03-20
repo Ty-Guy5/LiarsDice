@@ -26,11 +26,9 @@ public class DumbBot extends LiarsDiceBot {
 		if(b == null){
 			return new Bid(2, 2);
 		}
-		/* This prevents a game from never ending */
 		else if(b.getFrequency() > getTotalDice(currentGameInfo)){
 			return new Challenge();
 		}
-		/**/
 		else{
 			return new Bid(b.getFrequency() + 1, b.getFaceValue());
 		}
@@ -38,7 +36,7 @@ public class DumbBot extends LiarsDiceBot {
 	
 	private int getTotalDice(GameInfo currentGameInfo) {
 		int totalDice = currentGameInfo.getMyDice().size();
-		List<PlayerInfo> players = currentGameInfo.getPlayersInfo();
+		List<PlayerInfo> players = currentGameInfo.getAllPlayersInfo();
 		for(PlayerInfo p : players){
 			totalDice += p.getNumDice();
 		}

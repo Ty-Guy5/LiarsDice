@@ -60,7 +60,7 @@ public class SmartBot extends LiarsDiceBot {
 
 	private int getTotalDice(GameInfo currentGameInfo) {
 		int totalDice = currentGameInfo.getMyDice().size();
-		List<PlayerInfo> players = currentGameInfo.getPlayersInfo();
+		List<PlayerInfo> players = currentGameInfo.getAllPlayersInfo();
 		for(PlayerInfo p : players){
 			totalDice += p.getNumDice();
 		}
