@@ -50,11 +50,13 @@ public class TylerBot extends LiarsDiceBot
 	{
 		if (decision instanceof Challenge)
 			return "Challenge";
-		else
+		else if (decision instanceof Bid)
 		{
 			Bid bid = (Bid)decision;
 			return "Bid " + bid.getFrequency() + " " + bid.getFaceValue() + "s";
 		}
+		else
+			return "No decision";
 	}
 
 	private void displayRound(Round r) 
