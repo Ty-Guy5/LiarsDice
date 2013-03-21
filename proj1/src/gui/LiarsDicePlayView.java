@@ -456,7 +456,7 @@ public class LiarsDicePlayView extends JPanel implements LiarsDiceView {
     }
 
 	@Override
-	public void decisionRequest(GameInfo gameInfo) {
+	public void requestDecision(GameInfo gameInfo) {
 		updateView(gameInfo);
 		playerPanel1.updateDicePanel(false);
 		playerPanel2.updateDicePanel(false);
@@ -469,7 +469,7 @@ public class LiarsDicePlayView extends JPanel implements LiarsDiceView {
 
 	/**
 	 * Updates the message box with all messages for the turns completed, and updates 
-	 * the last-decision displays for all bots, up to the nearest round end.
+	 * the last-decision displays for all bots, up to the round end or the current turn.
 	 * @param gameInfo A GameInfo object representing the current state of the game.
 	 */
 	private void updateView(GameInfo gameInfo) {
@@ -508,27 +508,32 @@ public class LiarsDicePlayView extends JPanel implements LiarsDiceView {
 		//add the round result to oldGameInfo
 		oldLastRound.end(latestLastRound.getResult());
 		
-		//report the round result to the user
-		Result roundResult = oldLastRound.getResult();
-		Turn lastTurnInRound = oldLastRound.getTurns().get(oldLastRound.getTurns().size() - 1);
-		Player lastPlayer = getPlayerFromID(lastTurnInRound.getPlayerID());
-		String msg = "Round ended: " + lastPlayer.getName() + " ";
-		if (roundResult == Result.EXCEPTION)
-			msg += "threw an exception and lost a die.";
-		else if (roundResult == Result.INVALIDDECISION)
-			msg += "made an invalid decision and lost a die.";
-		else if (roundResult == Result.LOSING_CHALLENGE)
-			msg += "lost the challenge.";
-		else if (roundResult == Result.TIMEOUT)
-			msg += "timed out and lost a die.";
-		else if (roundResult == Result.WINNING_CHALLENGE) {
-			msg += "won the challenge. ";
-			Turn nextToLastTurnInRound = oldLastRound.getTurns().get(oldLastRound.getTurns().size() - 2);
-			Player nextToLastPlayer = getPlayerFromID(nextToLastTurnInRound.getPlayerID());
-			msg += nextToLastPlayer.getName() + " lost a die.";
+		if (latestLastRound.isOver())
+		{
+			//add the round result to oldGameInfo
+			oldLastRound.end(latestLastRound.getResult());
+			
+			//report the round result to the user
+			Result roundResult = oldLastRound.getResult();
+			Turn lastTurnInRound = oldLastRound.getTurns().get(oldLastRound.getTurns().size() - 1);
+			Player lastPlayer = getPlayerFromID(lastTurnInRound.getPlayerID());
+			String msg = "Round ended: " + lastPlayer.getName() + " ";
+			if (roundResult == Result.EXCEPTION)
+				msg += "threw an exception and lost a die.";
+			else if (roundResult == Result.INVALIDDECISION)
+				msg += "made an invalid decision and lost a die.";
+			else if (roundResult == Result.LOSING_CHALLENGE)
+				msg += "lost the challenge.";
+			else if (roundResult == Result.TIMEOUT)
+				msg += "timed out and lost a die.";
+			else if (roundResult == Result.WINNING_CHALLENGE) {
+				msg += "won the challenge. ";
+				Turn nextToLastTurnInRound = oldLastRound.getTurns().get(oldLastRound.getTurns().size() - 2);
+				Player nextToLastPlayer = getPlayerFromID(nextToLastTurnInRound.getPlayerID());
+				msg += nextToLastPlayer.getName() + " lost a die.";
+			}
+			writeMessage(msg);
 		}
-		writeMessage(msg);
-		
 	}
 
 	private void updateLastDecision(int playerID, String decisionString) {
@@ -582,6 +587,7 @@ public class LiarsDicePlayView extends JPanel implements LiarsDiceView {
 
 	private void writeMessage(String msg) {
 		history.setText(history.getText() + "\n" + msg);
+		//scrollPane.
 //XXX		history.setText(history.getText() + "max: " + scrollPane.getVerticalScrollBar().getMaximum() + "\n");
 //XXX		scrollPane.getVerticalScrollBar().setValue(50);
 //XXX		history.setText(history.getText() + "current: " + scrollPane.getVerticalScrollBar().getValue() + "\n");
@@ -681,6 +687,7 @@ public class LiarsDicePlayView extends JPanel implements LiarsDiceView {
         	else if(e.getSource() == nextRound) {
     			writeMessage("Round " + (oldGameInfo.getGameHistory().getRounds().size() + 1) + ":");
     			oldGameInfo.getGameHistory().addNewRound();
+    			nextRound.setEnabled(false);
         		humanController.getViewCommunication().continueNextRound();
     		}
         	else if(e.getSource() == humanBid){
