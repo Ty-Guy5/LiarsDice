@@ -504,9 +504,6 @@ public class LiarsDicePlayView extends JPanel implements LiarsDiceView {
 						"Failed Decision"));
 			oldLastRound.addTurn(turn);
 		}
-
-		//add the round result to oldGameInfo
-		oldLastRound.end(latestLastRound.getResult());
 		
 		if (latestLastRound.isOver())
 		{
