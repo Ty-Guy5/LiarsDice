@@ -105,7 +105,7 @@ public class LiarsDiceGame implements Game {
 				playerIndex, allPlayersInfo);
 		
 		return gi;
-	}
+	} //TODO this doesn't hide the right dice it seems
 
 	/**
 	 * Given a player's decision, processes that decision and updates whose turn it is (and, if applicable, removes a die from a player).
@@ -130,6 +130,7 @@ public class LiarsDiceGame implements Game {
 		}
 		catch(ExecutionException e){ //checking against exceptions thrown by bot
 			logException((Exception)e.getCause());
+			printLog();
 			roundResult = Result.EXCEPTION;
 			players.get(turnIndex).getStatistics().increaseExceptions();
 			takeAwayDieAndSetNextTurn(turnIndex);
@@ -398,5 +399,11 @@ public class LiarsDiceGame implements Game {
 		e.printStackTrace(new PrintWriter(stringWriter));
 		exceptionString = stringWriter.toString();
 		exceptionLog.add(exceptionString);
+	}
+	
+	private void printLog() {
+		System.out.println("Exception Log:");
+		for (int i=0; i<exceptionLog.size(); i++)
+			System.out.println(exceptionLog.get(i));
 	}
 }

@@ -74,7 +74,7 @@ public class GameInfo {
 	}
 
 	/**
-	 * @return List of PlayerInfo objects (one for each player excluding mine).
+	 * @return The dice of the player whose turn it is.
 	 */
 	public List<Die> getMyDice() {
 		return playersInfo.get(myIndex).getDice();
@@ -95,7 +95,7 @@ public class GameInfo {
 	}
 
 	/**
-	 * @return The dice of the player whose turn it is.
+	 * @return List of PlayerInfo objects (one for each player excluding mine).
 	 */
 	public List<PlayerInfo> getOtherPlayersInfo() {
 		List<PlayerInfo> otherPlayersInfo = new ArrayList<PlayerInfo>();

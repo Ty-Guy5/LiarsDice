@@ -65,7 +65,7 @@ public class HumanController extends LiarsDiceBot {
 		/*********** HumanController-end methods ***********/
 		
 		public void sendDecisionRequest(GameInfo gameInfo) {
-			view.decisionRequest(gameInfo);
+			view.requestDecision(gameInfo);
 		}
 		
 		public void reportRoundResults(GameInfo gameInfo) throws InterruptedException {
