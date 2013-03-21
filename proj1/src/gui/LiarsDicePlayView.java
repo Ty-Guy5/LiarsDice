@@ -557,7 +557,7 @@ public class LiarsDicePlayView extends JPanel implements LiarsDiceView {
 	public void reportRoundResults(GameInfo gameInfo) {
 		updateView(gameInfo);
 		if (gameInfo.isGameOver())
-			displayGameOver();
+			displayGameOver(gameInfo);
 		else {
     		nextRound.setEnabled(true);
     		bidListener.setEnabled(false);
@@ -565,8 +565,9 @@ public class LiarsDicePlayView extends JPanel implements LiarsDiceView {
 		}
 	}
 	
-	private void displayGameOver() {
-		writeMessage("Game over. ____ won."); //TODO declare who won
+	private void displayGameOver(GameInfo gameInfo) {
+		String winnerName = determineWinner(gameInfo);
+		writeMessage("Game over. " + winnerName + " won."); //TODO declare who won
 		playerPanel1.updateDicePanel(true);
 		playerPanel2.updateDicePanel(true);
 		playerPanel3.updateDicePanel(true);
@@ -582,11 +583,35 @@ public class LiarsDicePlayView extends JPanel implements LiarsDiceView {
 		nextRound.setEnabled(false);
 	}
 
+	private String determineWinner(GameInfo gameInfo) {
+		Player winner = getPlayerFromID(gameInfo.getWinnerID());
+		if(winner != null){
+			return winner.getName();
+		}
+		return "Somebody";
+	}
+
 	private void writeMessage(String msg) {
-		history.setText(history.getText() + "\n" + msg);
+//		if(history.getText().equals("")){
+//			history.setText(msg);
+//		}
+//		else{
+			//msg = history.getText() + "\n" + msg;
+			history.setText(history.getText() + "\n" + msg);
+//			System.out.println("value before: " + scrollPane.getVerticalScrollBar().getValue() + "\nmax val: " + scrollPane.getVerticalScrollBar().getMaximum());
+//			scrollPane.getVerticalScrollBar().setValue(scrollPane.getVerticalScrollBar().getMaximum());
+//			System.out.println("value after: " + scrollPane.getVerticalScrollBar().getValue() + "\nmax val: " + scrollPane.getVerticalScrollBar().getMaximum());
+//			scrollPane.getVerticalScrollBar().repaint();
+//			scrollPane.removeAll();
+//			history = new JTextArea();
+//			if(coloredGUI) history.setBackground(tablegreen);
+//			history.setLineWrap(true);
+//			history.setEditable(false);
+//			scrollPane.setViewportView(history);
+//		}
 		//scrollPane.
 //XXX		history.setText(history.getText() + "max: " + scrollPane.getVerticalScrollBar().getMaximum() + "\n");
-//XXX		scrollPane.getVerticalScrollBar().setValue(50);
+//		scrollPane.getVerticalScrollBar().setValue(scrollPane.getVerticalScrollBar().getMaximum());
 //XXX		history.setText(history.getText() + "current: " + scrollPane.getVerticalScrollBar().getValue() + "\n");
 	}
 
