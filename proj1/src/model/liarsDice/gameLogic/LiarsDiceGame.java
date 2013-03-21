@@ -125,6 +125,7 @@ public class LiarsDiceGame implements Game {
 			roundResult = Result.TIMEOUT;
 			players.get(turnIndex).getStatistics().increaseTimeouts();
 			takeAwayDieAndSetNextTurn(turnIndex);
+			history.addTurn(new Turn(players.get(turnIndex).getID(), null));
 			return roundResult;
 		}
 		catch(ExecutionException e){ //checking against exceptions thrown by bot
@@ -132,6 +133,7 @@ public class LiarsDiceGame implements Game {
 			roundResult = Result.EXCEPTION;
 			players.get(turnIndex).getStatistics().increaseExceptions();
 			takeAwayDieAndSetNextTurn(turnIndex);
+			history.addTurn(new Turn(players.get(turnIndex).getID(), null));
 			return roundResult;
 		}
 		
