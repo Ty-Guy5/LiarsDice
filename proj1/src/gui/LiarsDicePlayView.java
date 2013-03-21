@@ -476,6 +476,7 @@ public class LiarsDicePlayView extends JPanel implements LiarsDiceView {
 			writeMessage(msg);
 			
 			updateLastDecision(currentPlayer.getID(), turn.getDecision().toString());
+			oldLastRound.addTurn(turn);
 		}
 		
 		//report the round result to the user

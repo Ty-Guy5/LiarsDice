@@ -90,14 +90,14 @@ public class LiarsDiceGame implements Game {
 	/**
 	 * Creates a GameInfo object for the player of the given index.
 	 * @param revealAllDice Tells whether the dice should be revealed for all players.
-	 * @param playerIndex The index for the player the GameInfo is for.
+	 * @param playerIndex The index of the player for which the GameInfo is being created.
 	 * @return A newly created GameInfo object, complete with GameHistory and PlayerInfo objects.
 	 */
 	private GameInfo createGameInfo(boolean revealAllDice, int playerIndex)
 	{
 		ArrayList<PlayerInfo> allPlayersInfo = new ArrayList<PlayerInfo>();
 		for(Player p : players){
-			boolean hidePlayerDice = p.getID() != players.get(turnIndex).getID()
+			boolean hidePlayerDice = p.getID() != players.get(playerIndex).getID()
 					&& !revealAllDice; 
 			allPlayersInfo.add(new PlayerInfo((LiarsDicePlayer)p, !hidePlayerDice));
 		}
