@@ -255,6 +255,7 @@ public class LiarsDicePlayView extends JPanel implements LiarsDiceView {
 
         this.setMinimumSize(new Dimension(600,400));
         
+        /*
         //grey out everything for now - remove when playview is working again
         startGame.setEnabled(false);
         nextRound.setEnabled(false);
@@ -270,6 +271,7 @@ public class LiarsDicePlayView extends JPanel implements LiarsDiceView {
         	cb.setEnabled(false);
         }
         history.setText("This view is a work in progress. Please check back to the competition website after April 1st for updated code which includes this view.");
+		*/
 	}
 
 	public void setDice(Player p){
@@ -570,7 +572,7 @@ public class LiarsDicePlayView extends JPanel implements LiarsDiceView {
 	}
 
 	private void writeMessage(String msg) {
-		history.setText(msg + "\n\n" + history.getText().replace("\n\n", "\n"));
+		history.setText(history.getText() + "\n" + msg);
 //XXX		history.setText(history.getText() + "max: " + scrollPane.getVerticalScrollBar().getMaximum() + "\n");
 //XXX		scrollPane.getVerticalScrollBar().setValue(50);
 //XXX		history.setText(history.getText() + "current: " + scrollPane.getVerticalScrollBar().getValue() + "\n");
