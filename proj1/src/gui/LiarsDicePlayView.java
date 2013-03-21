@@ -47,7 +47,7 @@ public class LiarsDicePlayView extends JPanel implements LiarsDiceView {
     
     private Thread gameThread;
     
-    private GameInfo oldGameInfo; 
+    private GameInfo oldGameInfo, latestGameInfo; 
     
     private GridLayout layout;
     private PlayerPanel playerPanel1, playerPanel2, playerPanel3, humanPanel;
@@ -75,6 +75,8 @@ public class LiarsDicePlayView extends JPanel implements LiarsDiceView {
 
 		oldGameInfo = new GameInfo();
 		oldGameInfo.getGameHistory().addNewRound();
+		latestGameInfo = new GameInfo();
+		latestGameInfo.getGameHistory().addNewRound();
 		
 		botPickers = new JComboBox[3];
 
@@ -467,12 +469,44 @@ public class LiarsDicePlayView extends JPanel implements LiarsDiceView {
 		writeMessage("Please enter your bid.");
 	}
 
+	@Override
+	public void reportRoundResults(GameInfo gameInfo) {
+		updateView(gameInfo);
+		if (gameInfo.isGameOver())
+			displayGameOver();
+		else {
+    		nextRound.setEnabled(true);
+    		bidListener.setEnabled(false);
+    		humanChallenge.setEnabled(false);
+		}
+	}
+	
+	private void displayGameOver() {
+		writeMessage("Game over. ____ won."); //TODO declare who won
+		playerPanel1.updateDicePanel(true);
+		playerPanel2.updateDicePanel(true);
+		playerPanel3.updateDicePanel(true);
+		humanPanel.updateDicePanel(true);
+		
+		startGame.setText("New Game");
+		for (int i=0; i<botPickers.length; i++) {
+			botPickers[i].setEnabled(true);
+		}
+		startGame.setEnabled(true);
+		bidListener.setEnabled(false);
+		humanChallenge.setEnabled(false);
+		nextRound.setEnabled(false);
+	}
+
 	/**
 	 * Updates the message box with all messages for the turns completed, and updates 
 	 * the last-decision displays for all bots, up to the round end or the current turn.
 	 * @param gameInfo A GameInfo object representing the current state of the game.
 	 */
 	private void updateView(GameInfo gameInfo) {
+		latestGameInfo = gameInfo;
+		updateOldPlayersInfo(gameInfo.getAllPlayersInfo());
+		
 		Round oldLastRound = oldGameInfo.getGameHistory().getRounds().get(
 				oldGameInfo.getGameHistory().getRounds().size() - 1);
 		Round latestLastRound = gameInfo.getGameHistory().getRounds().get(
@@ -502,7 +536,7 @@ public class LiarsDicePlayView extends JPanel implements LiarsDiceView {
 			updateLastDecision(currentPlayer.getID(), (turn.getDecision() != null?
 					turn.getDecision().toString():
 						"Failed Decision"));
-			oldLastRound.addTurn(turn);
+			oldGameInfo.getGameHistory().addTurn(turn);
 		}
 		
 		if (latestLastRound.isOver())
@@ -533,6 +567,11 @@ public class LiarsDicePlayView extends JPanel implements LiarsDiceView {
 		}
 	}
 
+	private void updateOldPlayersInfo(List<PlayerInfo> newPlayersInfo) {
+		oldGameInfo = new GameInfo(oldGameInfo.getCurrentBid(), oldGameInfo.getGameHistory(), 
+				oldGameInfo.getMyIndex(), oldGameInfo.getAllPlayersInfo());
+	}
+
 	private void updateLastDecision(int playerID, String decisionString) {
 		if (players.get(0).getID() == playerID)
 			player1Decision.setText(decisionString);
@@ -551,35 +590,6 @@ public class LiarsDicePlayView extends JPanel implements LiarsDiceView {
 		}
 		System.err.println("Player not found for ID " + playerID);
 		return null;
-	}
-
-	@Override
-	public void reportRoundResults(GameInfo gameInfo) {
-		updateView(gameInfo);
-		if (gameInfo.isGameOver())
-			displayGameOver();
-		else {
-    		nextRound.setEnabled(true);
-    		bidListener.setEnabled(false);
-    		humanChallenge.setEnabled(false);
-		}
-	}
-	
-	private void displayGameOver() {
-		writeMessage("Game over. ____ won."); //TODO declare who won
-		playerPanel1.updateDicePanel(true);
-		playerPanel2.updateDicePanel(true);
-		playerPanel3.updateDicePanel(true);
-		humanPanel.updateDicePanel(true);
-		
-		startGame.setText("New Game");
-		for (int i=0; i<botPickers.length; i++) {
-			botPickers[i].setEnabled(true);
-		}
-		startGame.setEnabled(true);
-		bidListener.setEnabled(false);
-		humanChallenge.setEnabled(false);
-		nextRound.setEnabled(false);
 	}
 
 	private void writeMessage(String msg) {
@@ -646,7 +656,7 @@ public class LiarsDicePlayView extends JPanel implements LiarsDiceView {
 		}
 		
 		private void updateBidButtonEnabled() {
-			if (enabled && LiarsDiceGame.isValidDecision(getHumanBid(), oldGameInfo))
+			if (enabled && LiarsDiceGame.isValidDecision(getHumanBid(), latestGameInfo))
 				humanBid.setEnabled(true);
 			else
 				humanBid.setEnabled(false);
@@ -679,6 +689,11 @@ public class LiarsDicePlayView extends JPanel implements LiarsDiceView {
         			writeMessage("Game over.");
         			
         			gameThread.interrupt();
+        			
+        			oldGameInfo = new GameInfo();
+        			oldGameInfo.getGameHistory().addNewRound();
+        			latestGameInfo = new GameInfo();
+        			latestGameInfo.getGameHistory().addNewRound();
         		}
         	}
         	else if(e.getSource() == nextRound) {

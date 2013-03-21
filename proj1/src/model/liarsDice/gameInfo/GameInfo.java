@@ -142,4 +142,11 @@ public class GameInfo {
 	public boolean isGameOver() {
 		return getWinnerID() >= 0;
 	}
+
+	/**
+	 * @return The index into getAllPlayersInfo() that will return my player info.
+	 */
+	public int getMyIndex() {
+		return myIndex;
+	}
 }
