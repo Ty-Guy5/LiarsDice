@@ -504,6 +504,9 @@ public class LiarsDicePlayView extends JPanel implements LiarsDiceView {
 						"Failed Decision"));
 			oldLastRound.addTurn(turn);
 		}
+
+		//add the round result to oldGameInfo
+		oldLastRound.end(latestLastRound.getResult());
 		
 		//report the round result to the user
 		Result roundResult = oldLastRound.getResult();
@@ -526,17 +529,15 @@ public class LiarsDicePlayView extends JPanel implements LiarsDiceView {
 		}
 		writeMessage(msg);
 		
-		//add the round result to oldGameInfo
-		oldLastRound.end(latestLastRound.getResult());
 	}
 
 	private void updateLastDecision(int playerID, String decisionString) {
 		if (players.get(0).getID() == playerID)
-			player1Decision.setText("Last Decision:  " + decisionString);
+			player1Decision.setText(decisionString);
 		else if (players.get(1).getID() == playerID)
-			player2Decision.setText("Last Decision:  " + decisionString);
+			player2Decision.setText(decisionString);
 		else if (players.get(2).getID() == playerID)
-			player3Decision.setText("Last Decision:  " + decisionString);
+			player3Decision.setText(decisionString);
 		else
 			; //playerID is for the human player, so do nothing.
 	}

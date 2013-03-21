@@ -97,9 +97,14 @@ public class LiarsDiceGame implements Game {
 	{
 		ArrayList<PlayerInfo> allPlayersInfo = new ArrayList<PlayerInfo>();
 		for(Player p : players){
-			boolean hidePlayerDice = p.getID() != players.get(playerIndex).getID()
-					&& !revealAllDice; 
-			allPlayersInfo.add(new PlayerInfo((LiarsDicePlayer)p, !hidePlayerDice));
+			boolean hidePlayerDice = true;
+			if(revealAllDice){
+				hidePlayerDice = false;
+			}
+			else if(p.getID() == players.get(playerIndex).getID()){
+				hidePlayerDice = false;
+			}
+			allPlayersInfo.add(new PlayerInfo((LiarsDicePlayer)p, hidePlayerDice));
 		}
 		GameInfo gi = new GameInfo(currentBid, new GameHistory(history),
 				playerIndex, allPlayersInfo);
@@ -204,15 +209,17 @@ public class LiarsDiceGame implements Game {
 	 */
 	private class DecisionGettingCallable implements Callable<Decision>
 	{
+		public LiarsDicePlayer player;
+		public GameInfo gi;
+		
 		public DecisionGettingCallable(LiarsDicePlayer player, GameInfo gi) {
 			this.player = player;
 			this.gi = gi;
 		}
-		public LiarsDicePlayer player;
-		public GameInfo gi;
+		
 		public Decision call() throws InterruptedException {
 			return player.getDecision(gi);
-		  }
+		}
 	}
 	
 	/**
