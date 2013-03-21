@@ -72,7 +72,7 @@ public class Tournament {
 
 	/**
 	 * Sets the limit on turn times for each bot.  (If a player goes over that time, they lose the round/game.)
-	 * @param secBeforeTimeout Number of seconds allowed for each player to take a turn. (Can be less than 1.)
+	 * @param microsecBeforeTimeout Number of seconds allowed for each player to take a turn. (Can be less than 1.)
 	 */
 	public void setTimeout(long microsecBeforeTimeout) {
 		this.microsecBeforeTimeout = microsecBeforeTimeout;

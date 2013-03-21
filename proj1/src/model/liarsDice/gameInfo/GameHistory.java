@@ -46,7 +46,7 @@ public class GameHistory {
 	
 	/**
 	 * Adds a Turn to the current Round in the history.
-	 * @param round Turn to be added.
+	 * @param turn Turn to be added.
 	 */
 	public void addTurn(Turn turn){
 		rounds.get(rounds.size() - 1).addTurn(turn);

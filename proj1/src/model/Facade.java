@@ -86,7 +86,7 @@ public class Facade {
 	
 	/**
 	 * Sets the allowed length of time each bot will have to take a turn.
-	 * @param timeoutInSeconds Time (in milliseconds) allowed for each bot's turn.
+	 * @param microsecBeforeTimeout Time (in milliseconds) allowed for each bot's turn.
 	 */
 	public void setTimeout(long microsecBeforeTimeout) {
 		tournament.setTimeout(microsecBeforeTimeout);

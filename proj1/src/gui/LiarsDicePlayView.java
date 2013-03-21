@@ -254,6 +254,22 @@ public class LiarsDicePlayView extends JPanel implements LiarsDiceView {
 		writeMessage("Select opponent bots, then click \"New Game\" to get started.");
 
         this.setMinimumSize(new Dimension(600,400));
+        
+        //grey out everything for now - remove when playview is working again
+        startGame.setEnabled(false);
+        nextRound.setEnabled(false);
+        humanBid.setEnabled(false);
+        humanChallenge.setEnabled(false);
+        bidQuantity.setEnabled(false);
+        rb2.setEnabled(false);
+        rb3.setEnabled(false);
+        rb4.setEnabled(false);
+        rb5.setEnabled(false);
+        rb6.setEnabled(false);
+        for(JComboBox cb : botPickers){
+        	cb.setEnabled(false);
+        }
+        history.setText("This view is a work in progress. Please check back to the competition website after April 1st for updated code which includes this view.");
 	}
 
 	public void setDice(Player p){
