@@ -7,14 +7,8 @@ import java.util.ArrayList;
 import java.util.Random;
 import java.util.Vector;
 import java.util.List;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
-import java.util.concurrent.Future;
-import java.util.concurrent.TimeUnit;
 
 import javax.swing.*;
-import javax.swing.border.Border;
-import javax.swing.border.TitledBorder;
 import javax.swing.event.DocumentEvent;
 import javax.swing.event.DocumentListener;
 
@@ -24,7 +18,6 @@ import model.Player;
 import model.liarsDice.HumanController;
 import model.liarsDice.LiarsDiceGameFactory;
 import model.liarsDice.LiarsDiceView;
-import model.liarsDice.gameInfo.GameHistory;
 import model.liarsDice.gameInfo.GameInfo;
 import model.liarsDice.gameInfo.PlayerInfo;
 import model.liarsDice.gameInfo.Result;
@@ -53,7 +46,7 @@ public class LiarsDicePlayView extends JPanel implements LiarsDiceView {
     private PlayerPanel playerPanel1, playerPanel2, playerPanel3, humanPanel;
     private JPanel player1InfoPanel, player2InfoPanel, player3InfoPanel, humanInputPanel;
     private JLabel player1InfoLabel, player2InfoLabel, player3InfoLabel, player1Decision, player2Decision, player3Decision;
-    private JButton startGame, nextRound, humanBid, humanChallenge;
+    private JButton startOrEndGame, nextRound, humanBid, humanChallenge;
     private JTextField bidQuantity;
     private JRadioButton rb2, rb3, rb4, rb5, rb6;
 
@@ -208,8 +201,8 @@ public class LiarsDicePlayView extends JPanel implements LiarsDiceView {
 		humanChallenge = new JButton(" Challenge ");
 		humanChallenge.addActionListener(new ButtonListener());
 		
-		startGame = new JButton("New Game");
-		startGame.addActionListener(new ButtonListener());
+		startOrEndGame = new JButton("New Game");
+		startOrEndGame.addActionListener(new ButtonListener());
 		nextRound = new JButton("Next Round");
 		nextRound.addActionListener(new ButtonListener());
 		
@@ -218,7 +211,7 @@ public class LiarsDicePlayView extends JPanel implements LiarsDiceView {
 		
 		JPanel buttonPanel2 = new JPanel();
 		if(coloredGUI) buttonPanel2.setBackground(tablegreen);
-		buttonPanel2.add(startGame);
+		buttonPanel2.add(startOrEndGame);
 		buttonPanel2.add(nextRound);
 		
 		JPanel buttonPanel = new JPanel();
@@ -243,15 +236,19 @@ public class LiarsDicePlayView extends JPanel implements LiarsDiceView {
 		botPickers[0].setSelectedIndex(index);
 		allPlayers = factory.getPlayers();
 		index = rand.nextInt(allPlayers.size());
-		players.set(1, allPlayers.get(index));
+		Player p = new LiarsDicePlayer((LiarsDicePlayer)allPlayers.get(index), 
+				allPlayers.get(index).getID() + allPlayers.size()*1);
+		players.set(1, p);
 		botPickers[1].setSelectedIndex(index);
 		allPlayers = factory.getPlayers();
 		index = rand.nextInt(allPlayers.size());
-		players.set(2, allPlayers.get(index));
+		p = new LiarsDicePlayer((LiarsDicePlayer)allPlayers.get(index), 
+				allPlayers.get(index).getID() + allPlayers.size()*2);
+		players.set(2, p);
 		botPickers[2].setSelectedIndex(index);
 		humanController = new HumanController();
 		humanController.getViewCommunication().registerView(this);
-		players.set(3, new LiarsDicePlayer(humanController, allPlayers.size()));
+		players.set(3, new LiarsDicePlayer(humanController, allPlayers.size()*3));
 		
 		setupPlayers();
 		initializeEnables();
@@ -262,7 +259,7 @@ public class LiarsDicePlayView extends JPanel implements LiarsDiceView {
         //grey out everything for now - remove when playview is working again
         if (viewDisabled)
         {
-	        startGame.setEnabled(false);
+	        startOrEndGame.setEnabled(false);
 	        nextRound.setEnabled(false);
 	        humanBid.setEnabled(false);
 	        humanChallenge.setEnabled(false);
@@ -314,7 +311,7 @@ public class LiarsDicePlayView extends JPanel implements LiarsDiceView {
 	}
 
 	private void initializeEnables() {
-		startGame.setEnabled(true);
+		startOrEndGame.setEnabled(true);
 		nextRound.setEnabled(false);
 		bidListener.setEnabled(false);
 		humanChallenge.setEnabled(false);
@@ -488,11 +485,11 @@ public class LiarsDicePlayView extends JPanel implements LiarsDiceView {
 		playerPanel3.updateDicePanel(true);
 		humanPanel.updateDicePanel(true);
 		
-		startGame.setText("New Game");
+		startOrEndGame.setText("New Game");
 		for (int i=0; i<botPickers.length; i++) {
 			botPickers[i].setEnabled(true);
 		}
-		startGame.setEnabled(true);
+		startOrEndGame.setEnabled(true);
 		bidListener.setEnabled(false);
 		humanChallenge.setEnabled(false);
 		nextRound.setEnabled(false);
@@ -594,7 +591,6 @@ public class LiarsDicePlayView extends JPanel implements LiarsDiceView {
 
 	private void writeMessage(String msg) {
 		history.setText(history.getText() + "\n" + msg);
-		//scrollPane.
 //XXX		history.setText(history.getText() + "max: " + scrollPane.getVerticalScrollBar().getMaximum() + "\n");
 //XXX		scrollPane.getVerticalScrollBar().setValue(50);
 //XXX		history.setText(history.getText() + "current: " + scrollPane.getVerticalScrollBar().getValue() + "\n");
@@ -666,22 +662,22 @@ public class LiarsDicePlayView extends JPanel implements LiarsDiceView {
 	private class ButtonListener implements ActionListener
     {
         public void actionPerformed(ActionEvent e){
-        	if(e.getSource() == startGame) {
-        		if (startGame.getText().equals("New Game"))
+        	if(e.getSource() == startOrEndGame) {
+        		if (startOrEndGame.getText().equals("New Game")) //starting a game
         		{
-        			startGame.setText("End Game");
+        			startOrEndGame.setText("End Game");
             		for (int i=0; i<botPickers.length; i++) {
             			botPickers[i].setEnabled(false);
             		}
             		runGame();
         		}
-        		else
+        		else //ending a game
         		{
-        			startGame.setText("New Game");
+        			startOrEndGame.setText("New Game");
             		for (int i=0; i<botPickers.length; i++) {
             			botPickers[i].setEnabled(true);
             		}
-        			startGame.setEnabled(true);
+        			startOrEndGame.setEnabled(true);
         			bidListener.setEnabled(false);
         			humanChallenge.setEnabled(false);
         			nextRound.setEnabled(false);

@@ -20,7 +20,6 @@ import model.liarsDice.gameInfo.Turn;
  */
 public class LiarsDiceGame implements Game {
 	private GameHistory history;
-	private int numPlayers;
 	private int turnIndex;
 	private List<LiarsDicePlayer> players;
 	private Bid currentBid;
@@ -34,7 +33,6 @@ public class LiarsDiceGame implements Game {
 	 */
 	public LiarsDiceGame(List<LiarsDicePlayer> players){
 		history = new GameHistory();
-		numPlayers = players.size();
 		this.players = players;
 		turnIndex = 0;
 		currentBid = null;
@@ -47,7 +45,7 @@ public class LiarsDiceGame implements Game {
 	 * @return The victorious player.
 	 */
 	public Player runGame() {
-		while(numPlayers > 1){
+		while(!isGameOver()){
 			try {
 				playRound();
 				int playerIndex = 0;
@@ -62,12 +60,18 @@ public class LiarsDiceGame implements Game {
 		//determine the winner
 		LiarsDicePlayer winner = null;
 		for(LiarsDicePlayer p : players){
-			if(p.getDice().size() > 0){
-				//XXX: assert (winner == null) : "error: multiple winners???";
+			if(p.getNumDice() > 0){
+				//XXX: 
+				if (winner != null) 
+					System.err.println("error: multiple winners???");
+				//:XXX
 				winner = p;
 			}
 		}
-		assert (winner != null) : "error: runGame didn't have anyone with dice left!";
+		//XXX:
+		if (winner == null)
+			System.err.println("error: runGame didn't have anyone with dice left!");
+		//:XXX
 		return winner;		
 	}
 	
@@ -78,11 +82,14 @@ public class LiarsDiceGame implements Game {
 	 * @throws InterruptedException 
 	 */
 	private void playRound() throws InterruptedException {
+		for(LiarsDicePlayer p : players){
+			p.rerollDice();
+		}
 		Result roundResult = Result.UNFINISHED;
 		currentBid = null;
 		history.addNewRound();
 		while(roundResult == Result.UNFINISHED){
-			roundResult = collectAndProcessDecision(roundResult);
+			roundResult = collectAndProcessDecision();
 		}
 		history.endRound(roundResult);
 	}
@@ -110,16 +117,15 @@ public class LiarsDiceGame implements Game {
 				playerIndex, allPlayersInfo);
 		
 		return gi;
-	} //TODO this doesn't hide the right dice it seems
+	}
 
 	/**
 	 * Given a player's decision, processes that decision and updates whose turn it is (and, if applicable, removes a die from a player).
-	 * @param roundResult Result of the current round. (Result.UNFINISHED if round isn't over yet)
 	 * @return Result of the current round. (Result.UNFINISHED if round isn't over yet)
 	 * @throws InterruptedException 
 	 */
-	private Result collectAndProcessDecision(Result roundResult) throws InterruptedException {
-		
+	private Result collectAndProcessDecision() throws InterruptedException {
+		Result roundResult = Result.UNFINISHED;
 		Decision decision = null;
 		GameInfo gi = createGameInfo(false, turnIndex);
 		try{
@@ -135,7 +141,6 @@ public class LiarsDiceGame implements Game {
 		}
 		catch(ExecutionException e){ //checking against exceptions thrown by bot
 			logException((Exception)e.getCause());
-			printLog();
 			roundResult = Result.EXCEPTION;
 			players.get(turnIndex).getStatistics().increaseExceptions();
 			takeAwayDieAndSetNextTurn(turnIndex);
@@ -244,7 +249,7 @@ public class LiarsDiceGame implements Game {
 				//not error - only one player left with dice
 				break;
 			}
-		}while(players.get(tempIndex).getDice().size() <= 0);
+		}while(players.get(tempIndex).getNumDice() <= 0);
 		return tempIndex;
 	}
 
@@ -264,7 +269,7 @@ public class LiarsDiceGame implements Game {
 				//not error - only one player left with dice
 				break;
 			}
-		}while(players.get(temp).getDice().size() <= 0);
+		}while(players.get(temp).getNumDice() <= 0);
 		return temp;
 	}
 
@@ -292,17 +297,11 @@ public class LiarsDiceGame implements Game {
 	 */
 	private void takeAwayDieAndSetNextTurn(int loseIndex) {
 		players.get(loseIndex).removeDie();
-		if(players.get(loseIndex).getDice().size() <= 0){
-			numPlayers--;
+		if(players.get(loseIndex).getNumDice() <= 0){
 			this.turnIndex = nextTurnIndex(loseIndex);
 		}
 		else{
 			this.turnIndex = loseIndex;
-		}
-		if (isGameOver()) {
-			for(LiarsDicePlayer p : players){
-				p.rerollDice(); //every time a die is lost, round ends and everyone rerolls
-			}
 		}
 	}
 
@@ -313,11 +312,11 @@ public class LiarsDiceGame implements Game {
 	public boolean isGameOver() {
 		int playersLeft = 0;
 		for(LiarsDicePlayer p : players){
-			if(p.getDice().size() > 0){
+			if(p.getNumDice() > 0){
 				playersLeft++;
 			}
 		}
-		return playersLeft > 1;
+		return playersLeft == 1;
 	}
 
 	/**
@@ -406,6 +405,7 @@ public class LiarsDiceGame implements Game {
 		e.printStackTrace(new PrintWriter(stringWriter));
 		exceptionString = stringWriter.toString();
 		exceptionLog.add(exceptionString);
+		System.out.println(exceptionString);
 	}
 	
 	private void printLog() {

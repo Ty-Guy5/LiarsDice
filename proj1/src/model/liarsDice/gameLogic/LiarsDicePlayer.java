@@ -18,6 +18,8 @@ public class LiarsDicePlayer extends Player{
 	private LiarsDiceBot bot;
 	private List<Die> dice;
 
+	private int numDice;
+
 	/**
 	 * Constructor.
 	 * @param bot The bot implementation to be used by this player.
@@ -27,17 +29,22 @@ public class LiarsDicePlayer extends Player{
 		super(id);
 		this.bot = bot;
 		dice = new ArrayList<Die>();
-		int numDice = INITIAL_NUM_DICE;
+		numDice = INITIAL_NUM_DICE;
 		for (int i=0; i<numDice; i++) {
 			dice.add(new Die());	
 		}
 	}
 
+	/**
+	 * Copies a Player object but with a change to its ID.
+	 * @param other The Player object to copy
+	 * @param id The new id
+	 */
 	public LiarsDicePlayer(LiarsDicePlayer other, int id) {
 		super(id);
 		this.bot = other.bot;
 		dice = new ArrayList<Die>();
-		int numDice = INITIAL_NUM_DICE;
+		numDice = INITIAL_NUM_DICE;
 		for (int i=0; i<numDice; i++) {
 			dice.add(new Die());	
 		}
@@ -47,15 +54,13 @@ public class LiarsDicePlayer extends Player{
 	 * Removes one of the dice this player has.  (Used when they lose a round.)
 	 */
 	public void removeDie() {
-		//intentionally leaving open for exceptions
-		dice.remove(0);
+		numDice--;
 	}
 	
 	/**
 	 * Rerolls the player's remaining dice. (Random value [1,6])
 	 */
 	public void rerollDice() {
-		int numDice = dice.size();
 		dice = new ArrayList<Die>();
 		for (int i=0; i<numDice; i++) {
 			dice.add(new Die());	
@@ -66,11 +71,8 @@ public class LiarsDicePlayer extends Player{
 	 * Resets the player's dice to have 5 dice with new random values [1,6].
 	 */
 	public void resetDice(){
-		int numDice = INITIAL_NUM_DICE;
-		dice = new ArrayList<Die>();
-		for(int i = 0; i < numDice; i++){
-			dice.add(new Die());
-		}
+		numDice = INITIAL_NUM_DICE;
+		rerollDice();
 	}
 	
 	/**
@@ -104,5 +106,9 @@ public class LiarsDicePlayer extends Player{
 	 */
 	public String getName() {
 		return bot.getName();
+	}
+
+	public int getNumDice() {
+		return numDice;
 	}
 }
