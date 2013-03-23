@@ -135,7 +135,7 @@ public class LiarsDiceGame implements Game {
 	 * the die (or his successor if he is out), and the roundResult is changed. In 
 	 * the last case the turn passes on to the successor of the current player, and 
 	 * the current bid is updated. In all five cases a new turn is added to the 
-	 * history object.
+	 * history object, (but this must be done before changing the turnIndex).
 	 * @return Result of the current round. (Result.UNFINISHED if round isn't over yet)
 	 * @throws InterruptedException 
 	 */
@@ -149,16 +149,16 @@ public class LiarsDiceGame implements Game {
 		catch(DecisionTimeout dt) {
 			roundStatus = Result.TIMEOUT;
 			players.get(turnIndex).getStatistics().increaseTimeouts();
-			takeAwayDieAndSetNextTurn(turnIndex);
 			history.addTurn(new Turn(players.get(turnIndex).getID(), null));
+			takeAwayDieAndSetNextTurn(turnIndex);
 			return roundStatus;
 		}
 		catch(ExecutionException e){ //checking against exceptions thrown by bot
 			logException((Exception)e.getCause());
 			roundStatus = Result.EXCEPTION;
 			players.get(turnIndex).getStatistics().increaseExceptions();
-			takeAwayDieAndSetNextTurn(turnIndex);
 			history.addTurn(new Turn(players.get(turnIndex).getID(), null));
+			takeAwayDieAndSetNextTurn(turnIndex);
 			return roundStatus;
 		}
 
@@ -215,8 +215,6 @@ public class LiarsDiceGame implements Game {
 			decision = decisionFuture.get();
 		} 
 		catch (InterruptedException e) {
-			if (debug)
-				e.printStackTrace();
 			throw e;
 		}
 		
