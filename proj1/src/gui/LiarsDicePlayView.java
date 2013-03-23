@@ -11,6 +11,7 @@ import java.util.List;
 import javax.swing.*;
 import javax.swing.event.DocumentEvent;
 import javax.swing.event.DocumentListener;
+import javax.swing.text.DefaultCaret;
 
 import model.Facade;
 import model.Game;
@@ -107,6 +108,8 @@ public class LiarsDicePlayView extends JPanel implements LiarsDiceView {
 		add(playerPanel1, 3);
 		
 		history = new JTextArea();
+		DefaultCaret caret = (DefaultCaret)history.getCaret();
+		caret.setUpdatePolicy(DefaultCaret.ALWAYS_UPDATE);
 		if(coloredGUI) history.setBackground(tablegreen);
 		history.setLineWrap(true);
 		history.setEditable(false);
@@ -590,10 +593,7 @@ public class LiarsDicePlayView extends JPanel implements LiarsDiceView {
 	}
 
 	private void writeMessage(String msg) {
-		history.setText(history.getText() + "\n" + msg);
-//XXX		history.setText(history.getText() + "max: " + scrollPane.getVerticalScrollBar().getMaximum() + "\n");
-//XXX		scrollPane.getVerticalScrollBar().setValue(50);
-//XXX		history.setText(history.getText() + "current: " + scrollPane.getVerticalScrollBar().getValue() + "\n");
+		history.append("\n" + msg);
 	}
 
 	private Decision getHumanBid() {
