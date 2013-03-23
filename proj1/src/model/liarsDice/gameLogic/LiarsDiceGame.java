@@ -23,7 +23,7 @@ public class LiarsDiceGame implements Game {
 	private int turnIndex;
 	private List<LiarsDicePlayer> players;
 	private Bid currentBid;
-	private boolean debug = false;
+	private boolean debug = true;
 	private long microsecBeforeTimeout;
 	private List<String> exceptionLog;
 	
@@ -34,7 +34,7 @@ public class LiarsDiceGame implements Game {
 	public LiarsDiceGame(List<LiarsDicePlayer> players){
 		history = new GameHistory();
 		this.players = players;
-		turnIndex = 0;
+		turnIndex = 0; //TODO start with a random player?
 		currentBid = null;
 		microsecBeforeTimeout = Long.MAX_VALUE;
 		exceptionLog = new ArrayList<String>();
@@ -48,12 +48,12 @@ public class LiarsDiceGame implements Game {
 		while(!isGameOver()){
 			try {
 				playRound();
-				int playerIndex = 0;
-				for(LiarsDicePlayer p : players){
-					p.reportRoundResults(createGameInfo(true, playerIndex++)); //TODO assumes bot will be fast and exception-free
+				for(int i=0; i < players.size(); i++) {
+					LiarsDicePlayer p = players.get(i);
+					p.reportRoundResults(createGameInfo(true, i)); //TODO assumes bot will be fast and exception-free
 				}
 			} catch (InterruptedException e) {
-				return null;
+				return null; //end game if interrupted
 			}
 		}
 		
@@ -76,8 +76,8 @@ public class LiarsDiceGame implements Game {
 	}
 	
 	/**
-	 * Plays a single round of the game. (Until a player challenges, throws an exception, 
-	 * or returns an invalid decision.)
+	 * Plays a single round of the game. Players with dice are given turns until 
+	 * a player challenges, throws an exception, times out, or returns an invalid decision.
 	 * 
 	 * @throws InterruptedException 
 	 */
@@ -85,9 +85,9 @@ public class LiarsDiceGame implements Game {
 		for(LiarsDicePlayer p : players){
 			p.rerollDice();
 		}
-		Result roundResult = Result.UNFINISHED;
 		currentBid = null;
 		history.addNewRound();
+		Result roundResult = Result.UNFINISHED;
 		while(roundResult == Result.UNFINISHED){
 			roundResult = collectAndProcessDecision();
 		}
@@ -120,36 +120,51 @@ public class LiarsDiceGame implements Game {
 	}
 
 	/**
-	 * Given a player's decision, processes that decision and updates whose turn it is (and, if applicable, removes a die from a player).
+	 * Given a player's decision, processes that decision and updates whose turn it is 
+	 * (and, if applicable, removes a die from a player).
+	 * <p>
+	 * There are five cases for after getting a player's decision: 
+	 * <li>The player ran out of time
+	 * <li>The player threw an exception
+	 * <li>The decision was found to be invalid
+	 * <li>The decision was a valid challenge
+	 * <li>The decision was a valid bid
+	 * <p>
+	 * <br>In the first three cases, the player's statistics are modified. In the first 
+	 * four cases a die is taken away and the turn given to the player who lost 
+	 * the die (or his successor if he is out), and the roundResult is changed. In 
+	 * the last case the turn passes on to the successor of the current player, and 
+	 * the current bid is updated. In all five cases a new turn is added to the 
+	 * history object.
 	 * @return Result of the current round. (Result.UNFINISHED if round isn't over yet)
 	 * @throws InterruptedException 
 	 */
 	private Result collectAndProcessDecision() throws InterruptedException {
-		Result roundResult = Result.UNFINISHED;
+		Result roundStatus = Result.UNFINISHED;
 		Decision decision = null;
 		GameInfo gi = createGameInfo(false, turnIndex);
 		try{
 			decision = getDecisionTimed(players.get(turnIndex), gi);
-			history.addTurn(new Turn(players.get(turnIndex).getID(), decision));
 		}
 		catch(DecisionTimeout dt) {
-			roundResult = Result.TIMEOUT;
+			roundStatus = Result.TIMEOUT;
 			players.get(turnIndex).getStatistics().increaseTimeouts();
 			takeAwayDieAndSetNextTurn(turnIndex);
 			history.addTurn(new Turn(players.get(turnIndex).getID(), null));
-			return roundResult;
+			return roundStatus;
 		}
 		catch(ExecutionException e){ //checking against exceptions thrown by bot
 			logException((Exception)e.getCause());
-			roundResult = Result.EXCEPTION;
+			roundStatus = Result.EXCEPTION;
 			players.get(turnIndex).getStatistics().increaseExceptions();
 			takeAwayDieAndSetNextTurn(turnIndex);
 			history.addTurn(new Turn(players.get(turnIndex).getID(), null));
-			return roundResult;
+			return roundStatus;
 		}
-		
+
+		history.addTurn(new Turn(players.get(turnIndex).getID(), decision));
 		if(!isValidDecision(decision, gi)){
-			roundResult = Result.INVALIDDECISION;
+			roundStatus = Result.INVALIDDECISION;
 			players.get(turnIndex).getStatistics().increaseInvalidDecisions();
 			//maybe log later
 			takeAwayDieAndSetNextTurn(turnIndex);
@@ -157,11 +172,11 @@ public class LiarsDiceGame implements Game {
 		else if(decision instanceof Challenge){
 			if(numberOfDiceWithValue(currentBid.getFaceValue()) >= currentBid.getFrequency()){
 				takeAwayDieAndSetNextTurn(turnIndex);
-				roundResult = Result.LOSING_CHALLENGE;
+				roundStatus = Result.LOSING_CHALLENGE;
 			}
 			else{
 				takeAwayDieAndSetNextTurn(previousTurnIndex(turnIndex));
-				roundResult = Result.WINNING_CHALLENGE;
+				roundStatus = Result.WINNING_CHALLENGE;
 			}
 		}
 		else //normal bid
@@ -170,7 +185,7 @@ public class LiarsDiceGame implements Game {
 			currentBid = bid;
 			turnIndex = nextTurnIndex(turnIndex);
 		}
-		return roundResult;
+		return roundStatus;
 	}
 
 	/**
@@ -180,8 +195,8 @@ public class LiarsDiceGame implements Game {
 	 * @param gi The history of the current game, to be handed to the player
 	 * @return The player's decision
 	 * @throws DecisionTimeout If the player exceeds the time limit.
-	 * @throws ExecutionException If the player throws an exception. This will include all
-	 * 		the information of the exception that was thrown.
+	 * @throws ExecutionException If the player throws an exception. The exception
+	 *      that was thrown will be in ExecutionException::getCause().
 	 * @throws InterruptedException 
 	 */
 	private Decision getDecisionTimed(LiarsDicePlayer player,
@@ -189,7 +204,7 @@ public class LiarsDiceGame implements Game {
 		
 		Decision decision = null;
 		
-		ExecutorService svc = Executors.newFixedThreadPool( 1 ) ;
+		ExecutorService svc = Executors.newFixedThreadPool(1) ;
 		Future<Decision> decisionFuture = 
 				svc.submit( new DecisionGettingCallable(player, gi) ) ;
 		svc.shutdown() ;
@@ -242,7 +257,8 @@ public class LiarsDiceGame implements Game {
 	private int nextTurnIndex(int turnIndex) {
 		int tempIndex = turnIndex;
 		do{
-			tempIndex++;			if(tempIndex >= players.size()){
+			tempIndex++;
+			if(tempIndex >= players.size()){
 				tempIndex = 0;
 			}
 			if(tempIndex == turnIndex){
@@ -259,22 +275,23 @@ public class LiarsDiceGame implements Game {
 	 * @return The last turn index.
 	 */
 	private int previousTurnIndex(int turnIndex) {
-		int temp = turnIndex;
+		int tempIndex = turnIndex;
 		do{
-			temp--;
-			if(temp < 0){
-				temp = players.size() - 1;
+			tempIndex--;
+			if(tempIndex < 0){
+				tempIndex = players.size() - 1;
 			}
-			if(temp == turnIndex){
+			if(tempIndex == turnIndex){
 				//not error - only one player left with dice
 				break;
 			}
-		}while(players.get(temp).getNumDice() <= 0);
-		return temp;
+		}while(players.get(tempIndex).getNumDice() <= 0);
+		return tempIndex;
 	}
 
 	/**
-	 * Counts up the total number of dice that count as the given dieNumber. (dieNumber + wilds)
+	 * Counts up the total number of dice that count as the given dieNumber. 
+	 * (dieNumber + wilds)
 	 * @param dieNumber The face value to total.
 	 * @return Total number of dice with face value dieNumber + wild dice.
 	 */
@@ -405,9 +422,13 @@ public class LiarsDiceGame implements Game {
 		e.printStackTrace(new PrintWriter(stringWriter));
 		exceptionString = stringWriter.toString();
 		exceptionLog.add(exceptionString);
-		System.out.println(exceptionString);
+		if (debug)
+			System.out.println(exceptionString);
 	}
 	
+	/**
+	 * Prints the exception log to standard output.
+	 */
 	private void printLog() {
 		System.out.println("Exception Log:");
 		for (int i=0; i<exceptionLog.size(); i++)

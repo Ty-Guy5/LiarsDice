@@ -59,6 +59,7 @@ public class LiarsDicePlayer extends Player{
 	
 	/**
 	 * Rerolls the player's remaining dice. (Random value [1,6])
+	 * Note that this synchronizes the number of dice with numDice.
 	 */
 	public void rerollDice() {
 		dice = new ArrayList<Die>();
