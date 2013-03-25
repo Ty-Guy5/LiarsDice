@@ -27,12 +27,14 @@ import model.Statistics;
 
 
 
+@SuppressWarnings("serial")
 public class TournamentView extends JPanel {
     
-    private JLabel botsPerGameLabel , repeatTimesLabel, messageLabel;
+    private JLabel botsPerGameLabel , repeatTimesLabel;
+	JTextArea messageLabel;
     private JTextArea numberTimesLabel;
     private JTextField botsPerGame, repeatTimes;
-    private JPanel tournamentOptionsPanel, tablePanel;
+    private JPanel tournamentOptionsPanel;
     private JTable statsTable;
     private JButton runButton;
     
@@ -75,7 +77,10 @@ public class TournamentView extends JPanel {
         runButton = new JButton("Run Tournament");
         runButton.addActionListener(new ButtonListener());
         tournamentOptionsPanel.add(runButton);
-        messageLabel = new JLabel();
+        messageLabel = new JTextArea();
+        messageLabel.setPreferredSize(new Dimension(160, 45));
+        messageLabel.setLineWrap(true);
+        messageLabel.setWrapStyleWord(true);
         tournamentOptionsPanel.add(messageLabel);
         this.add(tournamentOptionsPanel, BorderLayout.WEST);
         
@@ -100,12 +105,13 @@ public class TournamentView extends JPanel {
 
 	public void updateNumberOfGamesText() {
 		try{
+    		messageLabel.setText("");
 			numPlayersPerGame = Integer.parseInt(botsPerGame.getText());
 			numGameRepeatsPerTournament = Integer.parseInt(repeatTimes.getText());
 			numberTimesLabel.setText("Number of games that will be played: " 
-        		+ facade.numGamesForSettings(numPlayersPerGame, numGameRepeatsPerTournament));
+        		+ Math.max(0, facade.numGamesForSettings(numPlayersPerGame, numGameRepeatsPerTournament)));
 		}catch(NumberFormatException ex){
-    		messageLabel.setText("Please only input positive integers.");
+    		; //do nothing
     	}
 	}
 	
@@ -228,8 +234,13 @@ public class TournamentView extends JPanel {
         		messageLabel.setText("");
         		numPlayersPerGame = Integer.parseInt(botsPerGame.getText());
         		numGameRepeatsPerTournament = Integer.parseInt(repeatTimes.getText());
-				facade.runTournament(numPlayersPerGame, numGameRepeatsPerTournament);
+        		long startTime = System.currentTimeMillis();
+        		facade.runTournament(numPlayersPerGame, numGameRepeatsPerTournament);
+        		long endTime = System.currentTimeMillis();
+        		long duration = endTime - startTime;
 				statsTableModel.loadTable(facade);
+        		messageLabel.setText("Tournament ran in " + duration/3600000 + ":" 
+						+ (duration/60000)%60 + ":" + (duration/1000)%60 + " seconds.");
         	}catch(NumberFormatException ex){
         		messageLabel.setText("Please only input positive integers.");
         	}
