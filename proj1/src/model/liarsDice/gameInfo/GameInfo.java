@@ -111,11 +111,11 @@ public class GameInfo {
 	 */
 	public int getWinnerID()
 	{
-		int winner = 0;
+		int winner = -1;
 		
 		for(PlayerInfo p : playersInfo){
 			if(p.getNumDice() > 0){
-				if (winner != 0)
+				if (winner != -1)
 					return -1;
 				winner = p.getID();
 			}
