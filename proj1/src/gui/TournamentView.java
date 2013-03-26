@@ -239,8 +239,19 @@ public class TournamentView extends JPanel {
         		long endTime = System.currentTimeMillis();
         		long duration = endTime - startTime;
 				statsTableModel.loadTable(facade);
+				int decimal = (int)(duration % 1000);
+				String decimalStr = "." + decimal;
+				if(decimal < 100){
+					decimalStr = ".0" + decimal;
+				}
+				else if(decimal < 10){
+					decimalStr = ".00" + decimal;
+				}
+				else if(decimal == 0){
+					decimalStr = ".000";
+				}
         		messageLabel.setText("Tournament ran in " + duration/3600000 + ":" 
-						+ (duration/60000)%60 + ":" + (duration/1000)%60 + " seconds.");
+						+ (duration/60000)%60 + ":" + (duration/1000)%60 + decimalStr + " seconds.");
         	}catch(NumberFormatException ex){
         		messageLabel.setText("Please only input positive integers.");
         	}
