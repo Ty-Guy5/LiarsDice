@@ -494,7 +494,10 @@ public class LiarsDicePlayView extends JPanel implements LiarsDiceView {
 	}
 
 	public void reportGameWinner(Player winner) {
-		writeMessage("Game over. " + winner.getName() + " won.");
+		if (winner != null)
+			writeMessage("Game over. " + winner.getName() + " won.");
+		else
+			writeMessage("Game interrupted.");
 		startOrEndGame.setText("New Game");
 		for (int i=0; i<botPickers.length; i++) {
 			botPickers[i].setEnabled(true);
@@ -503,9 +506,6 @@ public class LiarsDicePlayView extends JPanel implements LiarsDiceView {
 		bidListener.setEnabled(false);
 		humanChallenge.setEnabled(false);
 		nextRound.setEnabled(false);
-	}
-	
-	private void displayGameOver() {
 	}
 
 	/**
@@ -621,44 +621,6 @@ public class LiarsDicePlayView extends JPanel implements LiarsDiceView {
 		return null;
 	}
 
-//	@Override
-//	public void reportRoundResults(GameInfo gameInfo) {
-//		updateView(gameInfo);
-//		if (gameInfo.isGameOver())
-//			displayGameOver(gameInfo);
-//		else {
-//    		nextRound.setEnabled(true);
-//    		bidListener.setEnabled(false);
-//    		humanChallenge.setEnabled(false);
-//		}
-//	}
-	
-	private void displayGameOver(GameInfo gameInfo) {
-		String winnerName = determineWinner(gameInfo);
-		writeMessage("Game over. " + winnerName + " won."); //TODO declare who won
-		playerPanel1.updateDicePanel(true);
-		playerPanel2.updateDicePanel(true);
-		playerPanel3.updateDicePanel(true);
-		humanPanel.updateDicePanel(true);
-		
-		startOrEndGame.setText("New Game");
-		for (int i=0; i<botPickers.length; i++) {
-			botPickers[i].setEnabled(true);
-		}
-		startOrEndGame.setEnabled(true);
-		bidListener.setEnabled(false);
-		humanChallenge.setEnabled(false);
-		nextRound.setEnabled(false);
-	}
-
-	private String determineWinner(GameInfo gameInfo) {
-		Player winner = getPlayerFromID(gameInfo.getWinnerID());
-		if(winner != null){
-			return winner.getName();
-		}
-		return "Somebody";
-	}
-
 	private void writeMessage(String msg) {
 //		if(history.getText().equals("")){
 //			history.setText(msg);
@@ -770,8 +732,6 @@ public class LiarsDicePlayView extends JPanel implements LiarsDiceView {
         			bidListener.setEnabled(false);
         			humanChallenge.setEnabled(false);
         			nextRound.setEnabled(false);
-        			
-        			writeMessage("Game over.");
         			
         			gameThread.interrupt();
         			

@@ -56,7 +56,7 @@ public class LiarsDiceGameFactory implements GameFactory {
 		ArrayList<Bot> bots = new ArrayList<Bot>();
 		
 		//hardcoded bots
-		bots.add(new Problematic());
+//		bots.add(new Problematic());
 //		bots.add(new Challenger());
 //		bots.add(new Consistent());
 //		bots.add(new InfiniteLooper());

@@ -23,7 +23,7 @@ public class LiarsDiceGame implements Game {
 	private int turnIndex;
 	private List<LiarsDicePlayer> players;
 	private Bid currentBid;
-	private boolean debug = true;
+	private boolean debug = false;
 	private long microsecBeforeTimeout;
 	private List<String> exceptionLog;
 	
