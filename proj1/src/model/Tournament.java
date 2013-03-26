@@ -22,7 +22,7 @@ public class Tournament {
 	private GameFactory gameFactory; 
 	private List<Player> allPlayers, participatingPlayers;
 	private long microsecBeforeTimeout;
-	private static final boolean combosVsPermutations = false;
+	private boolean combosVsPermutations = true;
 	
 	/**
 	 * Constructor. (Pass in the GameFactory associated with the game you want to play.)
@@ -153,6 +153,15 @@ public class Tournament {
 		}
 		long end = System.currentTimeMillis();
 		System.out.println("tournament time: " + (end - start) + "ms");
+	}
+
+	/**
+	 * Gives access to the decision to run all permutations or to run all 
+	 * combinations with randomized turn order.
+	 * @param choice True means all combinations, false means all permutations. 
+	 */
+	public void setCombosVsPermutations(boolean choice) {
+		combosVsPermutations = choice;
 	}
 	
 	/**

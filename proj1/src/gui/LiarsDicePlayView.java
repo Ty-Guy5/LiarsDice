@@ -37,7 +37,7 @@ public class LiarsDicePlayView extends JPanel implements LiarsDiceView {
     private Facade facade;
     private HumanController humanController; 
     private Vector<Player> players;
-    private int numPlayers;
+    private static final int numPlayersPerGame = 4;
     
     private Thread gameThread;
     
@@ -228,8 +228,7 @@ public class LiarsDicePlayView extends JPanel implements LiarsDiceView {
 		add(humanInputPanel, 8);
 
 		players = new Vector<Player>();
-		numPlayers = 4; //TODO this should go elsewhere, I think
-		players.setSize(numPlayers);
+		players.setSize(numPlayersPerGame);
 		
 		
 		Random rand = new Random();

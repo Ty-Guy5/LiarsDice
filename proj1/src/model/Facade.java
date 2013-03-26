@@ -2,7 +2,6 @@ package model;
 
 import java.util.List;
 
-import model.liarsDice.HumanController;
 import model.liarsDice.LiarsDiceGameFactory;
 
 
@@ -113,39 +112,23 @@ public class Facade {
 		tournament.resetPlayerStats();		
 	}
 	
-	//TODO Still not sure how to step through turns in the Play view. May 
-	// need more methods for that here. Think about how the view will get 
-	// the info in the GameInfo object, including history of moves and 
-	// current bid.
-	
-	
-	/***************************TODO implement or scrap*************************/
-	
+	/**
+	 * Calculates how many games will be run with given tournament settings.
+	 * @param botsPerGame The number of players allowed in each game.
+	 * @param gameRepeats The number of times a tournament will repeat all games.
+	 * @return The number of games that will be played when the tournament is run.
+	 */
 	public int numGamesForSettings(int botsPerGame, int gameRepeats) {
 		return tournament.getNumGamesForSettings(botsPerGame, gameRepeats);
 	}
 	
-	/* If we want to have a faster tournament, we could randomize turn order 
-	 * instead of doing all possible permutations. 
-	 * 
-	 * We would still have to do all possible combinations to be fair. 
-	 * (Alternatively, we could put in dummy bots to make the number of 
-	 * players in the tournament equal to a power of n, where n is the number of 
-	 * bots in a single game. But that seems too drastic, don't you think?)
+	/**
+	 * Gives access to the decision to run all permutations or to run all 
+	 * combinations with randomized turn order.
+	 * @param choice True means all combinations, false means all permutations. 
 	 */
-	public void setAllPermutationsVsRandomFirstturn(boolean choice) {
-		
-	}
-	
-	/* These two settings could be left as arguments in the call to 
-	 * runTournament, of course.
-	 */
-	public void setNumPlayersPerGame(int numPerGame) {
-		
-	}
-	
-	public void setNumGameRepeatsPerTournament(int numPerTournament) {
-		
+	public void setCombosVsPermutations(boolean choice) {
+		tournament.setCombosVsPermutations(choice);
 	}
 
 }

@@ -61,17 +61,9 @@ public class LiarsDiceGame implements Game {
 		LiarsDicePlayer winner = null;
 		for(LiarsDicePlayer p : players){
 			if(p.getNumDice() > 0){
-				//XXX: 
-				if (winner != null) 
-					System.err.println("error: multiple winners???");
-				//:XXX
 				winner = p;
 			}
 		}
-		//XXX:
-		if (winner == null)
-			System.err.println("error: runGame didn't have anyone with dice left!");
-		//:XXX
 		return winner;		
 	}
 	
