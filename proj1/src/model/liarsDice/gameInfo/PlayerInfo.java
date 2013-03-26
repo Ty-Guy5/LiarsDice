@@ -14,26 +14,18 @@ import model.liarsDice.gameLogic.LiarsDicePlayer;
  */
 public class PlayerInfo {
 	private List<Die> dice;
+	private int numDice;
 	private int id;
 	private boolean diceHidden;
 	
 	/**
-	 * Constructor.
-	 * @param dice The number of dice this player still has.
-	 * @param playerID The player's unique ID.
-	 */
-	public PlayerInfo(List<Die> dice, int playerID, boolean diceHidden) {
-		this.dice = dice;
-		this.id = playerID;
-		this.diceHidden = diceHidden;
-	}
-	
-	/**
 	 * "Copy" constructor for creating a PlayerInfo object from a player.
 	 * @param p The player about whom we are creating this PlayerInfo object.
+	 * @param diceHidden True if the dice values should be kept hidden.
 	 */
 	public PlayerInfo(LiarsDicePlayer p, boolean diceHidden){
 		dice = new ArrayList<Die>();
+		this.numDice = p.getNumDice();
 		for (Die die : p.getDice()) {
 			dice.add(die);
 		}
@@ -45,7 +37,7 @@ public class PlayerInfo {
 	 * @return The number of dice this player still has.
 	 */
 	public int getNumDice() {
-		return dice.size();
+		return numDice;
 	}
 	
 	/**
