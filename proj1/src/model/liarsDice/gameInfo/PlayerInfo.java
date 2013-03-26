@@ -36,8 +36,9 @@ public class PlayerInfo {
 	/**
 	 * Note: During the call to reportRoundResults(), this method will return the number of dice this player had during the round which has just ended,
 	 * not the number of dice they will have after the round is over.  (For the player who lost a die for losing this round, getNumDice() will return
-	 * their number of dice before losing this round's die.)
-	 * Just to be clear, the above note only applies during calls to reportRoundResults(), not during calls to getDecision().
+	 * their number of dice before losing this round's die.) 
+	 * Just to be clear, this note only applies during calls to reportRoundResults(), not during calls to getDecision().
+	 * 
 	 * @return The number of dice this player still has.
 	 */
 	public int getNumDice() {
