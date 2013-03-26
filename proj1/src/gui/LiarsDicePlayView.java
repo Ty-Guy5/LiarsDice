@@ -489,6 +489,7 @@ public class LiarsDicePlayView extends JPanel implements LiarsDiceView {
 	public void reportRoundResults(GameInfo gameInfo) {
 		updateView(gameInfo);
 		nextRound.setEnabled(true);
+		writeMessage("Click \"next round\"");
 		bidListener.setEnabled(false);
 		humanChallenge.setEnabled(false);
 	}
