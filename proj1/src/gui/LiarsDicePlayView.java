@@ -621,7 +621,66 @@ public class LiarsDicePlayView extends JPanel implements LiarsDiceView {
 		return null;
 	}
 
+//	@Override
+//	public void reportRoundResults(GameInfo gameInfo) {
+//		updateView(gameInfo);
+//		if (gameInfo.isGameOver())
+//			displayGameOver(gameInfo);
+//		else {
+//    		nextRound.setEnabled(true);
+//    		bidListener.setEnabled(false);
+//    		humanChallenge.setEnabled(false);
+//		}
+//	}
+	
+	private void displayGameOver(GameInfo gameInfo) {
+		String winnerName = determineWinner(gameInfo);
+		writeMessage("Game over. " + winnerName + " won."); //TODO declare who won
+		playerPanel1.updateDicePanel(true);
+		playerPanel2.updateDicePanel(true);
+		playerPanel3.updateDicePanel(true);
+		humanPanel.updateDicePanel(true);
+		
+		startOrEndGame.setText("New Game");
+		for (int i=0; i<botPickers.length; i++) {
+			botPickers[i].setEnabled(true);
+		}
+		startOrEndGame.setEnabled(true);
+		bidListener.setEnabled(false);
+		humanChallenge.setEnabled(false);
+		nextRound.setEnabled(false);
+	}
+
+	private String determineWinner(GameInfo gameInfo) {
+		Player winner = getPlayerFromID(gameInfo.getWinnerID());
+		if(winner != null){
+			return winner.getName();
+		}
+		return "Somebody";
+	}
+
 	private void writeMessage(String msg) {
+//		if(history.getText().equals("")){
+//			history.setText(msg);
+//		}
+//		else{
+			//msg = history.getText() + "\n" + msg;
+//			history.setText(history.getText() + "\n" + msg);
+//			System.out.println("value before: " + scrollPane.getVerticalScrollBar().getValue() + "\nmax val: " + scrollPane.getVerticalScrollBar().getMaximum());
+//			scrollPane.getVerticalScrollBar().setValue(scrollPane.getVerticalScrollBar().getMaximum());
+//			System.out.println("value after: " + scrollPane.getVerticalScrollBar().getValue() + "\nmax val: " + scrollPane.getVerticalScrollBar().getMaximum());
+//			scrollPane.getVerticalScrollBar().repaint();
+//			scrollPane.removeAll();
+//			history = new JTextArea();
+//			if(coloredGUI) history.setBackground(tablegreen);
+//			history.setLineWrap(true);
+//			history.setEditable(false);
+//			scrollPane.setViewportView(history);
+//		}
+		//scrollPane.
+//XXX		history.setText(history.getText() + "max: " + scrollPane.getVerticalScrollBar().getMaximum() + "\n");
+//		scrollPane.getVerticalScrollBar().setValue(scrollPane.getVerticalScrollBar().getMaximum());
+//XXX		history.setText(history.getText() + "current: " + scrollPane.getVerticalScrollBar().getValue() + "\n");
 		history.append(msg + "\n");
 		history.setCaretPosition(history.getDocument().getLength());
 	}
