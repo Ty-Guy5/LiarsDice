@@ -34,7 +34,7 @@ public class LiarsDiceGame implements Game {
 	public LiarsDiceGame(List<LiarsDicePlayer> players){
 		history = new GameHistory();
 		this.players = players;
-		turnIndex = 0; //TODO start with a random player?
+		turnIndex = 0;
 		currentBid = null;
 		microsecBeforeTimeout = Long.MAX_VALUE;
 		exceptionLog = new ArrayList<String>();

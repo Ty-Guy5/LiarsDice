@@ -1,4 +1,5 @@
 package model;
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.LinkedList;
 import java.util.List;
@@ -18,6 +19,7 @@ public class Tournament {
 	private GameFactory gameFactory; 
 	private List<Player> allPlayers, participatingPlayers;
 	private long microsecBeforeTimeout;
+	private static final boolean combosVsPermutations = true;
 	
 	/**
 	 * Constructor. (Pass in the GameFactory associated with the game you want to play.)
@@ -99,6 +101,11 @@ public class Tournament {
 		for (int i=0; i<botsPerGame; i++) {
 			numGames *= (participatingPlayers.size() - i);
 		}
+		if (combosVsPermutations) {
+			for (int i=0; i<botsPerGame; i++) {
+				numGames /= (botsPerGame - i);
+			}
+		}
 		return numGames;
 	}
 	
@@ -131,19 +138,21 @@ public class Tournament {
 		}
 		
 		long start = System.currentTimeMillis();
-		for(int j = 0; j < gameRepeats; j++){
-			Collections.shuffle(participatingPlayers);
-			runAllPermutations(botsPerGame, new LinkedList<Player>());
+		if (combosVsPermutations)
+			runAllCombos(botsPerGame, gameRepeats);
+		else {
+			for(int j = 0; j < gameRepeats; j++){
+				runAllPermutations(botsPerGame, new LinkedList<Player>());
+			}
 		}
 		long end = System.currentTimeMillis();
 		System.out.println("tournament time: " + (end - start) + "ms");
 	}
 	
 	/**
-	 * Recursively runs a game for every permutation, as constrained by botsPerGame and gameRepeats.
+	 * Recursively runs a game for every permutation, as constrained by botsPerGame.
 	 * Also updates statistics at end of each game.
 	 * @param botsPerGame The number of players to play in each individual game.
-	 * @param gameRepeats The number of times to repeat each permutation of the tournament.
 	 * @param playersSoFar The players who are already included in the current game being constructed.
 	 */
 	private void runAllPermutations(int botsPerGame, LinkedList<Player> playersSoFar){
@@ -160,13 +169,63 @@ public class Tournament {
 			}
 		}
 	}
+	
+	/**
+	 * Runs a game for every combination, as constrained by botsPerGame and gameRepeats.
+	 * Also updates statistics at end of each game.
+	 * @param botsPerGame The number of players to play in each individual game.
+	 * @param gameRepeats The number of times to repeat each combination of the tournament.
+	 */
+	private void runAllCombos(int botsPerGame, int gameRepeats){
+		List<List<Player>> combosList = new ArrayList<List<Player>>();
+		combosList.add(new ArrayList<Player>());
+		combosList = createAllCombos(botsPerGame, participatingPlayers, combosList);
+		for(int j = 0; j < gameRepeats; j++){
+			Collections.shuffle(combosList);
+			for(List<Player> playerCombo : combosList){
+				runSingleGame(playerCombo);
+			}
+		}
+	}
+
+	private List<List<Player>> createAllCombos(int playersToAdd,
+			List<Player> participatingPlayers, 
+			List<List<Player>> combosList) {
+		ArrayList<List<Player>> combos = new ArrayList<List<Player>>();
+		for (List<Player> comboPrefix : combosList) {
+			Player lastPlayerChosen = null;
+			boolean passedLastPlayer;
+			if (comboPrefix.isEmpty()) {
+				passedLastPlayer = true;
+			} else {
+				lastPlayerChosen = comboPrefix.get(comboPrefix.size() - 1);
+				passedLastPlayer = false;
+			}
+			for (int i=0; i<participatingPlayers.size(); i++) {
+				if (passedLastPlayer || !combosVsPermutations) {
+					ArrayList<Player> combo = new ArrayList<Player>();
+					combo.addAll(comboPrefix);
+					combo.add(participatingPlayers.get(i));
+					combos.add(combo);
+				} else if (!comboPrefix.isEmpty() && lastPlayerChosen == participatingPlayers.get(i)) {
+					passedLastPlayer = true;
+				}
+			}
+		}
+		if (playersToAdd <= 1)
+			return combos;
+		else
+			return createAllCombos(playersToAdd - 1, participatingPlayers, combos);
+	}
 
 	/**
 	 * Runs a game using the local game factory and the given players. Updates 
 	 * the statistics for the players accordingly.
 	 * @param players Those which are to play in the game.
 	 */
-	private void runSingleGame(LinkedList<Player> players) {
+	private void runSingleGame(List<Player> players) {
+		if (combosVsPermutations)
+			Collections.shuffle(players);
 		Game game = gameFactory.getGameInstance(players);
 		game.setTimeout(microsecBeforeTimeout);
 		Player winner = game.runGame();
