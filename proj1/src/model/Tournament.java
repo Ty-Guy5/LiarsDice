@@ -15,11 +15,14 @@ public class Tournament {
 	 * allPlayers: Tournament keeps a master list of all players that could play.
 	 * participatingPlayers: The subset of players that are selected to play in this tournament.
 	 * microsecBeforeTimeout: How long this tournament allows player functions to run.
+	 * combosVsPermutations: Set true if you want all possible combinations of players, 
+	 * 						 with play order randomized. False will make the tournament 
+	 * 						 run every possible permutation instead.
 	 */
 	private GameFactory gameFactory; 
 	private List<Player> allPlayers, participatingPlayers;
 	private long microsecBeforeTimeout;
-	private static final boolean combosVsPermutations = true;
+	private static final boolean combosVsPermutations = false;
 	
 	/**
 	 * Constructor. (Pass in the GameFactory associated with the game you want to play.)
@@ -90,9 +93,12 @@ public class Tournament {
 	}
 
 	/**
-	 * @param botsPerGame The number of players to play in each individual game. (2 <= botsPerGame <= total # players)
-	 * @param gameRepeats The number of times to repeat each permutation of the tournament.
-	 * @return The number of games that would be run if runTournament were run now with these parameters.
+	 * @param botsPerGame The number of players to play in each individual game. 
+	 * 					  (2 <= botsPerGame <= total # players)
+	 * @param gameRepeats The number of times to repeat each 
+	 * 					  combination/permutation of the tournament.
+	 * @return The number of games that would be run if runTournament were 
+	 * 		   run now with these parameters.
 	 */
 	public int getNumGamesForSettings(int botsPerGame, int gameRepeats) {
 		if (botsPerGame > participatingPlayers.size())
@@ -110,16 +116,16 @@ public class Tournament {
 	}
 	
 	/**
-	 * Runs the tournament with all the players.  Runs every possible permutation of the 
-	 * players (repeated as many times as requested).  
-	 * For example, (players = A,B,C -- botsPerGame = 2 -- gameRepeats = 2) would yield the following games:
-	 * AB, AB, AC, AC, BA, BA, BC, BC, CA, CA, CB, CB
-	 * This guarantees that each player will play each other player at least once, and that each each player
-	 * will be guaranteed to start at least one game against each other player.
-	 * 
-	 * A tournament can only be run if there are at least two players.
-	 * @param botsPerGame The number of players to play in each individual game. (2 <= botsPerGame <= total # players)
-	 * @param gameRepeats The number of times to repeat each permutation of the tournament.
+	 * Runs the tournament with all the players.  Runs every possible 
+	 * combination/permutation of the players (repeated as many times 
+	 * as requested). This guarantees that each player will play at 
+	 * least one game (per repeat) against every possible subset of the 
+	 * rest of the players. A tournament will only be run if there are 
+	 * at least two players.
+	 * @param botsPerGame The number of players to play in each individual game. 
+	 * 					  (2 <= botsPerGame <= total # players)
+	 * @param gameRepeats The number of times to repeat each 
+	 * 					  combination/permutation of the tournament.
 	 */
 	public void runTournament(int botsPerGame, int gameRepeats)
 	{
@@ -188,6 +194,17 @@ public class Tournament {
 		}
 	}
 
+	/**
+	 * Expands (recursively) the list of all combos of length N to the list of all 
+	 * combos of length N+playersToAdd. This function assumes that no repeats are 
+	 * wanted and that the last Player in each combo prefix is of the greatest 
+	 * index in participatingPlayers.
+	 * @param playersToAdd The number of players to add to each combo.
+	 * @param participatingPlayers The list of all players that may be added. 
+	 * @param combosList A list of combo prefixes. 
+	 * @return The list of all combos of length N+playersToAdd that start with the 
+	 * 		   given list of prefixes.
+	 */
 	private List<List<Player>> createAllCombos(int playersToAdd,
 			List<Player> participatingPlayers, 
 			List<List<Player>> combosList) {
@@ -202,12 +219,13 @@ public class Tournament {
 				passedLastPlayer = false;
 			}
 			for (int i=0; i<participatingPlayers.size(); i++) {
-				if (passedLastPlayer || !combosVsPermutations) {
+				if (passedLastPlayer) {
 					ArrayList<Player> combo = new ArrayList<Player>();
 					combo.addAll(comboPrefix);
 					combo.add(participatingPlayers.get(i));
 					combos.add(combo);
-				} else if (!comboPrefix.isEmpty() && lastPlayerChosen == participatingPlayers.get(i)) {
+				} else if (!comboPrefix.isEmpty() 
+						&& lastPlayerChosen == participatingPlayers.get(i)) {
 					passedLastPlayer = true;
 				}
 			}
@@ -221,7 +239,7 @@ public class Tournament {
 	/**
 	 * Runs a game using the local game factory and the given players. Updates 
 	 * the statistics for the players accordingly.
-	 * @param players Those which are to play in the game.
+	 * @param players The players in the game.
 	 */
 	private void runSingleGame(List<Player> players) {
 		if (combosVsPermutations)
