@@ -16,6 +16,8 @@ import model.Player;
 import model.liarsDice.gameLogic.LiarsDiceBot;
 import model.liarsDice.gameLogic.LiarsDiceGame;
 import model.liarsDice.gameLogic.LiarsDicePlayer;
+import model.liarsDice.testBots.Challenger;
+import model.liarsDice.testBots.Consistent;
 import model.liarsDice.testBots.Problematic;
 
 
