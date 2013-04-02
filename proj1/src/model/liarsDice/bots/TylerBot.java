@@ -15,7 +15,11 @@ public class TylerBot extends LiarsDiceBot
 	@Override
 	public Decision getDecision(GameInfo gi) 
 	{
-		Bid myBid = new Bid(gi.getTotalDice() / 3, 6);
+		int frequency = gi.getTotalDice() / 3;
+		if(frequency < 1){
+			frequency = 1;
+		}
+		Bid myBid = new Bid(frequency, 6);
 		if(gi.getCurrentBid() == null)
 		{
 			return myBid;

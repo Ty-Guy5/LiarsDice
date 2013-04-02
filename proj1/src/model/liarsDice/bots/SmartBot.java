@@ -25,13 +25,17 @@ public class SmartBot extends LiarsDiceBot {
 			return calculateFirstBid(currentGameInfo);
 		}
 		else{
-			return makeDecision(currentGameInfo);
+			Decision d = makeDecision(currentGameInfo);
+			if(!checkValidDecision(d, currentGameInfo)){
+				return new Challenge();
+			}
+			return d;
 		}
 	}
 
 	private Decision makeDecision(GameInfo currentGameInfo) {
 		int[] myDiceFrequencies = getMyDiceFrequencies(currentGameInfo);
-		int totalDice = getTotalDice(currentGameInfo);
+		int totalDice = currentGameInfo.getTotalDice();
 		int othersDice = totalDice - currentGameInfo.getMyDice().size();
 		Bid currentBid = currentGameInfo.getCurrentBid();
 		int onesGuess = othersDice/6 + myDiceFrequencies[0];
@@ -56,15 +60,6 @@ public class SmartBot extends LiarsDiceBot {
 			}
 			return new Challenge();
 		}
-	}
-
-	private int getTotalDice(GameInfo currentGameInfo) {
-		int totalDice = currentGameInfo.getMyDice().size();
-		List<PlayerInfo> players = currentGameInfo.getAllPlayersInfo();
-		for(PlayerInfo p : players){
-			totalDice += p.getNumDice();
-		}
-		return totalDice;
 	}
 
 	private Decision calculateFirstBid(GameInfo currentGameInfo) {

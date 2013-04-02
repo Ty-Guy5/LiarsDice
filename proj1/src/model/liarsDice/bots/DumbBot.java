@@ -26,21 +26,12 @@ public class DumbBot extends LiarsDiceBot {
 		if(b == null){
 			return new Bid(2, 2);
 		}
-		else if(b.getFrequency() > getTotalDice(currentGameInfo)){
+		else if(b.getFrequency() >= currentGameInfo.getTotalDice()){
 			return new Challenge();
 		}
 		else{
 			return new Bid(b.getFrequency() + 1, b.getFaceValue());
 		}
-	}
-	
-	private int getTotalDice(GameInfo currentGameInfo) {
-		int totalDice = currentGameInfo.getMyDice().size();
-		List<PlayerInfo> players = currentGameInfo.getAllPlayersInfo();
-		for(PlayerInfo p : players){
-			totalDice += p.getNumDice();
-		}
-		return totalDice;
 	}
 
 }

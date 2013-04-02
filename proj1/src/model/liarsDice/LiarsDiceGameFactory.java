@@ -13,6 +13,8 @@ import model.Bot;
 import model.Game;
 import model.GameFactory;
 import model.Player;
+import model.liarsDice.bots.SmartBot;
+import model.liarsDice.bots.TylerBot;
 import model.liarsDice.gameLogic.LiarsDiceBot;
 import model.liarsDice.gameLogic.LiarsDiceGame;
 import model.liarsDice.gameLogic.LiarsDicePlayer;
@@ -58,7 +60,10 @@ public class LiarsDiceGameFactory implements GameFactory {
 		ArrayList<Bot> bots = new ArrayList<Bot>();
 		
 		//hardcoded bots
-//		bots.add(new Problematic());
+//		bots.add(new SmartBot());
+//		bots.add(new SmartBot());
+//		bots.add(new TylerBot());
+//		bots.add(new TylerBot());
 //		bots.add(new Challenger());
 //		bots.add(new Consistent());
 //		bots.add(new InfiniteLooper());
