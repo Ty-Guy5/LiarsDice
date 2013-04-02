@@ -43,6 +43,7 @@ public class TournamentView extends JPanel {
     private int numGameRepeatsPerTournament;
     
     private Facade facade;
+	public Thread tournamentThread;
 
 	public TournamentView(Facade f){
 		
@@ -228,34 +229,78 @@ public class TournamentView extends JPanel {
 
 	private class ButtonListener implements ActionListener
     {
-        public void actionPerformed(ActionEvent e) {
+        private long startTime;
+
+		public void actionPerformed(ActionEvent e) {
         	try{
         		facade.resetPlayerStats();
         		messageLabel.setText("");
         		numPlayersPerGame = Integer.parseInt(botsPerGame.getText());
         		numGameRepeatsPerTournament = Integer.parseInt(repeatTimes.getText());
-        		long startTime = System.currentTimeMillis();
-        		facade.runTournament(numPlayersPerGame, numGameRepeatsPerTournament);
-        		long endTime = System.currentTimeMillis();
-        		long duration = endTime - startTime;
-				statsTableModel.loadTable(facade);
-				int decimal = (int)(duration % 1000);
-				String decimalStr = "." + decimal;
-				if(decimal == 0){
-					decimalStr = ".000";
-				}
-				else if(decimal < 10){
-					decimalStr = ".00" + decimal;
-				}
-				else if(decimal < 100){
-					decimalStr = ".0" + decimal;
-				}
-        		messageLabel.setText("Tournament ran in " + duration/3600000 + ":" 
-						+ (duration/60000)%60 + ":" + (duration/1000)%60 + decimalStr + " seconds.");
+        		startTime = System.currentTimeMillis();
+        		//launch thread to run the tournament
+        		runTournamentThreaded();
+        		startTournamentWatch();
         	}catch(NumberFormatException ex){
         		messageLabel.setText("Please only input positive integers.");
         	}
         }
+
+		/**
+		 * Starts a thread to periodically check the status of the tournament
+		 * and update the view accordingly. Specifically, it keeps track of how
+		 * many games have completed and enables the run button after the 
+		 * tournament ends. 
+		 */
+		private void startTournamentWatch() {
+			Thread watchThread = new Thread( new Runnable() {
+				@Override
+				public void run() {
+		    		while (tournamentThread != null && tournamentThread.isAlive()) {
+		    			try {
+		    				messageLabel.setText("Games completed: " 
+		    			+ facade.getTournamentNumGamesCompleted());
+							Thread.sleep(200);
+						} catch (InterruptedException e) {
+							e.printStackTrace();
+						}
+		    		}
+		    		runButton.setEnabled(true);
+	        		long endTime = System.currentTimeMillis();
+	        		long duration = endTime - startTime;
+					statsTableModel.loadTable(facade);
+					int decimal = (int)(duration % 1000);
+					String decimalStr = "." + decimal;
+					if(decimal == 0){
+						decimalStr = ".000";
+					}
+					else if(decimal < 10){
+						decimalStr = ".00" + decimal;
+					}
+					else if(decimal < 100){
+						decimalStr = ".0" + decimal;
+					}
+	        		messageLabel.setText("Tournament ran in " + duration/3600000 + ":" 
+							+ (duration/60000)%60 + ":" + (duration/1000)%60 + decimalStr + " seconds.");
+				}
+			});
+			watchThread.start();
+		}
+
+		/**
+		 * Starts a thread to run the tournament with current settings.
+		 * (Disables the run button first.)
+		 */
+		private void runTournamentThreaded() {
+			tournamentThread = new Thread( new Runnable() {
+				@Override
+				public void run() {
+		    		runButton.setEnabled(false);
+		    		facade.runTournament(numPlayersPerGame, numGameRepeatsPerTournament);	
+				}
+			});
+			tournamentThread.start();
+		}
     }
 
 }

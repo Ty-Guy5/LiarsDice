@@ -67,6 +67,13 @@ public class Facade {
 	public void runTournament(int botsPerGame, int gameRepeats) {
 		tournament.runTournament(botsPerGame, gameRepeats);
 	}
+	
+	/**
+	 * @return The number of games the tournament has run and completed so far.
+	 */
+	public int getTournamentNumGamesCompleted() {
+		return tournament.getNumGamesCompleted();
+	}
 
 	public Player runGame(String gameName, List<Player> players, long microsecBeforeTimeout) {
 		GameFactory gameFactory = chooseGameFactory(gameName);
