@@ -23,6 +23,7 @@ public class Tournament {
 	private List<Player> allPlayers, participatingPlayers;
 	private long microsecBeforeTimeout;
 	private boolean combosVsPermutations = true;
+	private int numGamesCompleted = 0;
 	
 	/**
 	 * Constructor. (Pass in the GameFactory associated with the game you want to play.)
@@ -132,6 +133,7 @@ public class Tournament {
 		for(Player p : allPlayers){
 			p.resetStatistics();
 		}
+		numGamesCompleted = 0;
 		
 		if(participatingPlayers.size() < 2 || gameRepeats < 1){
 			return;
@@ -152,7 +154,7 @@ public class Tournament {
 			}
 		}
 		long end = System.currentTimeMillis();
-		System.out.println("tournament time: " + (end - start) + "ms");
+		//System.out.println("tournament time: " + (end - start) + "ms");
 	}
 
 	/**
@@ -256,6 +258,7 @@ public class Tournament {
 		Game game = gameFactory.getGameInstance(players);
 		game.setTimeout(microsecBeforeTimeout);
 		Player winner = game.runGame();
+		numGamesCompleted++;
 		//update stats
 		for(Player p : players){
 			if(p == winner){
@@ -265,5 +268,14 @@ public class Tournament {
 				p.getStatistics().increaseLosses();
 			}
 		}
+	}
+
+	/**
+	 * If runTournament is running, gets the number of games run in the 
+	 * tournament so far.
+	 * @return The number of games completed so far, or 0 if runTournament has not been called.
+	 */
+	public int getNumGamesCompleted() {
+		return numGamesCompleted ;
 	}
 }
